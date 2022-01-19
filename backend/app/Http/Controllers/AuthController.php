@@ -21,9 +21,10 @@ class AuthController extends Controller
 
     public function register(Request $request){
         $_dataAll = $request->all();
-        $name = $_dataAll['name'];
-        $email = $_dataAll['email'];
+        $name     = $_dataAll['name'];
+        $email    = $_dataAll['email'];
         $password = $_dataAll['password'];
+        $status   = $_dataAll['status'];
 
         $validator = validator()->make(request()->all(),[
             'name' => 'string|required',
@@ -40,11 +41,11 @@ class AuthController extends Controller
         // $user = User::create(['name' => request()->get('name'),
         //                       'email' => request()->get('email'),
         //                       'password' => bcrypt(request()->get('password'))]);
-        $user = Users::create_user($name, $email, $password);
+        $user = Users::check_register($name, $email, $password, $status);
         
         return response()->json([
-            'message' => 'User Created!',
-            'user' => $user
+            // 'message' => '',
+            'message' => $user
         ]);
     }
 
@@ -98,4 +99,26 @@ class AuthController extends Controller
             'expires_in' => config('jwt.ttl')
         ]);
     }
+
+    public function searchLDAP(Request $request)
+    {
+        $_dataAll = $request->all();
+        $emp_code = $_dataAll['emp_code'];
+        $ldap = file_get_contents("http://10.7.200.178:82/iauthen/get-all-profile?user_name=&emp_number={$emp_code}");
+        $data = json_decode($ldap);
+        foreach ($data->data as $item) {
+            $user[] = array(
+                'emp_code'    => $item->employeenumber,
+                'name_th'     => trim($item->fnamethai,' ').' '.$item->lnamethai,
+                'name_en'     => $item->firstname.' '.$item->lastname,
+                'postname_th' => $item->postname_thai,
+                'postname_en' => $item->postname_en,
+                'email'       => $item->email,
+            );
+        }
+        return response()->json([
+            'data' => $user
+        ], 200);
+    }
+
 }

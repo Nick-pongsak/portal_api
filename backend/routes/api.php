@@ -25,5 +25,6 @@ Route::group([
     Route::post('user-profile', 'AuthController@me');
     Route::post('tokenExpired', 'AuthController@tokenExpired');
     Route::get('setting-count-department', 'DepartmentManageController@getCountDepartment');
-
+    Route::post('search-emp-ldap', 'AuthController@searchLDAP');
 });
+
