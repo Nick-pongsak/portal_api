@@ -13,24 +13,38 @@ class Users extends Model
     //    protected $primaryKey = 'id';
     // public $timestamps = false;
 
-    public static function create_user($name, $email, $password, $status)
+    public static function create_user($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group, $type, $username, $password)
     {
         $datetime_now = date('Y-m-d H:i:s');
-        $password     = bcrypt($password);
+        $password = bcrypt($password);
         $sql = "INSERT INTO users 
-        (name 
+        (emp_code 
+        ,name_th
+        ,name_en
+        ,postname_th
+        ,postname_en
         ,email
+        ,status
+        ,group_app
+        ,type
+        ,username
         ,password
-        ,updated_at
         ,created_at
-        ,status)
+        ,updated_at)
         VALUES 
-        ('{$name}'
+        ('{$emp_code}'
+        ,'{$name_th}'
+        ,'{$name_en}'
+        ,'{$postname_th}'
+        ,'{$postname_en}'
         ,'{$email}'
+        ,'{$status}'
+        ,'{$group}'
+        ,'{$type}'
+        ,'{$username}'
         ,'{$password}'
         ,'{$datetime_now}'
-        ,'{$datetime_now}'
-        ,'{$status}')";
+        ,'{$datetime_now}')";
 
         $sql_user = DB::insert($sql);
 
@@ -41,25 +55,38 @@ class Users extends Model
         return $datas;
     }
 
-    public static function check_user($email, $password, $status)
+    public static function check_user($username, $password, $type)
     {
         $sql = "
         SELECT * FROM users WHERE
-        email = '{$email}'
-        AND status = '{$status}'";
+        username = '{$username}'
+        AND type = '{$type}'";
 
         $sql_user = DB::select($sql);
 
         if (count($sql_user) == 1) {
-            $credentials = request(['email', 'password']);
+            $credentials = array('username'=>$username,'password'=>$password,'type'=>$type);
 
             if (!$token = JwtAuth::attempt($credentials)) {
-                return response()->json(['error' => 'Unauthorized'], 401);
+                return response()->json([
+                    'data' =>$user[] = array(
+                        'error' => 'Unauthorized'
+                    )
+                ], 401);
             }
-            return $token;
-        }
-        else{
-            return 'Unknow Username or Password';
+            return response()->json([
+                'data' => $user[] = array(
+                    'access_token' => $token,
+                    'token_type' => 'bearer',
+                    'expires_in' => config('jwt.ttl')
+                )
+            ], 200);
+        } else {
+            return response()->json([
+                 'data' =>$user[] = array(
+                     'error' => 'Unknow Username or Password'
+                )
+            ], 401);
         }
 
 
@@ -68,20 +95,19 @@ class Users extends Model
     }
 
 
-    public static function check_register($name, $email, $password, $status)
+    public static function check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group, $type, $username, $password)
     {
         $sql = "
         SELECT * FROM users WHERE
-        email = '{$email}'
-        AND status = '{$status}'";
+        emp_code = '{$emp_code}'
+        AND type = '{$type}'";
 
         $sql_user = DB::select($sql);
 
         if (count($sql_user) == 0) {
-            $user = Users::create_user($name, $email, $password, $status);
+            $user = Users::create_user($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group, $type, $username, $password);
             return 'User Created!';
-        }
-        else{
+        } else {
             return 'User Duplicate Status LDAP or User';
         }
 
