@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthPortalController;
 use App\Http\Controllers\DepartmentManageController;
+use App\Http\Controllers\ApplicationController;
 
 
 Route::get('/date_now', function () {
@@ -27,4 +28,5 @@ Route::group([
     Route::get('setting-count-department', 'DepartmentManageController@getCountDepartment');
     Route::post('search-emp-ldap', 'AuthController@searchLDAP');
 });
+Route::post('/add-application', [ApplicationController::class, 'Addapplication']);
 

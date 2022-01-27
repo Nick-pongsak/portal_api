@@ -9,7 +9,7 @@ define('API_Cipher_PORT',  '80');
 define('Cipher_DB',  'SimpliCore');
 define('DreamFactory_Session_Token',  'c0be2ead2bfab53636c32a1cfa1ee8b5826479d63c57b99cc3f0cbfda0788473');
 define('API_Cipher',  'http://10.7.200.166:82/');
-define('API_Sync','http://10.7.200.178:82/');
+// define('API_Sync','http://10.7.200.178:82/');
 
 define('Mail_Server',  'mail.dhas.com');
 define('Mail_Port',  '10325');

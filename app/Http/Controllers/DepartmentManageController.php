@@ -19,11 +19,11 @@ class DepartmentManageController extends Controller {
     public function getCountDepartment()
     {
 
-        $datas = CfgDepartment::getCountDepartment();
+        // $datas = CfgDepartment::getCountDepartment();
         // print_r($datas); exit();
         return $this->createSuccessResponse([
           'success' => [
-              'data' => $datas,
+              'data' => 'cssscs',
           ]], 200);
 
     }

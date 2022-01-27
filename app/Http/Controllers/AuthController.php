@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Models\User;
 use App\Models\Users;
 use Illuminate\Support\Carbon;
 
@@ -29,7 +28,7 @@ class AuthController extends Controller
         $postname_en  = $_dataAll['postname_en'];
         $email    = $_dataAll['email'];
         $status   = $_dataAll['status'];
-        $group    = $_dataAll['group'];
+        $group_id    = $_dataAll['group_id'];
         $type     = $_dataAll['type'];
         $username = $_dataAll['username'];
         $password = $_dataAll['password'];
@@ -50,7 +49,7 @@ class AuthController extends Controller
         // $user = User::create(['name' => request()->get('name'),
         //                       'email' => request()->get('email'),
         //                       'password' => bcrypt(request()->get('password'))]);
-        $user = Users::check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group, $type, $username, $password);
+        $user = Users::check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password);
 
         return response()->json([
             // 'message' => '',
@@ -64,8 +63,8 @@ class AuthController extends Controller
         $username = $_dataAll['username'];
         $password = $_dataAll['password'];
         $type   = $_dataAll['type'];
-        if ($type == 'LDAP') {
-            $url = 'http://10.7.200.178:82/iauthen/ldap-authen';
+        if ($type == 1) {
+            $url = API_Sync.'iauthen/ldap-authen';
             $data = array('login' => $username, 'password' => $password);
 
             // use key 'http' even if you send the request to https://...
@@ -80,10 +79,10 @@ class AuthController extends Controller
             $result = file_get_contents($url, false, $context);
             if ($result === FALSE) { /* Handle error */
                 return response()->json([
-                    'data' =>$user[] = array(
+                    'data' => $user[] = array(
                         'error' => 'Unknow parameter '
-                   )
-               ], 401);
+                    )
+                ], 401);
             } else {
                 $data = json_decode($result);
                 if (isset($data->success->data->access_token)) {
@@ -92,15 +91,15 @@ class AuthController extends Controller
                     return $user;
                 } else {
                     return response()->json([
-                        'data' =>$user[] = array(
+                        'data' => $user[] = array(
                             'error' => 'Unknow Username or Password'
-                       )
-                   ], 401);
+                        )
+                    ], 401);
                 }
             }
         } else {
-        $user = Users::check_user($username, $password, $type);
-        return $user;
+            $user = Users::check_user($username, $password, $type);
+            return $user;
         }
     }
 
@@ -144,7 +143,7 @@ class AuthController extends Controller
     {
         $_dataAll = $request->all();
         $emp_code = $_dataAll['emp_code'];
-        $ldap = file_get_contents("http://10.7.200.178:82/iauthen/get-all-profile?user_name=&emp_number={$emp_code}");
+        $ldap = file_get_contents(API_Sync."iauthen/get-all-profile?user_name=&emp_number={$emp_code}");
         $data = json_decode($ldap);
         foreach ($data->data as $item) {
             $user[] = array(

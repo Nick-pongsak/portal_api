@@ -13,38 +13,82 @@ class Users extends Model
     //    protected $primaryKey = 'id';
     // public $timestamps = false;
 
-    public static function create_user($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group, $type, $username, $password)
+    public static function create_user($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password)
     {
         $datetime_now = date('Y-m-d H:i:s');
         $password = bcrypt($password);
         $sql = "INSERT INTO users 
-        (emp_code 
+        (user_id
+        ,emp_code
+        ,type 
+        ,username
+        ,password
+        ,createdate
+        ,updatedate
+        ,createby
+        ,updateby
+        ,last_login
+        ,active)
+        VALUES 
+        ({$emp_code}+10000000+{$type}
+        ,'{$emp_code}'
+        , {$type}
+        ,'{$username}'
+        ,'{$password}'
+        ,'{$datetime_now}'
+        ,'{$datetime_now}'
+        ,'admin'
+        ,'admin'
+        ,'{$datetime_now}'
+        , 1)";
+
+        $sql_user = DB::insert($sql);
+
+        $datas = array();
+        if (!empty($sql_user)) {
+            $datas = $sql_user;
+        }
+        return $datas;
+    }
+    
+    public static function create_user_profile($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password)
+    {
+        $datetime_now = date('Y-m-d H:i:s');
+        $password = bcrypt($password);
+        $sql = "INSERT INTO user_profile 
+        (user_id
+        ,emp_code
         ,name_th
         ,name_en
         ,postname_th
         ,postname_en
         ,email
         ,status
-        ,group_app
+        ,group_id
         ,type
-        ,username
-        ,password
-        ,created_at
-        ,updated_at)
+        ,createdate
+        ,updatedate
+        ,createby
+        ,updateby
+        ,image
+        ,status_permission)
         VALUES 
-        ('{$emp_code}'
+        ({$emp_code}+10000000+{$type}
+        ,'{$emp_code}'
         ,'{$name_th}'
         ,'{$name_en}'
         ,'{$postname_th}'
         ,'{$postname_en}'
         ,'{$email}'
         ,'{$status}'
-        ,'{$group}'
-        ,'{$type}'
-        ,'{$username}'
-        ,'{$password}'
+        , {$group_id}
+        , {$type}
         ,'{$datetime_now}'
-        ,'{$datetime_now}')";
+        ,'{$datetime_now}'
+        ,'admin'
+        ,'admin'
+        ,'/scsdvsdv.jpg/'
+        , 1)";
 
         $sql_user = DB::insert($sql);
 
@@ -70,7 +114,7 @@ class Users extends Model
             if (!$token = JwtAuth::attempt($credentials)) {
                 return response()->json([
                     'data' =>$user[] = array(
-                        'error' => 'Unauthorized'
+                        'error' => $credentials
                     )
                 ], 401);
             }
@@ -95,7 +139,7 @@ class Users extends Model
     }
 
 
-    public static function check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group, $type, $username, $password)
+    public static function check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password)
     {
         $sql = "
         SELECT * FROM users WHERE
@@ -105,10 +149,11 @@ class Users extends Model
         $sql_user = DB::select($sql);
 
         if (count($sql_user) == 0) {
-            $user = Users::create_user($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group, $type, $username, $password);
-            return 'User Created!';
+            $user = Users::create_user($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password);
+            $user_profile = Users::create_user_profile($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password);
+            return 'User Created';
         } else {
-            return 'User Duplicate Status LDAP or User';
+            return 'User Duplicate!';
         }
 
 
