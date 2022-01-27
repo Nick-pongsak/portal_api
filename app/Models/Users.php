@@ -18,8 +18,7 @@ class Users extends Model
         $datetime_now = date('Y-m-d H:i:s');
         $password = bcrypt($password);
         $sql = "INSERT INTO users 
-        (user_id
-        ,emp_code
+        (emp_code
         ,type 
         ,username
         ,password
@@ -30,8 +29,7 @@ class Users extends Model
         ,last_login
         ,active)
         VALUES 
-        ({$emp_code}+10000000+{$type}
-        ,'{$emp_code}'
+        ('{$emp_code}'
         , {$type}
         ,'{$username}'
         ,'{$password}'
@@ -56,8 +54,7 @@ class Users extends Model
         $datetime_now = date('Y-m-d H:i:s');
         $password = bcrypt($password);
         $sql = "INSERT INTO user_profile 
-        (user_id
-        ,emp_code
+        (emp_code
         ,name_th
         ,name_en
         ,postname_th
@@ -73,8 +70,7 @@ class Users extends Model
         ,image
         ,status_permission)
         VALUES 
-        ({$emp_code}+10000000+{$type}
-        ,'{$emp_code}'
+        ('{$emp_code}'
         ,'{$name_th}'
         ,'{$name_en}'
         ,'{$postname_th}'
