@@ -28,5 +28,7 @@ Route::group([
     Route::get('setting-count-department', 'DepartmentManageController@getCountDepartment');
     Route::post('search-emp-ldap', 'AuthController@searchLDAP');
 });
+Route::get('/application-detail', [ApplicationController::class, 'application']);
 Route::post('/add-application', [ApplicationController::class, 'Addapplication']);
+Route::post('/update-application', [ApplicationController::class, 'Updateapplication']);
 

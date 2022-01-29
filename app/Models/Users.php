@@ -48,13 +48,14 @@ class Users extends Model
         }
         return $datas;
     }
-    
-    public static function create_user_profile($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password)
+
+    public static function create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password)
     {
         $datetime_now = date('Y-m-d H:i:s');
         $password = bcrypt($password);
         $sql = "INSERT INTO user_profile 
-        (emp_code
+        (user_id
+        ,emp_code
         ,name_th
         ,name_en
         ,postname_th
@@ -70,7 +71,8 @@ class Users extends Model
         ,image
         ,status_permission)
         VALUES 
-        ('{$emp_code}'
+        ({$user_id}
+        ,'{$emp_code}'
         ,'{$name_th}'
         ,'{$name_en}'
         ,'{$postname_th}'
@@ -105,11 +107,11 @@ class Users extends Model
         $sql_user = DB::select($sql);
 
         if (count($sql_user) == 1) {
-            $credentials = array('username'=>$username,'password'=>$password,'type'=>$type);
+            $credentials = array('username' => $username, 'password' => $password, 'type' => $type);
 
             if (!$token = JwtAuth::attempt($credentials)) {
                 return response()->json([
-                    'data' =>$user[] = array(
+                    'data' => $user[] = array(
                         'error' => $credentials
                     )
                 ], 401);
@@ -123,8 +125,8 @@ class Users extends Model
             ], 200);
         } else {
             return response()->json([
-                 'data' =>$user[] = array(
-                     'error' => 'Unknow Username or Password'
+                'data' => $user[] = array(
+                    'error' => 'Unknow Username or Password'
                 )
             ], 401);
         }
@@ -146,14 +148,21 @@ class Users extends Model
 
         if (count($sql_user) == 0) {
             $user = Users::create_user($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password);
-            $user_profile = Users::create_user_profile($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password);
+            $sql = "
+            SELECT * FROM users WHERE
+            emp_code = '{$emp_code}'
+            AND type = '{$type}'";
+
+            $sql_user = DB::select($sql);
+            $user_id = 0;
+            foreach ($sql_user as $user) {
+                $user_id =  $user->user_id;
+            }
+            $user_profile = Users::create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password);
             return 'User Created';
         } else {
             return 'User Duplicate!';
         }
-
-
-        // return $datas;
 
     }
 }
