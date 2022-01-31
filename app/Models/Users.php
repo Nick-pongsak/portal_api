@@ -18,7 +18,8 @@ class Users extends Model
         $datetime_now = date('Y-m-d H:i:s');
         $password = bcrypt($password);
         $sql = "INSERT INTO users 
-        (emp_code
+        (id
+        ,emp_code
         ,type 
         ,username
         ,password
@@ -29,7 +30,8 @@ class Users extends Model
         ,last_login
         ,active)
         VALUES 
-        ('{$emp_code}'
+        (0
+        ,'{$emp_code}'
         , {$type}
         ,'{$username}'
         ,'{$password}'
@@ -53,6 +55,9 @@ class Users extends Model
     {
         $datetime_now = date('Y-m-d H:i:s');
         $password = bcrypt($password);
+        $sql_id = "UPDATE users SET id = {$user_id}";
+        $sql_add_id = DB::insert($sql_id);
+
         $sql = "INSERT INTO user_profile 
         (user_id
         ,emp_code

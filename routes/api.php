@@ -29,6 +29,10 @@ Route::group([
     Route::post('search-emp-ldap', 'AuthController@searchLDAP');
 });
 Route::get('/application-detail', [ApplicationController::class, 'application']);
-Route::post('/add-application', [ApplicationController::class, 'Addapplication']);
-Route::post('/update-application', [ApplicationController::class, 'Updateapplication']);
+Route::post('/add-application', [ApplicationController::class, 'addapplication']);
+Route::post('/update-application', [ApplicationController::class, 'updateapplication']);
+Route::get('/get_catagory', [ApplicationController::class, 'getcatagory']);
+Route::get('/get_catagory', [ApplicationController::class, 'getcatagory']);
+Route::post('/add_catagory', [ApplicationController::class, 'addcatagory']);
+Route::post('/update_catagory', [ApplicationController::class, 'updatecatagory']);
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Application;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ApplicationController extends Controller
 {
@@ -17,6 +18,13 @@ class ApplicationController extends Controller
         //
     }
 
+    private function getUserLogin()
+    {
+        $token = JWTAuth::parseToken();
+        $user = $token->authenticate();
+        return $user;
+    }
+
     public function application(Request $request)
     {
 
@@ -28,7 +36,18 @@ class ApplicationController extends Controller
         ]);
     }
 
-    public function Addapplication(Request $request)
+    public function getcatagory(Request $request)
+    {
+
+        $cat = Application::get_catagory();
+
+        return response()->json([
+            // 'message' => '',
+            'data' => $cat
+        ]);
+    }
+
+    public function addapplication(Request $request)
     {
         $_dataAll = $request->all();
         $name_th  = $_dataAll['name_th'];
@@ -59,7 +78,7 @@ class ApplicationController extends Controller
         ]);
     }
 
-    public function Updateapplication(Request $request)
+    public function updateapplication(Request $request)
     {
         $_dataAll = $request->all();
         $app_id  = $_dataAll['app_id'];
@@ -89,6 +108,43 @@ class ApplicationController extends Controller
         return response()->json([
             // 'message' => '',
             'message' => $app
+        ]);
+    }
+
+    public function addcatagory(Request $request)
+    {
+        $_dataAll = $request->all();
+        $user = $this->getUserLogin();
+        $name_th  = $_dataAll['name_th'];
+        $name_en  = $_dataAll['name_en'];
+
+        $app = Application::add_catagory($name_th
+        ,$name_en
+        ,$user->emp_code);
+
+
+        return response()->json([
+            // 'message' => '',
+            'message' => 'success'
+        ]);
+    }
+
+    public function updatecatagory(Request $request)
+    {
+        $_dataAll = $request->all();
+        $user = $this->getUserLogin();
+        $catagory_id  = $_dataAll['catagory_id'];
+        $name_th  = $_dataAll['name_th'];
+        $name_en  = $_dataAll['name_en'];
+
+        $app = Application::update_catagory($catagory_id, $name_th
+        ,$name_en
+        ,$user->emp_code);
+
+
+        return response()->json([
+            // 'message' => '',
+            'message' => 'success'
         ]);
     }
 }
