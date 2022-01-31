@@ -30,10 +30,12 @@ class ApplicationController extends Controller
 
         $app = Application::get_application();
 
-        return response()->json([
-            // 'message' => '',
-            'data' => $app
-        ]);
+        return $this->createSuccessResponse([
+            'success' => [
+                'data' => $app
+            ]
+        ], 200);
+
     }
 
     public function getcatagory(Request $request)
@@ -41,15 +43,17 @@ class ApplicationController extends Controller
 
         $cat = Application::get_catagory();
 
-        return response()->json([
-            // 'message' => '',
-            'data' => $cat
-        ]);
+        return $this->createSuccessResponse([
+            'success' => [
+                'data' => $cat
+            ]
+        ], 200);
     }
 
     public function addapplication(Request $request)
     {
         $_dataAll = $request->all();
+        $user = $this->getUserLogin();
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
         $description_th  = $_dataAll['description_th'];
@@ -70,17 +74,17 @@ class ApplicationController extends Controller
         ,$status
         ,$status_sso
         ,$image
-        ,$url);
+        ,$url
+        ,$user->user_id);
 
-        return response()->json([
-            // 'message' => '',
-            'message' => $app
-        ]);
+        return $app;
+
     }
 
     public function updateapplication(Request $request)
     {
         $_dataAll = $request->all();
+        $user = $this->getUserLogin();
         $app_id  = $_dataAll['app_id'];
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
@@ -103,12 +107,44 @@ class ApplicationController extends Controller
         ,$status
         ,$status_sso
         ,$image
-        ,$url);
+        ,$url
+        ,$user->user_id);
 
-        return response()->json([
-            // 'message' => '',
-            'message' => $app
-        ]);
+        return $app;
+
+    }
+
+    public function deleteapplication(Request $request)
+    {
+        $_dataAll = $request->all();
+        $user = $this->getUserLogin();
+        $app_id  = $_dataAll['app_id'];
+        $name_th  = $_dataAll['name_th'];
+        $name_en  = $_dataAll['name_en'];
+        // $description_th  = $_dataAll['description_th'];
+        // $description_en  = $_dataAll['description_en'];
+        // $catagory_id  = $_dataAll['catagory_id'];
+        // $type_login  = $_dataAll['type_login'];
+        // $status  = $_dataAll['status'];
+        // $status_sso  = $_dataAll['status_sso'];
+        // $image  = $_dataAll['image'];
+        // $url  = $_dataAll['url'];
+
+        $app = Application::delete_application($app_id
+        ,$name_th
+        ,$name_en
+        // ,$description_th
+        // ,$description_en
+        // ,$catagory_id
+        // ,$type_login
+        // ,$status
+        // ,$status_sso
+        // ,$image
+        // ,$url
+        ,$user->user_id);
+
+        return $app;
+
     }
 
     public function addcatagory(Request $request)
@@ -120,13 +156,10 @@ class ApplicationController extends Controller
 
         $app = Application::add_catagory($name_th
         ,$name_en
-        ,$user->emp_code);
+        ,$user->user_id);
 
 
-        return response()->json([
-            // 'message' => '',
-            'message' => 'success'
-        ]);
+        return $app;
     }
 
     public function updatecatagory(Request $request)
@@ -139,12 +172,27 @@ class ApplicationController extends Controller
 
         $app = Application::update_catagory($catagory_id, $name_th
         ,$name_en
-        ,$user->emp_code);
+        ,$user->user_id);
 
+        return $this->createSuccessResponse([
+            'success' => [
+                'data' => 'success'
+            ]
+        ], 200);
+    }
 
-        return response()->json([
-            // 'message' => '',
-            'message' => 'success'
-        ]);
+    public function deletecatagory(Request $request)
+    {
+        $_dataAll = $request->all();
+        $user = $this->getUserLogin();
+        $catagory_id  = $_dataAll['catagory_id'];
+        $name_th  = $_dataAll['name_th'];
+        $name_en  = $_dataAll['name_en'];
+
+        $app = Application::delete_catagory($catagory_id, $name_th
+        ,$name_en
+        ,$user->user_id);
+
+        return $app;
     }
 }

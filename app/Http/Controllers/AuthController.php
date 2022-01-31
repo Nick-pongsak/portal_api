@@ -18,9 +18,17 @@ class AuthController extends Controller
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
+    private function getUserLogin()
+    {
+        $token = JWTAuth::parseToken();
+        $user = $token->authenticate();
+        return $user;
+    }
+
     public function register(Request $request)
     {
         $_dataAll = $request->all();
+        $user_create = $this->getUserLogin();
         $emp_code = $_dataAll['emp_code'];
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
@@ -49,12 +57,9 @@ class AuthController extends Controller
         // $user = User::create(['name' => request()->get('name'),
         //                       'email' => request()->get('email'),
         //                       'password' => bcrypt(request()->get('password'))]);
-        $user = Users::check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password);
+        $user = Users::check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create->user_id);
 
-        return response()->json([
-            // 'message' => '',
-            'message' => $user
-        ]);
+        return $user;
     }
 
     public function login(Request $request)
@@ -80,7 +85,7 @@ class AuthController extends Controller
             if ($result === FALSE) { /* Handle error */
                 return response()->json([
                     'data' => $user[] = array(
-                        'error' => 'Unknow parameter '
+                        'error' => 'Validate parameter '
                     )
                 ], 401);
             } else {
@@ -91,10 +96,10 @@ class AuthController extends Controller
                     return $user;
                 } else {
                     return response()->json([
-                        'data' => $user[] = array(
-                            'error' => 'Unknow Username or Password'
-                        )
-                    ], 401);
+                        'error' => [
+                            'data' => 'Validate Username or Password'
+                        ]
+                    ], 400);
                 }
             }
         } else {
@@ -156,8 +161,11 @@ class AuthController extends Controller
                 'username'    => $item->uid,
             );
         }
-        return response()->json([
-            'data' => $user
+
+        return $this->createSuccessResponse([
+            'success' => [
+                'data' => $user
+            ]
         ], 200);
     }
 }

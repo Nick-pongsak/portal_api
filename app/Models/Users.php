@@ -13,7 +13,7 @@ class Users extends Model
     //    protected $primaryKey = 'id';
     // public $timestamps = false;
 
-    public static function create_user($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password)
+    public static function create_user($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create)
     {
         $datetime_now = date('Y-m-d H:i:s');
         $password = bcrypt($password);
@@ -37,8 +37,8 @@ class Users extends Model
         ,'{$password}'
         ,'{$datetime_now}'
         ,'{$datetime_now}'
-        ,'admin'
-        ,'admin'
+        ,'{$user_create}'
+        ,'{$user_create}'
         ,'{$datetime_now}'
         , 1)";
 
@@ -51,11 +51,10 @@ class Users extends Model
         return $datas;
     }
 
-    public static function create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password)
+    public static function create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create)
     {
         $datetime_now = date('Y-m-d H:i:s');
-        $password = bcrypt($password);
-        $sql_id = "UPDATE users SET id = {$user_id}";
+        $sql_id = "UPDATE users SET id = {$user_id} WHERE type = {$type} AND emp_code = '{$emp_code}'";
         $sql_add_id = DB::insert($sql_id);
 
         $sql = "INSERT INTO user_profile 
@@ -74,7 +73,8 @@ class Users extends Model
         ,createby
         ,updateby
         ,image
-        ,status_permission)
+        ,status_permission
+        ,active)
         VALUES 
         ({$user_id}
         ,'{$emp_code}'
@@ -88,9 +88,10 @@ class Users extends Model
         , {$type}
         ,'{$datetime_now}'
         ,'{$datetime_now}'
-        ,'admin'
-        ,'admin'
-        ,'/scsdvsdv.jpg/'
+        ,'{$user_create}'
+        ,'{$user_create}'
+        ,''
+        , 1
         , 1)";
 
         $sql_user = DB::insert($sql);
@@ -116,24 +117,26 @@ class Users extends Model
 
             if (!$token = JwtAuth::attempt($credentials)) {
                 return response()->json([
-                    'data' => $user[] = array(
-                        'error' => $credentials
-                    )
-                ], 401);
+                    'error' => [
+                        'data' => $credentials
+                    ]
+                ], 400);
             }
             return response()->json([
-                'data' => $user[] = array(
-                    'access_token' => $token,
-                    'token_type' => 'bearer',
-                    'expires_in' => config('jwt.ttl')
-                )
+                'success' => [
+                    'data' => $user[] = array(
+                        'access_token' => $token,
+                        'token_type' => 'bearer',
+                        'expires_in' => config('jwt.ttl')
+                    )
+                ]
             ], 200);
         } else {
             return response()->json([
-                'data' => $user[] = array(
-                    'error' => 'Unknow Username or Password'
-                )
-            ], 401);
+                'error' => [
+                    'data' => 'Validate Username or Password'
+                ]
+            ], 400);
         }
 
 
@@ -142,7 +145,7 @@ class Users extends Model
     }
 
 
-    public static function check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password)
+    public static function check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create)
     {
         $sql = "
         SELECT * FROM users WHERE
@@ -152,7 +155,7 @@ class Users extends Model
         $sql_user = DB::select($sql);
 
         if (count($sql_user) == 0) {
-            $user = Users::create_user($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password);
+            $user = Users::create_user($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create);
             $sql = "
             SELECT * FROM users WHERE
             emp_code = '{$emp_code}'
@@ -163,11 +166,18 @@ class Users extends Model
             foreach ($sql_user as $user) {
                 $user_id =  $user->user_id;
             }
-            $user_profile = Users::create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password);
-            return 'User Created';
+            $user_profile = Users::create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create);
+            return response()->json([
+                'success' => [
+                    'data' => 'User Created'
+                ]
+            ], 400);
         } else {
-            return 'User Duplicate!';
+            return response()->json([
+                'error' => [
+                    'data' => 'User Duplicate!'
+                ]
+            ], 400);
         }
-
     }
 }

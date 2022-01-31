@@ -28,11 +28,15 @@ Route::group([
     Route::get('setting-count-department', 'DepartmentManageController@getCountDepartment');
     Route::post('search-emp-ldap', 'AuthController@searchLDAP');
 });
+// application
 Route::get('/application-detail', [ApplicationController::class, 'application']);
 Route::post('/add-application', [ApplicationController::class, 'addapplication']);
 Route::post('/update-application', [ApplicationController::class, 'updateapplication']);
-Route::get('/get_catagory', [ApplicationController::class, 'getcatagory']);
+Route::post('/delete-application', [ApplicationController::class, 'deleteapplication']);
+
+// catagory
 Route::get('/get_catagory', [ApplicationController::class, 'getcatagory']);
 Route::post('/add_catagory', [ApplicationController::class, 'addcatagory']);
 Route::post('/update_catagory', [ApplicationController::class, 'updatecatagory']);
+Route::post('/delete_catagory', [ApplicationController::class, 'deletecatagory']);
 
