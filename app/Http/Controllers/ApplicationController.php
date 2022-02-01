@@ -38,10 +38,10 @@ class ApplicationController extends Controller
 
     }
 
-    public function getcatagory(Request $request)
+    public function getcategory(Request $request)
     {
 
-        $cat = Application::get_catagory();
+        $cat = Application::get_category();
 
         return $this->createSuccessResponse([
             'success' => [
@@ -58,7 +58,7 @@ class ApplicationController extends Controller
         $name_en  = $_dataAll['name_en'];
         $description_th  = $_dataAll['description_th'];
         $description_en  = $_dataAll['description_en'];
-        $catagory_id  = $_dataAll['catagory_id'];
+        $category_id  = $_dataAll['category_id'];
         $type_login  = $_dataAll['type_login'];
         $status  = $_dataAll['status'];
         $status_sso  = $_dataAll['status_sso'];
@@ -69,7 +69,7 @@ class ApplicationController extends Controller
         ,$name_en
         ,$description_th
         ,$description_en
-        ,$catagory_id
+        ,$category_id
         ,$type_login
         ,$status
         ,$status_sso
@@ -90,7 +90,7 @@ class ApplicationController extends Controller
         $name_en  = $_dataAll['name_en'];
         $description_th  = $_dataAll['description_th'];
         $description_en  = $_dataAll['description_en'];
-        $catagory_id  = $_dataAll['catagory_id'];
+        $category_id  = $_dataAll['category_id'];
         $type_login  = $_dataAll['type_login'];
         $status  = $_dataAll['status'];
         $status_sso  = $_dataAll['status_sso'];
@@ -102,7 +102,7 @@ class ApplicationController extends Controller
         ,$name_en
         ,$description_th
         ,$description_en
-        ,$catagory_id
+        ,$category_id
         ,$type_login
         ,$status
         ,$status_sso
@@ -123,7 +123,7 @@ class ApplicationController extends Controller
         $name_en  = $_dataAll['name_en'];
         // $description_th  = $_dataAll['description_th'];
         // $description_en  = $_dataAll['description_en'];
-        // $catagory_id  = $_dataAll['catagory_id'];
+        // $category_id  = $_dataAll['category_id'];
         // $type_login  = $_dataAll['type_login'];
         // $status  = $_dataAll['status'];
         // $status_sso  = $_dataAll['status_sso'];
@@ -135,7 +135,7 @@ class ApplicationController extends Controller
         ,$name_en
         // ,$description_th
         // ,$description_en
-        // ,$catagory_id
+        // ,$category_id
         // ,$type_login
         // ,$status
         // ,$status_sso
@@ -147,14 +147,14 @@ class ApplicationController extends Controller
 
     }
 
-    public function addcatagory(Request $request)
+    public function addcategory(Request $request)
     {
         $_dataAll = $request->all();
         $user = $this->getUserLogin();
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
 
-        $app = Application::add_catagory($name_th
+        $app = Application::add_category($name_th
         ,$name_en
         ,$user->user_id);
 
@@ -162,15 +162,15 @@ class ApplicationController extends Controller
         return $app;
     }
 
-    public function updatecatagory(Request $request)
+    public function updatecategory(Request $request)
     {
         $_dataAll = $request->all();
         $user = $this->getUserLogin();
-        $catagory_id  = $_dataAll['catagory_id'];
+        $category_id  = $_dataAll['category_id'];
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
 
-        $app = Application::update_catagory($catagory_id, $name_th
+        $app = Application::update_category($category_id, $name_th
         ,$name_en
         ,$user->user_id);
 
@@ -181,15 +181,15 @@ class ApplicationController extends Controller
         ], 200);
     }
 
-    public function deletecatagory(Request $request)
+    public function deletecategory(Request $request)
     {
         $_dataAll = $request->all();
         $user = $this->getUserLogin();
-        $catagory_id  = $_dataAll['catagory_id'];
+        $category_id  = $_dataAll['category_id'];
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
 
-        $app = Application::delete_catagory($catagory_id, $name_th
+        $app = Application::delete_category($category_id, $name_th
         ,$name_en
         ,$user->user_id);
 

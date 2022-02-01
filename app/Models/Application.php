@@ -15,7 +15,7 @@ class Application extends Model
         $name_en,
         $description_th,
         $description_en,
-        $catagory_id,
+        $category_id,
         $type_login,
         $status,
         $status_sso,
@@ -32,7 +32,7 @@ class Application extends Model
         $sql_app = DB::select($sql);
 
         if (count($sql_app) == 0) {
-            $app = Application::create_app($name_th, $name_en, $description_th, $description_en, $catagory_id, $type_login, $status, $status_sso, $image, $url, $user_id);
+            $app = Application::create_app($name_th, $name_en, $description_th, $description_en, $category_id, $type_login, $status, $status_sso, $image, $url, $user_id);
             return response()->json([
                 'success' => [
                     'data' => 'Application Created',
@@ -47,7 +47,7 @@ class Application extends Model
         }
     }
 
-    public static function create_app($name_th, $name_en, $description_th, $description_en, $catagory_id, $type_login, $status, $status_sso, $image, $url, $user_id)
+    public static function create_app($name_th, $name_en, $description_th, $description_en, $category_id, $type_login, $status, $status_sso, $image, $url, $user_id)
     {
         $datetime_now = date('Y-m-d H:i:s');
         $sql = "INSERT INTO application 
@@ -55,7 +55,7 @@ class Application extends Model
         ,name_en
         ,description_th
         ,description_en
-        ,catagory_id
+        ,category_id
         ,type_login
         ,status
         ,status_sso
@@ -71,7 +71,7 @@ class Application extends Model
         ,'{$name_en}'
         ,'{$description_th}'
         ,'{$description_en}'
-        , {$catagory_id}
+        , {$category_id}
         , {$type_login}
         , {$status}
         , {$status_sso}
@@ -99,7 +99,7 @@ class Application extends Model
         $name_en,
         $description_th,
         $description_en,
-        $catagory_id,
+        $category_id,
         $type_login,
         $status,
         $status_sso,
@@ -123,7 +123,7 @@ class Application extends Model
             $sql_check_name = DB::select($sql_name);
 
             if (count($sql_check_name) == 0) {
-                $app = Application::update_app($app_id, $name_th, $name_en, $description_th, $description_en, $catagory_id, $type_login, $status, $status_sso, $image, $url, $user_id);
+                $app = Application::update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $type_login, $status, $status_sso, $image, $url, $user_id);
                 return response()->json([
                     'success' => [
                         'data' => 'Application Updated',
@@ -145,7 +145,7 @@ class Application extends Model
         }
     }
 
-    public static function update_app($app_id, $name_th, $name_en, $description_th, $description_en, $catagory_id, $type_login, $status, $status_sso, $image, $url, $user_id)
+    public static function update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $type_login, $status, $status_sso, $image, $url, $user_id)
     {
         $datetime_now = date('Y-m-d H:i:s');
         $sql = "UPDATE application SET
@@ -153,7 +153,7 @@ class Application extends Model
         ,name_en = '{$name_en}'
         ,description_th = '{$description_th}'
         ,description_en = '{$description_en}'
-        ,catagory_id = {$catagory_id}
+        ,category_id = {$category_id}
         ,type_login = {$type_login}
         ,status = {$status}
         ,status_sso = {$status_sso}
@@ -174,7 +174,7 @@ class Application extends Model
     }
 
     public static function delete_application($app_id, $name_th, $name_en, $user_id)
-    // , $description_th, $description_en, $catagory_id, $type_login, $status, $status_sso, $image, $url, $emp_code)
+    // , $description_th, $description_en, $category_id, $type_login, $status, $status_sso, $image, $url, $emp_code)
     {
         $sql_check = "SELECT * FROM application
         WHERE app_id = {$app_id}";
@@ -237,13 +237,13 @@ class Application extends Model
         SELECT app.app_id
         ,app.name_th
         ,app.name_en
-        ,cat.name_th as catagory_name_th
-        ,cat.name_en as catagory_name_en
+        ,cat.name_th as category_name_th
+        ,cat.name_en as category_name_en
         ,app.type_login
         ,app.status
         FROM application app
-        JOIN catagory cat 
-        ON app.catagory_id=cat.catagory_id
+        JOIN category cat 
+        ON app.category_id=cat.category_id
         WHERE app.active = 1
         ORDER BY app.name_en,app.name_th";
 
@@ -256,10 +256,10 @@ class Application extends Model
         return $datas;
     }
 
-    public static function get_catagory()
+    public static function get_category()
     {
         $sql = "
-        SELECT * FROM catagory WHERE active = 1";
+        SELECT * FROM category WHERE active = 1";
 
         $sql_cat = DB::select($sql);
 
@@ -270,10 +270,10 @@ class Application extends Model
         return $datas;
     }
 
-    public static function add_catagory($name_th, $name_en, $user_id)
+    public static function add_category($name_th, $name_en, $user_id)
     {
         $sql = "
-        SELECT * FROM catagory WHERE
+        SELECT * FROM category WHERE
         name_th = '{$name_th}'
         OR name_en = '{$name_en}'";
 
@@ -281,7 +281,7 @@ class Application extends Model
 
         if (count($sql_cat) == 0) {
             $datetime_now = date('Y-m-d H:i:s');
-            $sql = "INSERT INTO catagory 
+            $sql = "INSERT INTO category 
             (name_th
             ,name_en
             ,createdate
@@ -313,23 +313,23 @@ class Application extends Model
         }
     }
 
-    public static function update_catagory($catagory_id, $name_th, $name_en, $user_id)
+    public static function update_category($category_id, $name_th, $name_en, $user_id)
     {
 
         $sql = "
-        SELECT * FROM catagory WHERE
-        catagory_id = '{$catagory_id}'";
+        SELECT * FROM category WHERE
+        category_id = '{$category_id}'";
 
         $sql_cat = DB::select($sql);
 
         if (count($sql_cat) == 1) {
             $datetime_now = date('Y-m-d H:i:s');
-            $sql = "UPDATE catagory SET 
+            $sql = "UPDATE category SET 
              name_th = '{$name_th}'
             ,name_en = '{$name_en}'
             ,updatedate = '{$datetime_now}'
             ,updateby = '{$user_id}'
-            WHERE catagory_id = $catagory_id";
+            WHERE category_id = $category_id";
 
             $sql_cat = DB::select($sql);
             return response()->json([
@@ -346,22 +346,22 @@ class Application extends Model
         }
     }
 
-    public static function delete_catagory($catagory_id, $name_th, $name_en, $user_id)
+    public static function delete_category($category_id, $name_th, $name_en, $user_id)
     {
 
         $sql = "
-        SELECT * FROM catagory WHERE
-        catagory_id = '{$catagory_id}'";
+        SELECT * FROM category WHERE
+        category_id = '{$category_id}'";
 
         $sql_cat = DB::select($sql);
 
         if (count($sql_cat) == 1) {
             $datetime_now = date('Y-m-d H:i:s');
-            $sql = "UPDATE catagory SET 
+            $sql = "UPDATE category SET 
              active = 0
             ,updatedate = '{$datetime_now}'
             ,updateby = '{$user_id}'
-            WHERE catagory_id = $catagory_id";
+            WHERE category_id = $category_id";
 
             $sql_cat = DB::select($sql);
             return response()->json([
