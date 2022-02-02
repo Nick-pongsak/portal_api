@@ -377,4 +377,20 @@ class Application extends Model
             ], 400);
         }
     }
+
+    public static function get_group_app()
+    {
+        $sql = "
+        SELECT name_en
+        FROM application_group
+        ";
+
+        $sql_group = DB::select($sql);
+
+        $datas = array();
+        if (!empty($sql_group)) {
+            $datas = $sql_group;
+        }
+        return $datas;
+    }
 }

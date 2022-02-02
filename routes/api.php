@@ -2,9 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\AuthPortalController;
-use App\Http\Controllers\DepartmentManageController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\ApplicationGroupController;
 
 
 Route::get('/date_now', function () {
@@ -39,4 +38,10 @@ Route::get('/get_category', [ApplicationController::class, 'getcategory']);
 Route::post('/add_category', [ApplicationController::class, 'addcategory']);
 Route::post('/update_category', [ApplicationController::class, 'updatecategory']);
 Route::post('/delete_category', [ApplicationController::class, 'deletecategory']);
+
+// application_group
+Route::get('/get-group-app', [ApplicationGroupController::class, 'groupapp']);
+Route::post('/add_group', [ApplicationGroupController::class, 'addgroup']);
+Route::post('/update_group', [ApplicationGroupController::class, 'updategroup']);
+Route::post('/delete_group', [ApplicationGroupController::class, 'deletegroup']);
 
