@@ -18,13 +18,56 @@ class ApplicationGroupController extends Controller
     public function groupapp(Request $request)
     {
 
-        $app = Application::get_group_app();
+        $group = Application::get_group_app();
 
         return $this->createSuccessResponse([
             'success' => [
-                'data' => $app
+                'data' => $group
             ]
         ], 200);
+
+    }
+
+    public function addgroup(Request $request)
+    {
+        $_dataAll = $request->all();
+        $user = $this->getUserLogin();
+        $name_th  = $_dataAll['name_th'];
+        $name_en  = $_dataAll['name_en'];
+        $app_id  = $_dataAll['app_id'];
+
+        $group = Application::add_group_app($name_th, $name_en, $app_id, $user->user_id);
+
+        return $group;
+
+    }
+
+    public function updategroup(Request $request)
+    {
+        $_dataAll = $request->all();
+        $user = $this->getUserLogin();
+        $group_id = $_dataAll['group_id'];
+        $name_th  = $_dataAll['name_th'];
+        $name_en  = $_dataAll['name_en'];
+        $app_id   = $_dataAll['app_id'];
+
+        $group = Application::update_group_app($group_id, $name_th, $name_en, $app_id, $user->user_id);
+
+        return $group;
+
+    }
+
+    public function deletegroup(Request $request)
+    {
+        $_dataAll = $request->all();
+        $user = $this->getUserLogin();
+        $group_id = $_dataAll['group_id'];
+        $name_th  = $_dataAll['name_th'];
+        $name_en  = $_dataAll['name_en'];
+
+        $group = Application::delete_group_app($group_id, $name_th, $name_en, $user->user_id);
+
+        return $group;
 
     }
 }

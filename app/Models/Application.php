@@ -222,7 +222,7 @@ class Application extends Model
                     ]
                 ], 200);
             }
-        }else{
+        } else {
             return response()->json([
                 'error' => [
                     'data' => 'Validate App ID!',
@@ -380,17 +380,180 @@ class Application extends Model
 
     public static function get_group_app()
     {
-        $sql = "
-        SELECT name_en
-        FROM application_group
+        $sql_gp = "
+        SELECT app.group_id, 
+        app.name_th as group_name_th,  
+        app.name_en as group_name_en,
+        app.app_id
+        FROM application_group app
+        WHERE  app.active = 1
         ";
+
+        $sql_group = DB::select($sql_gp);
+
+
+        if (!empty($sql_group)) {
+            foreach ($sql_group as $item) {
+
+                $sql_total_app = "
+                SELECT count(app_id) as total_app FROM application 
+                WHERE app_id in ($item->app_id)
+                AND active = 1
+                ";
+
+                $total_app = DB::select($sql_total_app);
+
+                foreach ($total_app as $item_a) {
+
+                      $sql_total_user = "
+                      SELECT count(user_id) as total_user FROM user_profile 
+                      WHERE group_id = $item->group_id
+                      AND active = 1
+                      ";
+
+                      $total_user = DB::select($sql_total_user);
+
+                      foreach ($total_user as $item_u) {
+                          $datas[] = array(
+                              'group_id'    => $item->group_id,
+                              'name_th'     => $item->group_name_th,
+                              'name_en'     => $item->group_name_en,
+                              'total_user'  => $item_u->total_user,
+                              'total_app'   => $item_a->total_app,
+                          );
+                      }
+                }
+   
+            }
+        }else{
+            $datas[] = array();
+        }
+
+        return $datas;
+        
+    }
+
+    public static function add_group_app($name_th, $name_en, $app_id, $user_id)
+    {
+
+        $sql = "
+        SELECT * FROM application_group WHERE
+        name_th = '{$name_th}' OR name_en = '{$name_en}'";
 
         $sql_group = DB::select($sql);
 
-        $datas = array();
-        if (!empty($sql_group)) {
-            $datas = $sql_group;
+        if (count($sql_group) == 0) {
+            $datetime_now = date('Y-m-d H:i:s');
+            $sql = "INSERT INTO application_group
+            (name_th,
+            name_en,
+            app_id,
+            createdate,
+            updatedate,
+            createby,
+            updateby,
+            active)
+            VALUES
+            ('{$name_th}',
+            '{$name_en}',
+            '{$app_id}',
+            '{$datetime_now}',
+            '{$datetime_now}',
+            '{$user_id}',
+            '{$user_id}',
+            1)";
+
+            $sql_group = DB::select($sql);
+            return response()->json([
+                'success' => [
+                    'data' => 'Group Created',
+                ]
+            ], 200);
+        } else {
+            return response()->json([
+                'error' => [
+                    'data' => 'Duplicate group!',
+                ]
+            ], 400);
         }
-        return $datas;
+    }
+
+    public static function update_group_app($group_id, $name_th, $name_en, $app_id, $user_id)
+    {
+
+        $sql = "
+        SELECT * FROM application_group WHERE
+        group_id = '{$group_id}'
+        WHERE active = 1";
+
+        $sql_group = DB::select($sql);
+
+        if (count($sql_group) == 1) {
+            $datetime_now = date('Y-m-d H:i:s');
+            $sql = "UPDATE application_group SET
+            name_th = '{$name_th}',
+            name_en = '{$name_en}',
+            app_id  = '{$app_id}',
+            updatedate = '{$datetime_now}',
+            updateby   = '{$user_id}'
+            WHERE group_id = {$group_id}
+            AND active = 1
+            ";
+
+            $sql_group = DB::select($sql);
+            return response()->json([
+                'success' => [
+                    'data' => 'Group Updated',
+                ]
+            ], 200);
+        } else {
+            return response()->json([
+                'error' => [
+                    'data' => ' Validate group!',
+                ]
+            ], 400);
+        }
+    }
+
+
+    public static function delete_group_app($group_id, $name_th, $name_en, $user_id)
+    {
+
+        $sql_g = "
+        SELECT * FROM application_group WHERE
+        group_id = '{$group_id}'
+        AND active = 1";
+
+        $sql_group = DB::select($sql_g);
+
+        $sql_u = "
+        SELECT * FROM user_profile WHERE
+        group_id = '{$group_id}'
+        AND active = 1";
+
+        $sql_user = DB::select($sql_u);
+
+        if (count($sql_group) == 1 && count($sql_user) == 0) {
+            $datetime_now = date('Y-m-d H:i:s');
+            $sql = "UPDATE application_group SET
+            active  = 0,
+            updatedate = '{$datetime_now}',
+            updateby   = '{$user_id}'
+            WHERE group_id = {$group_id}
+            ";
+
+            $sql_group = DB::select($sql);
+            return response()->json([
+                'success' => [
+                    'data' => 'Group Deleted',
+                ]
+            ], 200);
+        } else {
+            return response()->json([
+                'error' => [
+                    'data' => ' User using group!',
+                ]
+            ], 400);
+        }
     }
 }
