@@ -312,7 +312,16 @@ class Application extends Model
 
         $datas = array();
         if (!empty($sql_cat)) {
-            $datas = $sql_cat;
+            $i = 0;
+            foreach ($sql_cat as $item) {
+                $datas[] = array(
+                    'index' =>$i,
+                    'category_id' =>$item->category_id,
+                    'name_th' =>$item->name_th,
+                    'name_en' =>$item->name_en,
+                );
+                $i++;
+            }
         }
         return $datas;
     }
