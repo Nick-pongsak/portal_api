@@ -236,7 +236,7 @@ class Application extends Model
         $search = '';
         $order_by = '';
         if($keyword != ''){
-            $search = "AND app.name_th like '%{$keyword}%'";
+            $search = "AND ((app.name_th like '%{$keyword}%') OR (app.name_en like '%{$keyword}%'))";
         }
         if($field != ''){
             $order_by = "ORDER BY {$field} {$sort}";
@@ -273,10 +273,22 @@ class Application extends Model
         return $datas;
     }
 
-    public static function get_category()
+    public static function get_category($keyword, $field, $sort)
     {
+        $search = '';
+        $order_by = '';
+        if($keyword != ''){
+            $search = "AND ((name_th like '%{$keyword}%') OR (name_en like '%{$keyword}%'))";
+        }
+        if($field != ''){
+            $order_by = "ORDER BY {$field} {$sort}";
+        }else{
+            $order_by = "ORDER BY name_en,name_th";
+        }
         $sql = "
-        SELECT * FROM category WHERE active = 1";
+        SELECT * FROM category WHERE active = 1
+        {$search}
+        {$order_by}";
 
         $sql_cat = DB::select($sql);
 

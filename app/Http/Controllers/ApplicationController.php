@@ -45,7 +45,12 @@ class ApplicationController extends Controller
     public function getcategory(Request $request)
     {
 
-        $cat = Application::get_category();
+        $_dataAll = $request->all();
+        $user = $this->getUserLogin();
+        $keyword  = $_dataAll['keyword'];
+        $field  = $_dataAll['field'];
+        $sort  = $_dataAll['sort'];
+        $cat = Application::get_category($keyword, $field, $sort);
 
         return $this->createSuccessResponse([
             'success' => [
