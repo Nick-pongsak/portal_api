@@ -251,6 +251,7 @@ class Application extends Model
         ,app.description_en
         ,cat.name_th as category_name_th
         ,cat.name_en as category_name_en
+        ,app.category_id
         ,app.key_app
         ,app.type_login
         ,app.status_sso
@@ -279,6 +280,7 @@ class Application extends Model
                     'description_en' => $item->description_en,
                     'category_name_th' => $item->category_name_th,
                     'category_name_en' => $item->category_name_en,
+                    'category_id' => $item->category_id,
                     'key_app' => $item->key_app,
                     'type_login' => $item->type_login,
                     'status_sso' => $item->status_sso,
