@@ -197,4 +197,91 @@ class Users extends Model
             ], 400);
         }
     }
+
+    public static function get_user_list($keyword, $field, $sort){
+        $search = '';
+        $order_by = '';
+        if($keyword != ''){
+            $search = "AND ((pro.name_th like '%{$keyword}%') OR (pro.name_en like '%{$keyword}%') OR (pro.emp_code like '%{$keyword}%'))";
+        }
+        if($field != ''){
+            $order_by = "ORDER BY {$field} {$sort}";
+        }else{
+            $order_by = "ORDER BY pro.emp_code";
+        }
+        $sql = "
+        SELECT user.user_id
+        ,user.emp_code
+        ,user.username
+        ,pro.name_th
+        ,pro.name_en
+        ,pro.postname_th
+        ,pro.postname_en
+        ,pro.nickname1_th
+        ,pro.nickname1_en
+        ,pro.nickname2_th
+        ,pro.nickname2_en
+        ,pro.email
+        ,pro.3cx as cx
+        ,pro.phone
+        ,pro.status
+        ,pro.group_id
+        ,pro.type as type_login
+        ,pro.image
+        ,pro.status_permission
+        ,pro.admin_menu
+        FROM users user
+        JOIN user_profile pro 
+        ON user.user_id=pro.user_id
+        WHERE user.active = 1
+        {$search}
+        ";
+
+        $sql_app = DB::select($sql);
+
+        $datas = array();
+        if (!empty($sql_app)) {
+            $i = 0;
+            foreach ($sql_app as $item) {
+                $sql = "
+                SELECT name_th as group_name_th, name_en as group_name_en
+                FROM application_group
+                WHERE group_id = {$item->group_id}";
+
+                $sql_group_id = DB::select($sql);
+
+                foreach ($sql_group_id as $item_gorup_id) {
+                    $datas[] = array(
+                        'index'  => $i,
+                        'user_id' => $item->user_id,
+                        'emp_code' => $item->emp_code,
+                        'username' => $item->username,
+                        'name_th' => $item->name_th,
+                        'name_en' => $item->name_en,
+                        'postname_th' => $item->postname_th,
+                        'postname_en' => $item->postname_en,
+                        'nickname1_th' => $item->nickname1_th,
+                        'nickname1_en' => $item->nickname1_en,
+                        'nickname2_th' => $item->nickname2_th,
+                        'nickname2_en' => $item->nickname2_en,
+                        'email' => $item->email,
+                        '3cx' => $item->cx,
+                        'phone' => $item->phone,
+                        'status' => $item->status,
+                        'group_id' => $item->group_id,
+                        'group_name_th' => $item_gorup_id->group_name_th,
+                        'group_name_en' => $item_gorup_id->group_name_en,
+                        'type_login' => $item->type_login,
+                        'image' => $item->image,
+                        'status_permission' => $item->status_permission,
+                        'admin_menu' => $item->admin_menu,
+                    );
+                }
+
+                
+                $i++;
+            }
+        }
+        return $datas;
+    }
 }

@@ -17,8 +17,10 @@ class ApplicationGroupController extends Controller
 
     public function groupapp(Request $request)
     {
-
-        $group = Application::get_group_app();
+        $_dataAll = $request->all();
+        $user = $this->getUserLogin();
+        $keyword  = $_dataAll['keyword'];
+        $group = Application::get_group_app($keyword);
 
         return $this->createSuccessResponse([
             'success' => [

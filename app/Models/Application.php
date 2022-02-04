@@ -16,6 +16,7 @@ class Application extends Model
         $description_th,
         $description_en,
         $category_id,
+        $key_app,
         $type_login,
         $status,
         $status_sso,
@@ -32,7 +33,7 @@ class Application extends Model
         $sql_app = DB::select($sql);
 
         if (count($sql_app) == 0) {
-            $app = Application::create_app($name_th, $name_en, $description_th, $description_en, $category_id, $type_login, $status, $status_sso, $image, $url, $user_id);
+            $app = Application::create_app($name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id);
             return response()->json([
                 'success' => [
                     'data' => 'Application Created',
@@ -47,7 +48,7 @@ class Application extends Model
         }
     }
 
-    public static function create_app($name_th, $name_en, $description_th, $description_en, $category_id, $type_login, $status, $status_sso, $image, $url, $user_id)
+    public static function create_app($name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id)
     {
         $datetime_now = date('Y-m-d H:i:s');
         $sql = "INSERT INTO application 
@@ -56,6 +57,7 @@ class Application extends Model
         ,description_th
         ,description_en
         ,category_id
+        ,key_app
         ,type_login
         ,status
         ,status_sso
@@ -72,6 +74,7 @@ class Application extends Model
         ,'{$description_th}'
         ,'{$description_en}'
         , {$category_id}
+        ,'{$key_app}'
         , {$type_login}
         , {$status}
         , {$status_sso}
@@ -100,6 +103,7 @@ class Application extends Model
         $description_th,
         $description_en,
         $category_id,
+        $key_app,
         $type_login,
         $status,
         $status_sso,
@@ -123,7 +127,7 @@ class Application extends Model
             $sql_check_name = DB::select($sql_name);
 
             if (count($sql_check_name) == 0) {
-                $app = Application::update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $type_login, $status, $status_sso, $image, $url, $user_id);
+                $app = Application::update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id);
                 return response()->json([
                     'success' => [
                         'data' => 'Application Updated',
@@ -145,7 +149,7 @@ class Application extends Model
         }
     }
 
-    public static function update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $type_login, $status, $status_sso, $image, $url, $user_id)
+    public static function update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id)
     {
         $datetime_now = date('Y-m-d H:i:s');
         $sql = "UPDATE application SET
@@ -154,6 +158,7 @@ class Application extends Model
         ,description_th = '{$description_th}'
         ,description_en = '{$description_en}'
         ,category_id = {$category_id}
+        ,key_app = {$key_app}
         ,type_login = {$type_login}
         ,status = {$status}
         ,status_sso = {$status_sso}
@@ -256,6 +261,7 @@ class Application extends Model
         ,app.type_login
         ,app.status_sso
         ,app.status
+        ,app.image
         ,app.url
         FROM application app
         JOIN category cat 
@@ -285,6 +291,7 @@ class Application extends Model
                     'type_login' => $item->type_login,
                     'status_sso' => $item->status_sso,
                     'status' => $item->status,
+                    'image' => $item->image,
                     'url' => $item->url,
                 );
                 $i++;
@@ -436,7 +443,7 @@ class Application extends Model
         }
     }
 
-    public static function get_group_app()
+    public static function get_group_app($keyword)
     {
         $sql_gp = "
         SELECT app.group_id, 
@@ -445,12 +452,14 @@ class Application extends Model
         app.app_id
         FROM application_group app
         WHERE  app.active = 1
+        AND ((app.name_th like '%{$keyword}%') OR (app.name_en like '%{$keyword}%'))
         ";
 
         $sql_group = DB::select($sql_gp);
 
 
         if (!empty($sql_group)) {
+            $i = 0;
             foreach ($sql_group as $item) {
 
                 $sql_total_app = "
@@ -470,18 +479,19 @@ class Application extends Model
                       ";
 
                       $total_user = DB::select($sql_total_user);
-
                       foreach ($total_user as $item_u) {
                           $datas[] = array(
+                              'index'       => $i,
                               'group_id'    => $item->group_id,
                               'name_th'     => $item->group_name_th,
                               'name_en'     => $item->group_name_en,
                               'total_user'  => $item_u->total_user,
                               'total_app'   => $item_a->total_app,
                           );
+                          
                       }
                 }
-   
+                $i++;
             }
         }else{
             $datas[] = array();

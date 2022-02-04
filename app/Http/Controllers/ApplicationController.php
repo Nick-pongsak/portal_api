@@ -68,6 +68,7 @@ class ApplicationController extends Controller
         $description_th  = $_dataAll['description_th'];
         $description_en  = $_dataAll['description_en'];
         $category_id  = $_dataAll['category_id'];
+        $key_app  = $_dataAll['key_app'];
         $type_login  = $_dataAll['type_login'];
         $status  = $_dataAll['status'];
         $status_sso  = $_dataAll['status_sso'];
@@ -79,6 +80,7 @@ class ApplicationController extends Controller
         ,$description_th
         ,$description_en
         ,$category_id
+        ,$key_app
         ,$type_login
         ,$status
         ,$status_sso
@@ -100,6 +102,7 @@ class ApplicationController extends Controller
         $description_th  = $_dataAll['description_th'];
         $description_en  = $_dataAll['description_en'];
         $category_id  = $_dataAll['category_id'];
+        $key_app  = $_dataAll['key_app'];
         $type_login  = $_dataAll['type_login'];
         $status  = $_dataAll['status'];
         $status_sso  = $_dataAll['status_sso'];
@@ -112,6 +115,7 @@ class ApplicationController extends Controller
         ,$description_th
         ,$description_en
         ,$category_id
+        ,$key_app
         ,$type_login
         ,$status
         ,$status_sso
