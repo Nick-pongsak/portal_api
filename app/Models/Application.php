@@ -268,7 +268,25 @@ class Application extends Model
 
         $datas = array();
         if (!empty($sql_app)) {
-            $datas = $sql_app;
+            $i = 0;
+            foreach ($sql_app as $item) {
+                $datas[] = array(
+                    'index'  => $i,
+                    'app_id' => $item->app_id,
+                    'name_th' => $item->name_th,
+                    'name_en' => $item->name_en,
+                    'description_th' => $item->description_th,
+                    'description_en' => $item->description_en,
+                    'category_name_th' => $item->category_name_th,
+                    'category_name_en' => $item->category_name_en,
+                    'key_app' => $item->key_app,
+                    'type_login' => $item->type_login,
+                    'status_sso' => $item->status_sso,
+                    'status' => $item->status,
+                    'url' => $item->url,
+                );
+                $i++;
+            }
         }
         return $datas;
     }
