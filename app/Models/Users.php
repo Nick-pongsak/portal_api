@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Crypt;
 
 class Users extends Model
 {
@@ -51,7 +52,7 @@ class Users extends Model
         return $datas;
     }
 
-    public static function create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create)
+    public static function create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu)
     {
         $datetime_now = date('Y-m-d H:i:s');
         $sql_id = "UPDATE users SET id = {$user_id} WHERE type = {$type} AND emp_code = '{$emp_code}'";
@@ -62,9 +63,15 @@ class Users extends Model
         ,emp_code
         ,name_th
         ,name_en
+        ,nickname1_th
+        ,nickname1_en
+        ,nickname2_th
+        ,nickname2_en
         ,postname_th
         ,postname_en
         ,email
+        ,3cx
+        ,phone
         ,status
         ,group_id
         ,type
@@ -74,15 +81,22 @@ class Users extends Model
         ,updateby
         ,image
         ,status_permission
+        ,admin_menu
         ,active)
         VALUES 
         ({$user_id}
         ,'{$emp_code}'
         ,'{$name_th}'
         ,'{$name_en}'
+        ,'{$nickname1_th}'
+        ,'{$nickname1_en}'
+        ,'{$nickname2_th}'
+        ,'{$nickname2_en}'
         ,'{$postname_th}'
         ,'{$postname_en}'
         ,'{$email}'
+        ,'{$cx}'
+        ,'{$phone}'
         ,'{$status}'
         , {$group_id}
         , {$type}
@@ -91,7 +105,8 @@ class Users extends Model
         ,'{$user_create}'
         ,'{$user_create}'
         ,''
-        , 1
+        ,'{$permission}'
+        ,'{$admin_menu}'
         , 1)";
 
         $sql_user = DB::insert($sql);
@@ -145,12 +160,13 @@ class Users extends Model
     }
 
 
-    public static function check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create)
+    public static function check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu)
     {
         $sql = "
         SELECT * FROM users WHERE
         emp_code = '{$emp_code}'
-        AND type = '{$type}'";
+        AND type = '{$type}'
+        AND active = 1";
 
         $sql_user = DB::select($sql);
 
@@ -159,14 +175,15 @@ class Users extends Model
             $sql = "
             SELECT * FROM users WHERE
             emp_code = '{$emp_code}'
-            AND type = '{$type}'";
+            AND type = '{$type}'
+            AND active = 1";
 
             $sql_user = DB::select($sql);
             $user_id = 0;
             foreach ($sql_user as $user) {
                 $user_id =  $user->user_id;
             }
-            $user_profile = Users::create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create);
+            $user_profile = Users::create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu);
             return response()->json([
                 'success' => [
                     'data' => 'User Created'

@@ -27,8 +27,12 @@ class ApplicationController extends Controller
 
     public function application(Request $request)
     {
-
-        $app = Application::get_application();
+        $_dataAll = $request->all();
+        $user = $this->getUserLogin();
+        $keyword  = $_dataAll['keyword'];
+        $field  = $_dataAll['field'];
+        $sort  = $_dataAll['sort'];
+        $app = Application::get_application($keyword, $field, $sort);
 
         return $this->createSuccessResponse([
             'success' => [

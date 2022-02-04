@@ -231,21 +231,38 @@ class Application extends Model
         }
     }
 
-    public static function get_application()
+    public static function get_application($keyword, $field, $sort)
     {
+        $search = '';
+        $order_by = '';
+        if($keyword != ''){
+            $search = "AND app.name_th like '%{$keyword}%'";
+        }
+        if($field != ''){
+            $order_by = "ORDER BY {$field} {$sort}";
+        }else{
+            $order_by = "ORDER BY app.name_en,app.name_th";
+        }
         $sql = "
         SELECT app.app_id
         ,app.name_th
         ,app.name_en
+        ,app.description_th
+        ,app.description_en
         ,cat.name_th as category_name_th
         ,cat.name_en as category_name_en
+        ,app.key_app
         ,app.type_login
+        ,app.status_sso
         ,app.status
+        ,app.url
         FROM application app
         JOIN category cat 
         ON app.category_id=cat.category_id
         WHERE app.active = 1
-        ORDER BY app.name_en,app.name_th";
+        {$search}
+        {$order_by}
+        ";
 
         $sql_app = DB::select($sql);
 

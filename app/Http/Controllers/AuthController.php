@@ -40,7 +40,15 @@ class AuthController extends Controller
         $type     = $_dataAll['type'];
         $username = $_dataAll['username'];
         $password = $_dataAll['password'];
-
+        $cx       = $_dataAll['3cx'];
+        $phone     = $_dataAll['phone'];
+        $nickname1_th = $_dataAll['nickname1_th'];
+        $nickname1_en = $_dataAll['nickname1_en'];
+        $nickname2_th = $_dataAll['nickname2_th'];
+        $nickname2_en = $_dataAll['nickname2_en'];
+        $permission   = $_dataAll['permission'];
+        $admin_menu   = $_dataAll['admin_menu'];
+        //  $cx, $nickname1_th, $nickname_en, $nickname2_th, $nickname_en, $phone, 
         // if ($type == 'USER') {
         //     $validator = validator()->make(request()->all(), [
         //         'username' => 'string|required',
@@ -57,7 +65,7 @@ class AuthController extends Controller
         // $user = User::create(['name' => request()->get('name'),
         //                       'email' => request()->get('email'),
         //                       'password' => bcrypt(request()->get('password'))]);
-        $user = Users::check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create->user_id);
+        $user = Users::check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create->user_id, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu);
 
         return $user;
     }
