@@ -508,7 +508,7 @@ class Application extends Model
         app.name_en as group_name_en,
         app.app_id
         FROM application_group app
-        WHERE  app.app_id = {$group_id}
+        WHERE  app.group_id = {$group_id}
         ";
 
         $sql_group = DB::select($sql_gp);
