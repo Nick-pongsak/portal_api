@@ -445,6 +445,10 @@ class Application extends Model
 
     public static function get_group_app($keyword)
     {
+        $search = '';
+        if($keyword != ''){
+            $search = "AND ((app.name_th like '%{$keyword}%') OR (app.name_en like '%{$keyword}%'))";
+        }
         $sql_gp = "
         SELECT app.group_id, 
         app.name_th as group_name_th,  
@@ -452,7 +456,7 @@ class Application extends Model
         app.app_id
         FROM application_group app
         WHERE  app.active = 1
-        AND ((app.name_th like '%{$keyword}%') OR (app.name_en like '%{$keyword}%'))
+        {$search}
         ";
 
         $sql_group = DB::select($sql_gp);
@@ -530,13 +534,11 @@ class Application extends Model
                 ";
 
                 $app = DB::select($sql_app);
-
+                $app_a = array();
                 foreach ($app as $item_a) {
-                    $app_a[] = array(
-                        $item_a
-                    );
+                    array_push($app_a,$item_a);
                 }
-                $datas[] = array(
+                $datas = array(
                     'group_id'    => $item->group_id,
                     'name_th'     => $item->group_name_th,
                     'name_en'     => $item->group_name_en,
@@ -600,8 +602,8 @@ class Application extends Model
 
         $sql = "
         SELECT * FROM application_group WHERE
-        group_id = '{$group_id}'
-        WHERE active = 1";
+        group_id = {$group_id}
+        AND active = 1";
 
         $sql_group = DB::select($sql);
 

@@ -49,7 +49,7 @@ class ApplicationGroupController extends Controller
         $user = $this->getUserLogin();
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
-        $app_id  = $_dataAll['app_id'];
+        $app_id  = implode(",",$_dataAll['app_id']);
 
         $group = Application::add_group_app($name_th, $name_en, $app_id, $user->user_id);
 
@@ -63,7 +63,7 @@ class ApplicationGroupController extends Controller
         $group_id = $_dataAll['group_id'];
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
-        $app_id   = $_dataAll['app_id'];
+        $app_id   = implode(",",$_dataAll['app_id']);
 
         $group = Application::update_group_app($group_id, $name_th, $name_en, $app_id, $user->user_id);
 
