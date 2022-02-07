@@ -77,7 +77,7 @@ class AuthController extends Controller
         $password = $_dataAll['password'];
         $type   = $_dataAll['type'];
         if ($type == 1) {
-            $url = API_Sync.'iauthen/ldap-authen';
+            $url = API_Sync . 'iauthen/ldap-authen';
             $data = array('login' => $username, 'password' => $password);
 
             // use key 'http' even if you send the request to https://...
@@ -156,7 +156,7 @@ class AuthController extends Controller
     {
         $_dataAll = $request->all();
         $emp_code = $_dataAll['emp_code'];
-        $ldap = file_get_contents(API_Sync."iauthen/get-all-profile?user_name=&emp_number={$emp_code}");
+        $ldap = file_get_contents(API_Sync . "iauthen/get-all-profile?user_name=&emp_number={$emp_code}");
         $data = json_decode($ldap);
         foreach ($data->data as $item) {
             $user[] = array(

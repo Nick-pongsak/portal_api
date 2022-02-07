@@ -39,7 +39,6 @@ class ApplicationController extends Controller
                 'data' => $app
             ]
         ], 200);
-
     }
 
     public function getcategory(Request $request)
@@ -75,21 +74,22 @@ class ApplicationController extends Controller
         $image  = $_dataAll['image'];
         $url  = $_dataAll['url'];
 
-        $app = Application::check_add_application($name_th
-        ,$name_en
-        ,$description_th
-        ,$description_en
-        ,$category_id
-        ,$key_app
-        ,$type_login
-        ,$status
-        ,$status_sso
-        ,$image
-        ,$url
-        ,$user->user_id);
+        $app = Application::check_add_application(
+            $name_th,
+            $name_en,
+            $description_th,
+            $description_en,
+            $category_id,
+            $key_app,
+            $type_login,
+            $status,
+            $status_sso,
+            $image,
+            $url,
+            $user->user_id
+        );
 
         return $app;
-
     }
 
     public function updateapplication(Request $request)
@@ -109,22 +109,23 @@ class ApplicationController extends Controller
         $image  = $_dataAll['image'];
         $url  = $_dataAll['url'];
 
-        $app = Application::update_application($app_id
-        ,$name_th
-        ,$name_en
-        ,$description_th
-        ,$description_en
-        ,$category_id
-        ,$key_app
-        ,$type_login
-        ,$status
-        ,$status_sso
-        ,$image
-        ,$url
-        ,$user->user_id);
+        $app = Application::update_application(
+            $app_id,
+            $name_th,
+            $name_en,
+            $description_th,
+            $description_en,
+            $category_id,
+            $key_app,
+            $type_login,
+            $status,
+            $status_sso,
+            $image,
+            $url,
+            $user->user_id
+        );
 
         return $app;
-
     }
 
     public function deleteapplication(Request $request)
@@ -143,21 +144,23 @@ class ApplicationController extends Controller
         // $image  = $_dataAll['image'];
         // $url  = $_dataAll['url'];
 
-        $app = Application::delete_application($app_id
-        ,$name_th
-        ,$name_en
-        // ,$description_th
-        // ,$description_en
-        // ,$category_id
-        // ,$type_login
-        // ,$status
-        // ,$status_sso
-        // ,$image
-        // ,$url
-        ,$user->user_id);
+        $app = Application::delete_application(
+            $app_id,
+            $name_th,
+            $name_en
+            // ,$description_th
+            // ,$description_en
+            // ,$category_id
+            // ,$type_login
+            // ,$status
+            // ,$status_sso
+            // ,$image
+            // ,$url
+            ,
+            $user->user_id
+        );
 
         return $app;
-
     }
 
     public function addcategory(Request $request)
@@ -167,9 +170,11 @@ class ApplicationController extends Controller
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
 
-        $app = Application::add_category($name_th
-        ,$name_en
-        ,$user->user_id);
+        $app = Application::add_category(
+            $name_th,
+            $name_en,
+            $user->user_id
+        );
 
 
         return $app;
@@ -183,9 +188,12 @@ class ApplicationController extends Controller
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
 
-        $app = Application::update_category($category_id, $name_th
-        ,$name_en
-        ,$user->user_id);
+        $app = Application::update_category(
+            $category_id,
+            $name_th,
+            $name_en,
+            $user->user_id
+        );
 
         return $this->createSuccessResponse([
             'success' => [
@@ -202,9 +210,12 @@ class ApplicationController extends Controller
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
 
-        $app = Application::delete_category($category_id, $name_th
-        ,$name_en
-        ,$user->user_id);
+        $app = Application::delete_category(
+            $category_id,
+            $name_th,
+            $name_en,
+            $user->user_id
+        );
 
         return $app;
     }

@@ -240,12 +240,12 @@ class Application extends Model
     {
         $search = '';
         $order_by = '';
-        if($keyword != ''){
+        if ($keyword != '') {
             $search = "AND ((app.name_th like '%{$keyword}%') OR (app.name_en like '%{$keyword}%'))";
         }
-        if($field != ''){
+        if ($field != '') {
             $order_by = "ORDER BY {$field} {$sort}";
-        }else{
+        } else {
             $order_by = "ORDER BY app.name_en,app.name_th";
         }
         $sql = "
@@ -304,12 +304,12 @@ class Application extends Model
     {
         $search = '';
         $order_by = '';
-        if($keyword != ''){
+        if ($keyword != '') {
             $search = "AND ((name_th like '%{$keyword}%') OR (name_en like '%{$keyword}%'))";
         }
-        if($field != ''){
+        if ($field != '') {
             $order_by = "ORDER BY {$field} {$sort}";
-        }else{
+        } else {
             $order_by = "ORDER BY name_en,name_th";
         }
         $sql = "
@@ -324,10 +324,10 @@ class Application extends Model
             $i = 0;
             foreach ($sql_cat as $item) {
                 $datas[] = array(
-                    'index' =>$i,
-                    'category_id' =>$item->category_id,
-                    'name_th' =>$item->name_th,
-                    'name_en' =>$item->name_en,
+                    'index' => $i,
+                    'category_id' => $item->category_id,
+                    'name_th' => $item->name_th,
+                    'name_en' => $item->name_en,
                 );
                 $i++;
             }
@@ -472,33 +472,82 @@ class Application extends Model
 
                 foreach ($total_app as $item_a) {
 
-                      $sql_total_user = "
+                    $sql_total_user = "
                       SELECT count(user_id) as total_user FROM user_profile 
                       WHERE group_id = $item->group_id
                       AND active = 1
                       ";
 
-                      $total_user = DB::select($sql_total_user);
-                      foreach ($total_user as $item_u) {
-                          $datas[] = array(
-                              'index'       => $i,
-                              'group_id'    => $item->group_id,
-                              'name_th'     => $item->group_name_th,
-                              'name_en'     => $item->group_name_en,
-                              'total_user'  => $item_u->total_user,
-                              'total_app'   => $item_a->total_app,
-                          );
-                          
-                      }
+                    $total_user = DB::select($sql_total_user);
+                    foreach ($total_user as $item_u) {
+                        $datas[] = array(
+                            'index'       => $i,
+                            'group_id'    => $item->group_id,
+                            'name_th'     => $item->group_name_th,
+                            'name_en'     => $item->group_name_en,
+                            'total_user'  => $item_u->total_user,
+                            'total_app'   => $item_a->total_app,
+                        );
+                    }
                 }
                 $i++;
             }
-        }else{
+        } else {
             $datas[] = array();
         }
 
         return $datas;
-        
+    }
+
+
+    public static function groupdetail($group_id)
+    {
+        $sql_gp = "
+        SELECT app.group_id, 
+        app.name_th as group_name_th,  
+        app.name_en as group_name_en,
+        app.app_id
+        FROM application_group app
+        WHERE  app.app_id = {$group_id}
+        ";
+
+        $sql_group = DB::select($sql_gp);
+
+
+        if (!empty($sql_group)) {
+            foreach ($sql_group as $item) {
+
+                $sql_app = "
+                SELECT a.*,
+                c.name_th category_name_th, 
+                c.name_en category_name_en 
+                FROM application a 
+                INNER JOIN category c 
+                ON 
+                a.category_id = c.category_id
+                WHERE a.app_id in ($item->app_id)
+                AND a.active = 1
+                ";
+
+                $app = DB::select($sql_app);
+
+                foreach ($app as $item_a) {
+                    $app_a[] = array(
+                        $item_a
+                    );
+                }
+                $datas[] = array(
+                    'group_id'    => $item->group_id,
+                    'name_th'     => $item->group_name_th,
+                    'name_en'     => $item->group_name_en,
+                    'app'         => $app_a,
+                );
+            }
+        } else {
+            $datas[] = array();
+        }
+
+        return $datas;
     }
 
     public static function add_group_app($name_th, $name_en, $app_id, $user_id)

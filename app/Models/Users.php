@@ -198,15 +198,16 @@ class Users extends Model
         }
     }
 
-    public static function get_user_list($keyword, $field, $sort){
+    public static function get_user_list($keyword, $field, $sort)
+    {
         $search = '';
         $order_by = '';
-        if($keyword != ''){
+        if ($keyword != '') {
             $search = "AND ((pro.name_th like '%{$keyword}%') OR (pro.name_en like '%{$keyword}%') OR (pro.emp_code like '%{$keyword}%'))";
         }
-        if($field != ''){
+        if ($field != '') {
             $order_by = "ORDER BY {$field} {$sort}";
-        }else{
+        } else {
             $order_by = "ORDER BY pro.emp_code";
         }
         $sql = "
@@ -278,7 +279,7 @@ class Users extends Model
                     );
                 }
 
-                
+
                 $i++;
             }
         }

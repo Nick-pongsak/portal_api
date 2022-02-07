@@ -36,15 +36,16 @@ Route::post('/delete-application', [ApplicationController::class, 'deleteapplica
 
 // category
 Route::post('/get_category', [ApplicationController::class, 'getcategory']);
-Route::post('/add_category', [ApplicationController::class, 'addcategory']);
-Route::post('/update_category', [ApplicationController::class, 'updatecategory']);
-Route::post('/delete_category', [ApplicationController::class, 'deletecategory']);
+Route::post('/add-category', [ApplicationController::class, 'addcategory']);
+Route::post('/update-category', [ApplicationController::class, 'updatecategory']);
+Route::post('/delete-category', [ApplicationController::class, 'deletecategory']);
 
 // application_group
 Route::post('/get-group-app', [ApplicationGroupController::class, 'groupapp']);
-Route::post('/add_group', [ApplicationGroupController::class, 'addgroup']);
-Route::post('/update_group', [ApplicationGroupController::class, 'updategroup']);
-Route::post('/delete_group', [ApplicationGroupController::class, 'deletegroup']);
+Route::post('/group-detail', [ApplicationGroupController::class, 'groupdetail']);
+Route::post('/add-group', [ApplicationGroupController::class, 'addgroup']);
+Route::post('/update-group', [ApplicationGroupController::class, 'updategroup']);
+Route::post('/delete-group', [ApplicationGroupController::class, 'deletegroup']);
 
 // users
 Route::post('/get-user-list', [UserController::class, 'userlist']);
