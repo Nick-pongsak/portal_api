@@ -158,7 +158,7 @@ class Application extends Model
         ,description_th = '{$description_th}'
         ,description_en = '{$description_en}'
         ,category_id = {$category_id}
-        ,key_app = {$key_app}
+        ,key_app = '{$key_app}'
         ,type_login = {$type_login}
         ,status = {$status}
         ,status_sso = {$status_sso}
