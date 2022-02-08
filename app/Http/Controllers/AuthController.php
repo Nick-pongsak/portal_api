@@ -40,7 +40,7 @@ class AuthController extends Controller
         $type     = $_dataAll['type'];
         $username = $_dataAll['username'];
         $password = $_dataAll['password'];
-        $cx       = $_dataAll['3cx'];
+        $cx       = $_dataAll['cx'];
         $phone     = $_dataAll['phone'];
         $nickname1_th = $_dataAll['nickname1_th'];
         $nickname1_en = $_dataAll['nickname1_en'];

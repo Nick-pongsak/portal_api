@@ -607,6 +607,7 @@ class Application extends Model
                 a.app_id = ss.app_id AND ss.user_id = {$user_id}
                 WHERE a.app_id in ($item->app_id)
                 AND a.active = 1
+                AND a.status_sso = 1
                 ";
 
                 $app = DB::select($sql_app);

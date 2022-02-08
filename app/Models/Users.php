@@ -198,6 +198,80 @@ class Users extends Model
         }
     }
 
+    public static function update_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu)
+    {
+        $sql = "
+        SELECT * FROM users WHERE
+        user_id = {$user_id}
+        AND active = 1";
+
+        $sql_user = DB::select($sql);
+
+        if (count($sql_user) == 1) {
+            $user = Users::create_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create);
+            $sql = "
+            SELECT * FROM users WHERE
+            emp_code = '{$emp_code}'
+            AND type = '{$type}'
+            AND active = 1";
+
+            $sql_user = DB::select($sql);
+            $user_id = 0;
+            foreach ($sql_user as $user) {
+                $user_id =  $user->user_id;
+            }
+            $user_profile = Users::create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu);
+            return response()->json([
+                'success' => [
+                    'data' => 'User Created'
+                ]
+            ], 200);
+        } else {
+            return response()->json([
+                'error' => [
+                    'data' => 'User Duplicate!'
+                ]
+            ], 400);
+        }
+    }
+
+    public static function delete_user($user_id)
+    {
+        $sql = "
+        SELECT * FROM users WHERE
+        user_id = {$user_id}
+        AND active = 1";
+
+        $sql_user = DB::select($sql);
+
+        if (count($sql_user) == 1) {
+            $sql_users = "
+            UPDATE users SET
+            active = 0
+            WHERE user_id = {$user_id}";
+            $users = DB::select($sql_users);
+
+            $sql_users_profile = "
+            UPDATE user_profile SET
+            active = 0
+            WHERE user_id = {$user_id}";
+            $sql_user_profile = DB::select($sql_users_profile);
+
+            return response()->json([
+                'success' => [
+                    'data' => 'User Deleted'
+                ]
+            ], 200);
+            
+        } else {
+            return response()->json([
+                'error' => [
+                    'data' => 'User Duplicate!'
+                ]
+            ], 400);
+        }
+    }
+
     public static function get_user_list($keyword, $field, $sort)
     {
         $search = '';
