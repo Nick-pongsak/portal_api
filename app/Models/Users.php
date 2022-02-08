@@ -229,7 +229,7 @@ class Users extends Model
             ,updateby   = '{$user_update}'
             WHERE user_id = {$user_id}
             AND app_id = {$app_id} 
-            AND emp_code = {$emp_code}";
+            AND emp_code = '{$emp_code}'";
 
             $sql_user = DB::insert($sql);
         }
