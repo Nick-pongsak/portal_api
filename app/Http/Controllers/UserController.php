@@ -37,8 +37,7 @@ class UserController extends Controller
     {
 
         $_dataAll = $request->all();
-        $user_s = $this->getUserLogin();
-        $user_create = $this->getUserLogin();
+        $user_update = $this->getUserLogin();
         $user_id = $_dataAll['user_id'];
         $emp_code = $_dataAll['emp_code'];
         $name_th  = $_dataAll['name_th'];
@@ -59,14 +58,11 @@ class UserController extends Controller
         $nickname2_en = $_dataAll['nickname2_en'];
         $permission   = $_dataAll['permission'];
         $admin_menu   = $_dataAll['admin_menu'];
+        $app          = json_decode($_dataAll['app']);
 
-        $user = Users::update_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create->user_id, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu);
+        $user = Users::update_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update->user_id, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu, $app);
 
-        return $this->createSuccessResponse([
-            'success' => [
-                'data' => $user
-            ]
-        ], 200);
+        return $user;
     }
 
     public function deleteuser(Request $request)
@@ -77,10 +73,6 @@ class UserController extends Controller
         $user_id  = $_dataAll['user_id'];
         $user = Users::delete_user($user_id);
 
-        return $this->createSuccessResponse([
-            'success' => [
-                'data' => $user
-            ]
-        ], 200);
+        return $user;
     }
 }

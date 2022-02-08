@@ -751,7 +751,7 @@ class Application extends Model
         } else {
             return response()->json([
                 'error' => [
-                    'data' => ' User using group!',
+                    'data' => 'ไม่สามารถลบได้เนื่องจากมี user ใช้งาน group นี้',
                 ]
             ], 400);
         }

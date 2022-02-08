@@ -52,6 +52,28 @@ class Users extends Model
         return $datas;
     }
 
+    public static function edit_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update)
+    {
+        $datetime_now = date('Y-m-d H:i:s');
+        $password = bcrypt($password);
+        $sql = "UPDATE users SET
+         emp_code = '{$emp_code}'
+        ,type = {$type}
+        ,username = '{$username}'
+        ,password = '{$password}'
+        ,updatedate = '{$datetime_now}'
+        ,updateby = '{$user_update}'
+        WHERE user_id = {$user_id}";
+
+        $sql_user = DB::insert($sql);
+
+        $datas = array();
+        if (!empty($sql_user)) {
+            $datas = $sql_user;
+        }
+        return $datas;
+    }
+
     public static function create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu)
     {
         $datetime_now = date('Y-m-d H:i:s');
@@ -118,6 +140,42 @@ class Users extends Model
         return $datas;
     }
 
+    public static function edit_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu)
+    {
+        $datetime_now = date('Y-m-d H:i:s');
+
+        $sql = "UPDATE user_profile SET 
+         emp_code = '{$emp_code}'
+        ,name_th  = '{$name_th}'
+        ,name_en  = '{$name_en}'
+        ,nickname1_th = '{$nickname1_th}'
+        ,nickname1_en = '{$nickname1_en}'
+        ,nickname2_th = '{$nickname2_th}'
+        ,nickname2_en = '{$nickname2_en}'
+        ,postname_th  = '{$postname_th}'
+        ,postname_en  = '{$postname_en}'
+        ,email = '{$email}'
+        ,3cx   = '{$cx}'
+        ,phone = '{$phone}'
+        ,status = '{$status}'
+        ,group_id = {$group_id}
+        ,type = {$type}
+        ,updatedate = '{$datetime_now}'
+        ,updateby   = '{$user_update}'
+        ,image      = ''
+        ,status_permission = '{$permission}'
+        ,admin_menu = '{$admin_menu}'
+        WHERE user_id = {$user_id}";
+
+        $sql_user = DB::insert($sql);
+
+        $datas = array();
+        if (!empty($sql_user)) {
+            $datas = $sql_user;
+        }
+        return $datas;
+    }
+
     public static function create_username_sso($user_id, $emp_code, $app_id, $username, $password_sso, $user_create)
     {
         $datetime_now = date('Y-m-d H:i:s');
@@ -145,6 +203,61 @@ class Users extends Model
         ,'{$user_create}')";
 
         $sql_user = DB::insert($sql);
+
+        $datas = array();
+        if (!empty($sql_user)) {
+            $datas = $sql_user;
+        }
+        return $datas;
+    }
+
+    public static function edit_username_sso($user_id, $emp_code, $app_id, $username, $password_sso, $user_update)
+    {
+        $datetime_now = date('Y-m-d H:i:s');
+        // $password = bcrypt($password);
+        $sql_app = "
+        SELECT * FROM sso
+        WHERE app_id = {$app_id}
+        AND user_id = {$user_id}";
+        $sql_check_app = DB::select($sql_app);
+
+        if (count($sql_check_app) == 1) {
+            $sql = "UPDATE sso SET
+             username = '{$username}'
+            ,password = '{$password_sso}'
+            ,updatedate = '{$datetime_now}'
+            ,updateby   = '{$user_update}'
+            WHERE user_id = {$user_id}
+            AND app_id = {$app_id} 
+            AND emp_code = {$emp_code}";
+
+            $sql_user = DB::insert($sql);
+        }
+        if (count($sql_check_app) == 0) {
+            $sql = "INSERT INTO sso 
+            (emp_code
+            ,user_id
+            ,app_id
+            ,username
+            ,password
+            ,createdate
+            ,updatedate
+            ,createby
+            ,updateby)
+            VALUES 
+            (
+             '{$emp_code}'
+            , {$user_id}
+            , {$app_id}
+            ,'{$username}'
+            ,'{$password_sso}'
+            ,'{$datetime_now}'
+            ,'{$datetime_now}'
+            ,'{$user_update}'
+            ,'{$user_update}')";
+            $sql_user = DB::insert($sql);
+        }
+
 
         $datas = array();
         if (!empty($sql_user)) {
@@ -189,9 +302,6 @@ class Users extends Model
             ], 400);
         }
 
-
-        // return $datas;
-
     }
 
 
@@ -219,14 +329,14 @@ class Users extends Model
                 $user_id =  $user->user_id;
             }
             $user_profile = Users::create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu);
-            
+
             foreach ($app as $item) {
                 $app_id =  $item->app_id;
                 $username =  $item->username;
                 $password_sso =  $item->password;
                 $user_sso = Users::create_username_sso($user_id, $emp_code, $app_id, $username, $password_sso, $user_create);
             }
-            
+
             return response()->json([
                 'success' => [
                     'data' => 'User Created'
@@ -241,7 +351,7 @@ class Users extends Model
         }
     }
 
-    public static function update_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu)
+    public static function update_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu, $app)
     {
         $sql = "
         SELECT * FROM users WHERE
@@ -251,28 +361,27 @@ class Users extends Model
         $sql_user = DB::select($sql);
 
         if (count($sql_user) == 1) {
-            $user = Users::create_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create);
-            $sql = "
-            SELECT * FROM users WHERE
-            emp_code = '{$emp_code}'
-            AND type = '{$type}'
-            AND active = 1";
+            $user = Users::edit_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update);
 
-            $sql_user = DB::select($sql);
-            $user_id = 0;
-            foreach ($sql_user as $user) {
-                $user_id =  $user->user_id;
+
+            $user_profile = Users::edit_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu);
+
+            foreach ($app as $item) {
+                $app_id =  $item->app_id;
+                $username =  $item->username;
+                $password_sso =  $item->password;
+                $user_sso = Users::edit_username_sso($user_id, $emp_code, $app_id, $username, $password_sso, $user_update);
             }
-            $user_profile = Users::create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu);
+
             return response()->json([
                 'success' => [
-                    'data' => 'User Created'
+                    'data' => 'User Updated'
                 ]
             ], 200);
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'User Duplicate!'
+                    'data' => 'ไม่พบ user ที่จะแก้ไข'
                 ]
             ], 400);
         }
@@ -305,11 +414,10 @@ class Users extends Model
                     'data' => 'User Deleted'
                 ]
             ], 200);
-            
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'User Duplicate!'
+                    'data' => 'ไม่พบ user ที่จะลบ'
                 ]
             ], 400);
         }
