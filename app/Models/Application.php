@@ -597,7 +597,7 @@ class Application extends Model
                 SELECT a.*,
                 c.name_th category_name_th, 
                 c.name_en category_name_en,
-                ss.username
+                IFNULL(ss.username, '') as username
                 FROM application a 
                 INNER JOIN category c 
                 ON 
