@@ -443,11 +443,22 @@ class Application extends Model
         }
     }
 
-    public static function get_group_app($keyword)
+    public static function get_group_app($keyword, $field, $sort)
     {
         $search = '';
-        if($keyword != ''){
+        $where_sort = '';
+        if ($keyword != '') {
             $search = "AND ((app.name_th like '%{$keyword}%') OR (app.name_en like '%{$keyword}%'))";
+        }
+        if ($field != '') {
+            $where_sort = "ORDER BY {$field} {$sort}";
+        }else{
+            return response()->json([
+                'error' => [
+                    'data' => 'ไม่มีการส่งตัวแปร field sort จากหน้าบ้าน',
+                ]
+            ], 400);
+            die;
         }
         $sql_gp = "
         SELECT app.group_id, 
@@ -457,6 +468,7 @@ class Application extends Model
         FROM application_group app
         WHERE  app.active = 1
         {$search}
+        {$where_sort}
         ";
 
         $sql_group = DB::select($sql_gp);
@@ -500,7 +512,11 @@ class Application extends Model
             $datas[] = array();
         }
 
-        return $datas;
+        return response()->json([
+            'success' => [
+                'data' => $datas,
+            ]
+        ], 200);
     }
 
 
@@ -536,7 +552,7 @@ class Application extends Model
                 $app = DB::select($sql_app);
                 $app_a = array();
                 foreach ($app as $item_a) {
-                    array_push($app_a,$item_a);
+                    array_push($app_a, $item_a);
                 }
                 $datas = array(
                     'group_id'    => $item->group_id,
@@ -550,6 +566,70 @@ class Application extends Model
         }
 
         return $datas;
+    }
+
+    public static function dropdown_group($group_id, $user_id)
+    {
+        if ($user_id == '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ไม่ได้ส่ง user_id',
+                ]
+            ], 400);
+            die;
+        }
+        $sql_gp = "
+        SELECT app.group_id, 
+        app.name_th as group_name_th,  
+        app.name_en as group_name_en,
+        app.app_id
+        FROM application_group app
+        WHERE  app.group_id = {$group_id}
+        ";
+
+        $sql_group = DB::select($sql_gp);
+
+
+        if (!empty($sql_group)) {
+            foreach ($sql_group as $item) {
+
+                $sql_app = "
+                SELECT a.*,
+                c.name_th category_name_th, 
+                c.name_en category_name_en,
+                ss.username
+                FROM application a 
+                INNER JOIN category c 
+                ON 
+                a.category_id = c.category_id
+                LEFT JOIN sso ss
+                ON 
+                a.app_id = ss.app_id AND ss.user_id = {$user_id}
+                WHERE a.app_id in ($item->app_id)
+                AND a.active = 1
+                ";
+
+                $app = DB::select($sql_app);
+                $app_a = array();
+                foreach ($app as $item_a) {
+                    array_push($app_a, $item_a);
+                }
+                $datas = array(
+                    'group_id'    => $item->group_id,
+                    'name_th'     => $item->group_name_th,
+                    'name_en'     => $item->group_name_en,
+                    'app'         => $app_a,
+                );
+            }
+        } else {
+            $datas[] = array();
+        }
+
+        return response()->json([
+            'success' => [
+                'data' => $datas,
+            ]
+        ], 200);
     }
 
     public static function add_group_app($name_th, $name_en, $app_id, $user_id)

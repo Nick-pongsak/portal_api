@@ -20,13 +20,11 @@ class ApplicationGroupController extends Controller
         $_dataAll = $request->all();
         $user = $this->getUserLogin();
         $keyword  = $_dataAll['keyword'];
-        $group = Application::get_group_app($keyword);
+        $field    = $_dataAll['field'];
+        $sort    = $_dataAll['sort'];
+        $group = Application::get_group_app($keyword, $field, $sort);
 
-        return $this->createSuccessResponse([
-            'success' => [
-                'data' => $group
-            ]
-        ], 200);
+        return $group;
     }
 
     public function groupdetail(Request $request)
@@ -41,6 +39,17 @@ class ApplicationGroupController extends Controller
                 'data' => $group
             ]
         ], 200);
+    }
+
+    public function dropdowngroup(Request $request)
+    {
+        $_dataAll = $request->all();
+        $user = $this->getUserLogin();
+        $group_id  = $_dataAll['group_id'];
+        $user_id  = $_dataAll['user_id'];
+        $group = Application::dropdown_group($group_id, $user_id);
+
+        return $group;
     }
 
     public function addgroup(Request $request)

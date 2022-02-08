@@ -49,4 +49,5 @@ Route::post('/delete-group', [ApplicationGroupController::class, 'deletegroup'])
 
 // users
 Route::post('/get-user-list', [UserController::class, 'userlist']);
+Route::post('/dropdown-group', [ApplicationGroupController::class, 'dropdowngroup']);
 
