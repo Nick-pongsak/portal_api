@@ -160,13 +160,27 @@ class AuthController extends Controller
         $data = json_decode($ldap);
         foreach ($data->data as $item) {
             $user[] = array(
+                'user_id'     => '',
                 'emp_code'    => $item->employeenumber,
+                'username'    => $item->uid,
                 'name_th'     => trim($item->fnamethai, ' ') . ' ' . $item->lnamethai,
                 'name_en'     => $item->firstname . ' ' . $item->lastname,
                 'postname_th' => $item->postname_thai,
                 'postname_en' => $item->postname_en,
+                'nickname1_th'=> '',
+                'nickname1_en'=> '',
+                'nickname2_th'=> '',
+                'nickname2_en'=> '',
                 'email'       => $item->email,
-                'username'    => $item->uid,
+                'cx'          => '',
+                'phone'       => '',
+                'group_id'    => '',
+                'group_name_th' => '',
+                'group_name_en' => '',
+                'type_login'  => 1,
+                'image'       => '',
+                'status_permission' => '',
+                'admin_menu'  => '',
             );
         }
 

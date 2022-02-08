@@ -266,7 +266,7 @@ class Users extends Model
                         'nickname2_th' => $item->nickname2_th,
                         'nickname2_en' => $item->nickname2_en,
                         'email' => $item->email,
-                        '3cx' => $item->cx,
+                        'cx' => $item->cx,
                         'phone' => $item->phone,
                         'status' => $item->status,
                         'group_id' => $item->group_id,
