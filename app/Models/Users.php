@@ -118,6 +118,41 @@ class Users extends Model
         return $datas;
     }
 
+    public static function create_username_sso($user_id, $emp_code, $app_id, $username, $password, $user_create)
+    {
+        $datetime_now = date('Y-m-d H:i:s');
+        // $password = bcrypt($password);
+        $sql = "INSERT INTO sso 
+        (emp_code
+        ,user_id
+        ,app_id
+        ,username
+        ,password
+        ,createdate
+        ,updatedate
+        ,createby
+        ,updateby)
+        VALUES 
+        (
+         '{$emp_code}'
+        , {$user_id}
+        , {$app_id}
+        ,'{$username}'
+        ,'{$password}'
+        ,'{$datetime_now}'
+        ,'{$datetime_now}'
+        ,'{$user_create}'
+        ,'{$user_create}')";
+
+        $sql_user = DB::insert($sql);
+
+        $datas = array();
+        if (!empty($sql_user)) {
+            $datas = $sql_user;
+        }
+        return $datas;
+    }
+
     public static function check_user($username, $password, $type)
     {
         $sql = "
@@ -160,7 +195,7 @@ class Users extends Model
     }
 
 
-    public static function check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu)
+    public static function check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu, $app)
     {
         $sql = "
         SELECT * FROM users WHERE
@@ -184,11 +219,18 @@ class Users extends Model
                 $user_id =  $user->user_id;
             }
             $user_profile = Users::create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu);
+            
+            foreach ($app as $item) {
+                $app_id =  $item->app_id;
+                $username =  $item->username;
+                $user_sso = Users::create_username_sso($user_id, $emp_code, $app_id, $username, $password, $user_create);
+            }
+            
             return response()->json([
                 'success' => [
                     'data' => 'User Created'
                 ]
-            ], 400);
+            ], 200);
         } else {
             return response()->json([
                 'error' => [

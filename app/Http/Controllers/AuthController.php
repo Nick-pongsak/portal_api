@@ -48,6 +48,15 @@ class AuthController extends Controller
         $nickname2_en = $_dataAll['nickname2_en'];
         $permission   = $_dataAll['permission'];
         $admin_menu   = $_dataAll['admin_menu'];
+        $app          = json_decode($_dataAll['app']);
+
+        // foreach ($data as $item) {
+        //     $user = array(
+        //         'app_id' => $item->app_id,
+        //         'username' => $item->username,
+        //     );
+        // }
+        
         //  $cx, $nickname1_th, $nickname_en, $nickname2_th, $nickname_en, $phone, 
         // if ($type == 'USER') {
         //     $validator = validator()->make(request()->all(), [
@@ -65,7 +74,7 @@ class AuthController extends Controller
         // $user = User::create(['name' => request()->get('name'),
         //                       'email' => request()->get('email'),
         //                       'password' => bcrypt(request()->get('password'))]);
-        $user = Users::check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create->user_id, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu);
+        $user = Users::check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create->user_id, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu, $app);
 
         return $user;
     }
