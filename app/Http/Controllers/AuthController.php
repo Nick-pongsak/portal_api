@@ -37,7 +37,7 @@ class AuthController extends Controller
         $email    = $_dataAll['email'];
         $status   = $_dataAll['status'];
         $group_id    = $_dataAll['group_id'];
-        $type     = $_dataAll['type'];
+        $type     = $_dataAll['type_login'];
         $username = $_dataAll['username'];
         $password = $_dataAll['password'];
         $cx       = $_dataAll['cx'];
@@ -46,7 +46,7 @@ class AuthController extends Controller
         $nickname1_en = $_dataAll['nickname1_en'];
         $nickname2_th = $_dataAll['nickname2_th'];
         $nickname2_en = $_dataAll['nickname2_en'];
-        $permission   = $_dataAll['permission'];
+        $permission   = $_dataAll['status_permission'];
         $admin_menu   = $_dataAll['admin_menu'];
         $app          = json_decode($_dataAll['app']);
 
