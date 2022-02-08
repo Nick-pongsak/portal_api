@@ -118,7 +118,7 @@ class Users extends Model
         return $datas;
     }
 
-    public static function create_username_sso($user_id, $emp_code, $app_id, $username, $password, $user_create)
+    public static function create_username_sso($user_id, $emp_code, $app_id, $username, $password_sso, $user_create)
     {
         $datetime_now = date('Y-m-d H:i:s');
         // $password = bcrypt($password);
@@ -138,7 +138,7 @@ class Users extends Model
         , {$user_id}
         , {$app_id}
         ,'{$username}'
-        ,'{$password}'
+        ,'{$password_sso}'
         ,'{$datetime_now}'
         ,'{$datetime_now}'
         ,'{$user_create}'
@@ -223,7 +223,8 @@ class Users extends Model
             foreach ($app as $item) {
                 $app_id =  $item->app_id;
                 $username =  $item->username;
-                $user_sso = Users::create_username_sso($user_id, $emp_code, $app_id, $username, $password, $user_create);
+                $password_sso =  $item->password;
+                $user_sso = Users::create_username_sso($user_id, $emp_code, $app_id, $username, $password_sso, $user_create);
             }
             
             return response()->json([
