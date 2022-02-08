@@ -158,8 +158,10 @@ class AuthController extends Controller
         $emp_code = $_dataAll['emp_code'];
         $ldap = file_get_contents(API_Sync . "iauthen/get-all-profile?user_name=&emp_number={$emp_code}");
         $data = json_decode($ldap);
+        $i = 0;
         foreach ($data->data as $item) {
             $user[] = array(
+                'index'       => $i,
                 'user_id'     => '',
                 'emp_code'    => $item->employeenumber,
                 'username'    => $item->uid,
@@ -182,6 +184,7 @@ class AuthController extends Controller
                 'status_permission' => '',
                 'admin_menu'  => '',
             );
+            $i++;
         }
 
         return $this->createSuccessResponse([
