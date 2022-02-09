@@ -182,7 +182,8 @@ class Application extends Model
     // , $description_th, $description_en, $category_id, $type_login, $status, $status_sso, $image, $url, $emp_code)
     {
         $sql_check = "SELECT * FROM application
-        WHERE app_id = {$app_id}";
+        WHERE app_id = {$app_id}
+        AND active = 1 ";
         $sql_check_id = DB::select($sql_check);
 
         if (count($sql_check_id) == 1) {
