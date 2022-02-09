@@ -42,9 +42,9 @@ class Application extends Model
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'Application Duplicate!',
+                    'data' => 'Application มีอยู่เเล้วไม่สามารถเพิ่มได้ โปรดเช็คชื่อของ Application (API : application-detail)',
                 ]
-            ], 400);
+            ], 213);
         }
     }
 
@@ -143,9 +143,9 @@ class Application extends Model
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'Validate Application!',
+                    'data' => 'ไม่สามารถแก้ไขมาใช้ชื่อ app นี้ได้เนื่องจากมีการใช้ชื่อนี้เเล้ว (API : update-application)',
                 ]
-            ], 400);
+            ], 214);
         }
     }
 
@@ -178,7 +178,7 @@ class Application extends Model
         return $datas;
     }
 
-    public static function delete_application($app_id, $name_th, $name_en, $user_id)
+    public static function delete_application($app_id, $name_th, $name_en, $user_id, $confirm)
     // , $description_th, $description_en, $category_id, $type_login, $status, $status_sso, $image, $url, $emp_code)
     {
         $sql_check = "SELECT * FROM application
@@ -206,19 +206,36 @@ class Application extends Model
 
                 $sql_group = DB::select($sql);
                 if (count($sql_group) > 0) {
-                    return response()->json([
-                        'error' => [
-                            'data' => 'Application active!',
-                        ]
-                    ], 400);
+                    if ($confirm == 0) {
+                        return response()->json([
+                            'error' => [
+                                'data' => 'ไม่สามารถลบ app นี้ได้เนื่องจากมี user ใช้งานอยู่ (API : delete-application)',
+                            ]
+                        ], 215);
+                    }
+                    if ($confirm == 1) {
+                        $datetime_now = date('Y-m-d H:i:s');
+                        $sql = "UPDATE application SET
+                        active = 0,
+                        updateby = '{$user_id}',
+                        updatedate = '{$datetime_now}'
+                        WHERE app_id = {$app_id}";
+
+                        $sql_app = DB::select($sql);
+                        return response()->json([
+                            'success' => [
+                                'data' => 'Application Deleted',
+                            ]
+                        ], 200);
+                    }
                 }
             } else {
                 $datetime_now = date('Y-m-d H:i:s');
                 $sql = "UPDATE application SET
-            active = 0,
-            updateby = '{$user_id}',
-            updatedate = '{$datetime_now}'
-            WHERE app_id = {$app_id}";
+                active = 0,
+                updateby = '{$user_id}',
+                updatedate = '{$datetime_now}'
+                WHERE app_id = {$app_id}";
 
                 $sql_app = DB::select($sql);
                 return response()->json([
@@ -230,9 +247,9 @@ class Application extends Model
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'Validate App ID!',
+                    'data' => 'ไม่พบ app_id ที่ต้องการลบ กรุณาตรวจสอบ app_id อีกครั้ง (API : delete-application)',
                 ]
-            ], 400);
+            ], 216);
         }
     }
 
@@ -340,7 +357,8 @@ class Application extends Model
         $sql = "
         SELECT * FROM category WHERE
         name_th = '{$name_th}'
-        OR name_en = '{$name_en}'";
+        OR name_en = '{$name_en}'
+        WHERE active = 1";
 
         $sql_cat = DB::select($sql);
 
@@ -372,9 +390,9 @@ class Application extends Model
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'Catagory Duplicate!',
+                    'data' => 'ไม่สามารถเพิ่ม category ชื่อนี้ได้เนื่องจากซ้ำ (API : add-category)',
                 ]
-            ], 400);
+            ], 217);
         }
     }
 
@@ -405,9 +423,9 @@ class Application extends Model
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'Validate Catagory!',
+                    'data' => 'ไม่พบ category ที่ต้องการ update กรุณาตรวจสอบ  category_id (API : update-category)',
                 ]
-            ], 400);
+            ], 218);
         }
     }
 
@@ -416,7 +434,8 @@ class Application extends Model
 
         $sql = "
         SELECT * FROM category WHERE
-        category_id = '{$category_id}'";
+        category_id = '{$category_id}'
+        WHERE active = 1";
 
         $sql_cat = DB::select($sql);
 
@@ -437,28 +456,21 @@ class Application extends Model
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'Validate Catagory!',
+                    'data' => 'ไม่พบ category_id ที่ต้องการลบ กรุณาตรวจสอบ category_id ที่ส่งมา (API : delete-category)',
                 ]
-            ], 400);
+            ], 219);
         }
     }
 
     public static function get_group_app($keyword, $field, $sort)
     {
         $search = '';
-        $where_sort = '';
+        $order_by = '';
         if ($keyword != '') {
             $search = "AND ((app.name_th like '%{$keyword}%') OR (app.name_en like '%{$keyword}%'))";
         }
         if ($field != '') {
-            $where_sort = "ORDER BY {$field} {$sort}";
-        }else{
-            return response()->json([
-                'error' => [
-                    'data' => 'ไม่มีการส่งตัวแปร field sort จากหน้าบ้าน',
-                ]
-            ], 400);
-            die;
+            $order_by = "ORDER BY {$field} {$sort}";
         }
         $sql_gp = "
         SELECT app.group_id, 
@@ -468,7 +480,7 @@ class Application extends Model
         FROM application_group app
         WHERE  app.active = 1
         {$search}
-        {$where_sort}
+        {$order_by}
         ";
 
         $sql_group = DB::select($sql_gp);
@@ -570,14 +582,6 @@ class Application extends Model
 
     public static function dropdown_group($group_id, $user_id)
     {
-        if ($user_id == '') {
-            return response()->json([
-                'error' => [
-                    'data' => 'ไม่ได้ส่ง user_id',
-                ]
-            ], 400);
-            die;
-        }
         $sql_gp = "
         SELECT app.group_id, 
         app.name_th as group_name_th,  
@@ -638,7 +642,8 @@ class Application extends Model
 
         $sql = "
         SELECT * FROM application_group WHERE
-        name_th = '{$name_th}' OR name_en = '{$name_en}'";
+        name_th = '{$name_th}' OR name_en = '{$name_en}'
+        AND active = 1";
 
         $sql_group = DB::select($sql);
 
@@ -672,9 +677,9 @@ class Application extends Model
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'Duplicate group!',
+                    'data' => 'ไม่สามาถเพิ่ม group นี้ได้เนื่องจากชื่อ group นี้มีการใช้งานเเล้ว (API : add-group)',
                 ]
-            ], 400);
+            ], 220);
         }
     }
 
@@ -709,9 +714,9 @@ class Application extends Model
         } else {
             return response()->json([
                 'error' => [
-                    'data' => ' Validate group!',
+                    'data' => 'ไม่สามารถ update ได้เนื่องจากไม่พบ group_id ที่ส่งมา (API : update-group)',
                 ]
-            ], 400);
+            ], 221);
         }
     }
 
@@ -751,9 +756,9 @@ class Application extends Model
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'ไม่สามารถลบได้เนื่องจากมี user ใช้งาน group นี้',
+                    'data' => 'ไม่สามารถลบได้เนื่องจากมี user ใช้งาน group นี้ (API : dalete-group)',
                 ]
-            ], 400);
+            ], 222);
         }
     }
 }

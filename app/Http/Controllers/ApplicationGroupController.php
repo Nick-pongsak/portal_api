@@ -32,13 +32,26 @@ class ApplicationGroupController extends Controller
         $_dataAll = $request->all();
         $user = $this->getUserLogin();
         $group_id  = $_dataAll['group_id'];
-        $group = Application::groupdetail($group_id);
 
-        return $this->createSuccessResponse([
-            'success' => [
-                'data' => $group
-            ]
-        ], 200);
+        $field_error = '';
+        if ($group_id == '') {
+            $field_error .= ' group_id,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $group = Application::groupdetail($group_id);
+
+            return $this->createSuccessResponse([
+                'success' => [
+                    'data' => $group
+                ]
+            ], 200);
+        }
     }
 
     public function dropdowngroup(Request $request)
@@ -47,9 +60,25 @@ class ApplicationGroupController extends Controller
         $user = $this->getUserLogin();
         $group_id  = $_dataAll['group_id'];
         $user_id  = $_dataAll['user_id'];
-        $group = Application::dropdown_group($group_id, $user_id);
 
-        return $group;
+        $field_error = '';
+        if ($group_id == '') {
+            $field_error .= ' group_id,';
+        }
+        if ($user_id == '') {
+            $field_error .= ' user_id,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $group = Application::dropdown_group($group_id, $user_id);
+
+            return $group;
+        }
     }
 
     public function addgroup(Request $request)
@@ -58,11 +87,29 @@ class ApplicationGroupController extends Controller
         $user = $this->getUserLogin();
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
-        $app_id  = implode(",",$_dataAll['app_id']);
+        $app_id  = implode(",", $_dataAll['app_id']);
 
-        $group = Application::add_group_app($name_th, $name_en, $app_id, $user->user_id);
+        $field_error = '';
+        if ($name_th == "") {
+            $field_error .= ' name_th,';
+        }
+        if ($name_en == "") {
+            $field_error .= ' name_en,';
+        }
+        if ($app_id == "") {
+            $field_error .= ' app_id,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $group = Application::add_group_app($name_th, $name_en, $app_id, $user->user_id);
 
-        return $group;
+            return $group;
+        }
     }
 
     public function updategroup(Request $request)
@@ -72,11 +119,32 @@ class ApplicationGroupController extends Controller
         $group_id = $_dataAll['group_id'];
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
-        $app_id   = implode(",",$_dataAll['app_id']);
+        $app_id   = implode(",", $_dataAll['app_id']);
 
-        $group = Application::update_group_app($group_id, $name_th, $name_en, $app_id, $user->user_id);
+        $field_error = '';
+        if ($group_id == '') {
+            $field_error .= ' group_id,';
+        }
+        if ($name_th == '') {
+            $field_error .= ' name_th,';
+        }
+        if ($name_en == '') {
+            $field_error .= ' name_en,';
+        }
+        if ($app_id == '') {
+            $field_error .= ' app_id,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $group = Application::update_group_app($group_id, $name_th, $name_en, $app_id, $user->user_id);
 
-        return $group;
+            return $group;
+        }
     }
 
     public function deletegroup(Request $request)
@@ -87,8 +155,26 @@ class ApplicationGroupController extends Controller
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
 
-        $group = Application::delete_group_app($group_id, $name_th, $name_en, $user->user_id);
+        $field_error = '';
+        if ($group_id == '') {
+            $field_error .= ' group_id,';
+        }
+        if ($name_th == '') {
+            $field_error .= ' name_th,';
+        }
+        if ($name_en == '') {
+            $field_error .= ' name_en,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $group = Application::delete_group_app($group_id, $name_th, $name_en, $user->user_id);
 
-        return $group;
+            return $group;
+        }
     }
 }

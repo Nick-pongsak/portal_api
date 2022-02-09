@@ -74,22 +74,64 @@ class ApplicationController extends Controller
         $image  = $_dataAll['image'];
         $url  = $_dataAll['url'];
 
-        $app = Application::check_add_application(
-            $name_th,
-            $name_en,
-            $description_th,
-            $description_en,
-            $category_id,
-            $key_app,
-            $type_login,
-            $status,
-            $status_sso,
-            $image,
-            $url,
-            $user->user_id
-        );
+        $field_error = '';
+        if ($name_th == '') {
+            $field_error .= ' name_th,';
+        }
+        if ($name_en == '') {
+            $field_error .= ' name_en,';
+        }
+        if ($description_th == '') {
+            $field_error .= ' description_th,';
+        }
+        if ($description_en == '') {
+            $field_error .= ' description_en,';
+        }
+        if ($category_id == '') {
+            $field_error .= ' category_id,';
+        }
+        if ($key_app == '') {
+            $field_error .= ' key_app,';
+        }
+        if ($type_login == '') {
+            $field_error .= ' type_login,';
+        }
+        if ($status == '') {
+            $field_error .= ' status,';
+        }
+        if ($status_sso == '') {
+            $field_error .= ' status_sso,';
+        }
+        if ($image == '') {
+            $field_error .= ' image,';
+        }
+        if ($url  == '') {
+            $field_error .= ' url,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $app = Application::check_add_application(
+                $name_th,
+                $name_en,
+                $description_th,
+                $description_en,
+                $category_id,
+                $key_app,
+                $type_login,
+                $status,
+                $status_sso,
+                $image,
+                $url,
+                $user->user_id
+            );
 
-        return $app;
+            return $app;
+        }
     }
 
     public function updateapplication(Request $request)
@@ -109,23 +151,68 @@ class ApplicationController extends Controller
         $image  = $_dataAll['image'];
         $url  = $_dataAll['url'];
 
-        $app = Application::update_application(
-            $app_id,
-            $name_th,
-            $name_en,
-            $description_th,
-            $description_en,
-            $category_id,
-            $key_app,
-            $type_login,
-            $status,
-            $status_sso,
-            $image,
-            $url,
-            $user->user_id
-        );
+        $field_error = '';
+        if ($app_id == '') {
+            $field_error .= ' app_id,';
+        }
+        if ($name_th == '') {
+            $field_error .= ' name_th,';
+        }
+        if ($name_en == '') {
+            $field_error .= ' name_en,';
+        }
+        if ($description_th == '') {
+            $field_error .= ' description_th,';
+        }
+        if ($description_en == '') {
+            $field_error .= ' description_en,';
+        }
+        if ($category_id == '') {
+            $field_error .= ' category_id,';
+        }
+        if ($key_app == '') {
+            $field_error .= ' key_app,';
+        }
+        if ($type_login == '') {
+            $field_error .= ' type_login,';
+        }
+        if ($status == '') {
+            $field_error .= ' status,';
+        }
+        if ($status_sso == '') {
+            $field_error .= ' status_sso,';
+        }
+        if ($image == '') {
+            $field_error .= ' image,';
+        }
+        if ($url  == '') {
+            $field_error .= ' url,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $app = Application::update_application(
+                $app_id,
+                $name_th,
+                $name_en,
+                $description_th,
+                $description_en,
+                $category_id,
+                $key_app,
+                $type_login,
+                $status,
+                $status_sso,
+                $image,
+                $url,
+                $user->user_id
+            );
 
-        return $app;
+            return $app;
+        }
     }
 
     public function deleteapplication(Request $request)
@@ -135,32 +222,38 @@ class ApplicationController extends Controller
         $app_id  = $_dataAll['app_id'];
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
-        // $description_th  = $_dataAll['description_th'];
-        // $description_en  = $_dataAll['description_en'];
-        // $category_id  = $_dataAll['category_id'];
-        // $type_login  = $_dataAll['type_login'];
-        // $status  = $_dataAll['status'];
-        // $status_sso  = $_dataAll['status_sso'];
-        // $image  = $_dataAll['image'];
-        // $url  = $_dataAll['url'];
+        $confirm  = $_dataAll['confirm'];
 
-        $app = Application::delete_application(
-            $app_id,
-            $name_th,
-            $name_en
-            // ,$description_th
-            // ,$description_en
-            // ,$category_id
-            // ,$type_login
-            // ,$status
-            // ,$status_sso
-            // ,$image
-            // ,$url
-            ,
-            $user->user_id
-        );
+        $field_error = '';
+        if ($app_id == '') {
+            $field_error .= ' app_id,';
+        }
+        if ($name_th == '') {
+            $field_error .= ' name_th,';
+        }
+        if ($name_en == '') {
+            $field_error .= ' name_en,';
+        }
+        if ($confirm == '') {
+            $field_error .= ' confirm,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $app = Application::delete_application(
+                $app_id,
+                $name_th,
+                $name_en,
+                $user->user_id,
+                $confirm
+            );
 
-        return $app;
+            return $app;
+        }
     }
 
     public function addcategory(Request $request)
@@ -170,14 +263,27 @@ class ApplicationController extends Controller
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
 
-        $app = Application::add_category(
-            $name_th,
-            $name_en,
-            $user->user_id
-        );
-
-
-        return $app;
+        $field_error = '';
+        if ($name_th == '') {
+            $field_error .= ' name_th,';
+        }
+        if ($name_en == '') {
+            $field_error .= ' name_en,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $app = Application::add_category(
+                $name_th,
+                $name_en,
+                $user->user_id
+            );
+            return $app;
+        }
     }
 
     public function updatecategory(Request $request)
@@ -188,18 +294,33 @@ class ApplicationController extends Controller
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
 
-        $app = Application::update_category(
-            $category_id,
-            $name_th,
-            $name_en,
-            $user->user_id
-        );
+        $field_error = '';
+        if ($name_th == '') {
+            $field_error .= ' name_th,';
+        }
+        if ($name_en == '') {
+            $field_error .= ' name_en,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $app = Application::update_category(
+                $category_id,
+                $name_th,
+                $name_en,
+                $user->user_id
+            );
 
-        return $this->createSuccessResponse([
-            'success' => [
-                'data' => 'success'
-            ]
-        ], 200);
+            return $this->createSuccessResponse([
+                'success' => [
+                    'data' => 'Categoty Updated'
+                ]
+            ], 200);
+        }
     }
 
     public function deletecategory(Request $request)
@@ -210,13 +331,31 @@ class ApplicationController extends Controller
         $name_th  = $_dataAll['name_th'];
         $name_en  = $_dataAll['name_en'];
 
-        $app = Application::delete_category(
-            $category_id,
-            $name_th,
-            $name_en,
-            $user->user_id
-        );
-
-        return $app;
+        $field_error = '';
+        if ($category_id == '') {
+            $field_error .= ' category_id,';
+        }
+        if ($name_th == '') {
+            $field_error .= ' name_th,';
+        }
+        if ($name_en == '') {
+            $field_error .= ' name_en,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $app = Application::delete_category(
+                $category_id,
+                $name_th,
+                $name_en,
+                $user->user_id
+            );
+            return $app;
+        }
+        
     }
 }

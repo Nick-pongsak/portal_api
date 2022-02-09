@@ -345,9 +345,9 @@ class Users extends Model
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'User Duplicate!'
+                    'data' => 'User type นี้มีการใช้งานเเล้ว (API : register)'
                 ]
-            ], 400);
+            ], 211);
         }
     }
 
@@ -417,9 +417,9 @@ class Users extends Model
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'ไม่พบ user ที่จะลบ'
+                    'data' => 'ไม่พบ user ที่จะลบ ตรวจสอบ user_id (API : delete-user)'
                 ]
-            ], 400);
+            ], 212);
         }
     }
 

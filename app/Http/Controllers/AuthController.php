@@ -50,33 +50,45 @@ class AuthController extends Controller
         $admin_menu   = $_dataAll['admin_menu'];
         $app          = json_decode($_dataAll['app']);
 
-        // foreach ($data as $item) {
-        //     $user = array(
-        //         'app_id' => $item->app_id,
-        //         'username' => $item->username,
-        //     );
-        // }
-        
-        //  $cx, $nickname1_th, $nickname_en, $nickname2_th, $nickname_en, $phone, 
-        // if ($type == 'USER') {
-        //     $validator = validator()->make(request()->all(), [
-        //         'username' => 'string|required',
-        //         'email' => 'email|required',
-        //         'password' => 'string|min:6'
-        //     ]);
-
-        //     if ($validator->fails()) {
-        //         return response()->json([
-        //             'message' => 'Registrantion Faild'
-        //         ]);
-        //     }
-        // }
-        // $user = User::create(['name' => request()->get('name'),
-        //                       'email' => request()->get('email'),
-        //                       'password' => bcrypt(request()->get('password'))]);
-        $user = Users::check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create->user_id, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu, $app);
-
-        return $user;
+        $field_error = '';
+        if ($emp_code == '') {
+            $field_error .= ' emp_code,';
+        }if ($name_th == '') {
+            $field_error .= ' name_th,';
+        }if ($name_en == '') {
+            $field_error .= ' name_en,';
+        }if ($postname_th == '') {
+            $field_error .= ' postname_th,';
+        }if ($postname_en == '') {
+            $field_error .= ' postname_en,';
+        }if ($email == '') {
+            $field_error .= ' email,';
+        }if ($status == '') {
+            $field_error .= ' status,';
+        }if ($group_id == '') {
+            $field_error .= ' group_id,';
+        }if ($type == '') {
+            $field_error .= ' type_login,';
+        }if ($username == '') {
+            $field_error .= ' username,';
+        }if ($password == '') {
+            $field_error .= ' password,';
+        }if ($permission  == '') {
+            $field_error .= ' status_permission,';
+        }if ($admin_menu == '') {
+            $field_error .= ' admin_menu,';
+        }if ($app == '') {
+            $field_error .= ' app,';
+        }if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $user = Users::check_register($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create->user_id, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu, $app);
+            return $user;
+        }
     }
 
     public function login(Request $request)
@@ -104,7 +116,7 @@ class AuthController extends Controller
                     'data' => $user[] = array(
                         'error' => 'Validate parameter '
                     )
-                ], 401);
+                ], 500);
             } else {
                 $data = json_decode($result);
                 if (isset($data->success->data->access_token)) {
@@ -178,10 +190,10 @@ class AuthController extends Controller
                 'name_en'     => $item->firstname . ' ' . $item->lastname,
                 'postname_th' => $item->postname_thai,
                 'postname_en' => $item->postname_en,
-                'nickname1_th'=> '',
-                'nickname1_en'=> '',
-                'nickname2_th'=> '',
-                'nickname2_en'=> '',
+                'nickname1_th' => '',
+                'nickname1_en' => '',
+                'nickname2_th' => '',
+                'nickname2_en' => '',
                 'email'       => $item->email,
                 'cx'          => '',
                 'phone'       => '',
