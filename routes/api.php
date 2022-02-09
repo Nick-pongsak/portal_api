@@ -35,7 +35,7 @@ Route::post('/update-application', [ApplicationController::class, 'updateapplica
 Route::post('/delete-application', [ApplicationController::class, 'deleteapplication']);
 
 // category
-Route::post('/get_category', [ApplicationController::class, 'getcategory']);
+Route::post('/get-category', [ApplicationController::class, 'getcategory']);
 Route::post('/add-category', [ApplicationController::class, 'addcategory']);
 Route::post('/update-category', [ApplicationController::class, 'updatecategory']);
 Route::post('/delete-category', [ApplicationController::class, 'deletecategory']);

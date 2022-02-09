@@ -505,10 +505,11 @@ class Users extends Model
                         'status_permission' => $item->status_permission,
                         'admin_menu' => $item->admin_menu,
                     );
+                    $i++;
                 }
 
 
-                $i++;
+                
             }
         }
         return $datas;
