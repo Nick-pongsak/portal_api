@@ -47,9 +47,10 @@ Route::post('/add-group', [ApplicationGroupController::class, 'addgroup']);
 Route::post('/update-group', [ApplicationGroupController::class, 'updategroup']);
 Route::post('/delete-group', [ApplicationGroupController::class, 'deletegroup']);
 
+
 // users
-Route::post('/get-user-list', [UserController::class, 'userlist']);
 Route::post('/dropdown-group', [ApplicationGroupController::class, 'dropdowngroup']);
+Route::post('/get-user-list', [UserController::class, 'userlist']);
 Route::post('/update-user', [UserController::class, 'updateuser']);
 Route::post('/delete-user', [UserController::class, 'deleteuser']);
 

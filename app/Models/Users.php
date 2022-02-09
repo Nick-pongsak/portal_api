@@ -461,6 +461,7 @@ class Users extends Model
         ON user.user_id=pro.user_id
         WHERE user.active = 1
         {$search}
+        {$order_by}
         ";
 
         $sql_app = DB::select($sql);
