@@ -439,6 +439,7 @@ class Users extends Model
         SELECT user.user_id
         ,user.emp_code
         ,user.username
+        ,user.password
         ,pro.name_th
         ,pro.name_en
         ,pro.postname_th
@@ -483,6 +484,7 @@ class Users extends Model
                         'user_id' => $item->user_id,
                         'emp_code' => $item->emp_code,
                         'username' => $item->username,
+                        'password' => $item->password,
                         'name_th' => $item->name_th,
                         'name_en' => $item->name_en,
                         'postname_th' => $item->postname_th,
