@@ -359,7 +359,7 @@ class Application extends Model
         SELECT * FROM category WHERE
         name_th = '{$name_th}'
         OR name_en = '{$name_en}'
-        WHERE active = 1";
+        AND active = 1";
 
         $sql_cat = DB::select($sql);
 
@@ -436,7 +436,7 @@ class Application extends Model
         $sql = "
         SELECT * FROM category WHERE
         category_id = '{$category_id}'
-        WHERE active = 1";
+        AND active = 1";
 
         $sql_cat = DB::select($sql);
 
