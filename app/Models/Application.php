@@ -28,7 +28,8 @@ class Application extends Model
         $sql = "
         SELECT * FROM application WHERE
         name_th = '{$name_th}'
-        OR name_en = '{$name_en}'";
+        AND name_en = '{$name_en}'
+        AND active = 1";
 
         $sql_app = DB::select($sql);
 
@@ -122,7 +123,8 @@ class Application extends Model
             $sql_name = "
             SELECT * FROM application WHERE
             name_th = '{$name_th}'
-            OR name_en = '{$name_en}'";
+            AND name_en = '{$name_en}'
+            AND active = 1";
 
             $sql_check_name = DB::select($sql_name);
 
@@ -358,7 +360,7 @@ class Application extends Model
         $sql = "
         SELECT * FROM category WHERE
         name_th = '{$name_th}'
-        OR name_en = '{$name_en}'
+        AND name_en = '{$name_en}'
         AND active = 1";
 
         $sql_cat = DB::select($sql);
@@ -642,7 +644,7 @@ class Application extends Model
 
         $sql = "
         SELECT * FROM application_group WHERE
-        name_th = '{$name_th}' OR name_en = '{$name_en}'
+        name_th = '{$name_th}' AND name_en = '{$name_en}'
         AND active = 1";
 
         $sql_group = DB::select($sql);
