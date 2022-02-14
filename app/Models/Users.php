@@ -269,9 +269,20 @@ class Users extends Model
     public static function check_user($username, $password, $type)
     {
         $sql = "
-        SELECT * FROM users WHERE
-        username = '{$username}'
-        AND type = '{$type}'";
+        SELECT p.*,
+        p.3cx as cx, 
+        p.type as type_login,
+        g.name_en as group_name_en,
+        g.name_th as group_name_th 
+        FROM users u
+        INNER JOIN user_profile p
+        ON u.user_id = p.user_id
+        INNER JOIN application_group g
+        ON p.group_id = g.group_id
+        WHERE
+        u.username = '{$username}'
+        AND u.type = '{$type}'
+        AND u.active = 1";
 
         $sql_user = DB::select($sql);
 
@@ -285,13 +296,39 @@ class Users extends Model
                     ]
                 ], 400);
             }
+            foreach ($sql_user as $item) {
+                $datas = array(
+                    'access_token' => $token,
+                    'username' => $username,
+                    'token_type' => 'bearer',
+                    'expires_in' => config('jwt.ttl'),
+                    'user_id' => $item->user_id,
+                    'emp_code' => $item->emp_code,
+                    'username' => $username,
+                    'name_th' => $item->name_th,
+                    'name_en' => $item->name_en,
+                    'postname_th' => $item->postname_th,
+                    'postname_en' => $item->postname_en,
+                    'nickname1_th' => $item->nickname1_th,
+                    'nickname1_en' => $item->nickname1_en,
+                    'nickname2_th' => $item->nickname2_th,
+                    'nickname2_en' => $item->nickname2_en,
+                    'email' => $item->email,
+                    'cx' => $item->cx,
+                    'phone' => $item->phone,
+                    'status' => $item->status,
+                    'group_id' => $item->group_id,
+                    'group_name_th' => $item->group_name_th,
+                    'group_name_en' => $item->group_name_en,
+                    'type_login' => $item->type_login,
+                    'image' => $item->image,
+                    'status_permission' => $item->status_permission,
+                    'admin_menu' => $item->admin_menu,
+                );
+            }
             return response()->json([
                 'success' => [
-                    'data' => $user[] = array(
-                        'access_token' => $token,
-                        'token_type' => 'bearer',
-                        'expires_in' => config('jwt.ttl')
-                    )
+                    'data' => $datas
                 ]
             ], 200);
         } else {
