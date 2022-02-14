@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\ApplicationGroupController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\imageController;
 
 
 Route::get('/date_now', function () {
@@ -53,4 +54,7 @@ Route::post('/dropdown-group', [ApplicationGroupController::class, 'dropdowngrou
 Route::post('/get-user-list', [UserController::class, 'userlist']);
 Route::post('/update-user', [UserController::class, 'updateuser']);
 Route::post('/delete-user', [UserController::class, 'deleteuser']);
+
+// image
+Route::post('/upload-image', [imageController::class, 'upload_img']);
 

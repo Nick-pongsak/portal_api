@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Application;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Image;
 
 class ApplicationController extends Controller
 {
@@ -102,9 +103,20 @@ class ApplicationController extends Controller
         if ($status_sso == '') {
             $field_error .= ' status_sso,';
         }
+
         if ($image == '') {
             $field_error .= ' image,';
+        }else{
+            $image = $request->file('image');
+            $input['imagename'] = time().'.'.$image->extension();
+    
+            $destinationPath = public_path('images/banner-app');
+            $img = Image::make($image->path());
+            $img->resize(240,180, function($constraint){
+                $constraint->aspectRatio();
+            })->save($destinationPath.'/'.$input['imagename']);
         }
+
         if ($url  == '') {
             $field_error .= ' url,';
         }
@@ -125,7 +137,7 @@ class ApplicationController extends Controller
                 $type_login,
                 $status,
                 $status_sso,
-                $image,
+                $input['imagename'],
                 $url,
                 $user->user_id
             );

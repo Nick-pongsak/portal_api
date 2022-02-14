@@ -311,7 +311,7 @@ class Application extends Model
                     'type_login' => $item->type_login,
                     'status_sso' => $item->status_sso,
                     'status' => $item->status,
-                    'image' => $item->image,
+                    'image' => 'http://10.7.200.229/apiweb/images/banner-app/'.$item->image,
                     'url' => $item->url,
                 );
                 $i++;
