@@ -269,16 +269,33 @@ class Users extends Model
     public static function check_user($username, $password, $type)
     {
         $sql = "
-        SELECT p.*,
-        p.3cx as cx, 
-        p.type as type_login,
+        SELECT
+         pro.user_id
+        ,pro.emp_code
+        ,pro.name_th
+        ,pro.name_en
+        ,pro.postname_th
+        ,pro.postname_en
+        ,pro.nickname1_th
+        ,pro.nickname1_en
+        ,pro.nickname2_th
+        ,pro.nickname2_en
+        ,pro.email
+        ,pro.3cx as cx
+        ,pro.phone
+        ,pro.status
+        ,pro.group_id
+        ,pro.type as type_login
+        ,IFNULL(pro.image,'') as image
+        ,pro.status_permission
+        ,pro.admin_menu,
         g.name_en as group_name_en,
         g.name_th as group_name_th 
         FROM users u
-        INNER JOIN user_profile p
-        ON u.user_id = p.user_id
+        INNER JOIN user_profile pro
+        ON u.user_id = pro.user_id
         INNER JOIN application_group g
-        ON p.group_id = g.group_id
+        ON pro.group_id = g.group_id
         WHERE
         u.username = '{$username}'
         AND u.type = '{$type}'
@@ -321,7 +338,7 @@ class Users extends Model
                     'group_name_th' => $item->group_name_th,
                     'group_name_en' => $item->group_name_en,
                     'type_login' => $item->type_login,
-                    'image' => $item->image,
+                    'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/'.$item->image),
                     'status_permission' => $item->status_permission,
                     'admin_menu' => $item->admin_menu,
                 );
@@ -491,7 +508,7 @@ class Users extends Model
         ,pro.status
         ,pro.group_id
         ,pro.type as type_login
-        ,pro.image
+        ,IFNULL(pro.image,'') as image
         ,pro.status_permission
         ,pro.admin_menu
         FROM users user
@@ -538,7 +555,7 @@ class Users extends Model
                         'group_name_th' => $item_gorup_id->group_name_th,
                         'group_name_en' => $item_gorup_id->group_name_en,
                         'type_login' => $item->type_login,
-                        'image' => $item->image,
+                        'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/'.$item->image),
                         'status_permission' => $item->status_permission,
                         'admin_menu' => $item->admin_menu,
                     );
@@ -551,4 +568,7 @@ class Users extends Model
         }
         return $datas;
     }
+
+
+    
 }

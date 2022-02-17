@@ -81,6 +81,33 @@ class ApplicationGroupController extends Controller
         }
     }
 
+    public function appuser(Request $request)
+    {
+        $_dataAll = $request->all();
+        $user = $this->getUserLogin();
+        $group_id  = $_dataAll['group_id'];
+        $user_id  = $_dataAll['user_id'];
+
+        $field_error = '';
+        if ($group_id == '') {
+            $field_error .= ' group_id,';
+        }
+        if ($user_id == '') {
+            $field_error .= ' user_id,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $group = Application::app_user($group_id, $user_id);
+
+            return $group;
+        }
+    }
+
     public function addgroup(Request $request)
     {
         $_dataAll = $request->all();

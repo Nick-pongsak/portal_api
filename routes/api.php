@@ -58,3 +58,6 @@ Route::post('/delete-user', [UserController::class, 'deleteuser']);
 // image
 Route::post('/upload-image', [imageController::class, 'upload_img']);
 
+// font-end
+Route::post('/application-user', [ApplicationGroupController::class, 'appuser']);
+

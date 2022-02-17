@@ -142,4 +142,29 @@ class UserController extends Controller
             return $user;
         }
     }
+
+    public function appuser(Request $request)
+    {
+
+        $_dataAll = $request->all();
+        $user_s = $this->getUserLogin();
+        $user_id  = $_dataAll['user_id'];
+
+        $field_error = '';
+        if ($user_id == '') {
+            $field_error .= ' user_id,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $user = Users::appuser($user_id);
+
+            return $user;
+        }
+    }
+
 }

@@ -639,6 +639,86 @@ class Application extends Model
         ], 200);
     }
 
+    public static function app_user($group_id, $user_id)
+    {
+        $sql_gp = "
+        SELECT app.group_id, 
+        app.name_th as group_name_th,  
+        app.name_en as group_name_en,
+        app.app_id
+        FROM application_group app
+        WHERE  app.group_id = {$group_id}
+        ";
+
+        $sql_group = DB::select($sql_gp);
+
+
+        if (!empty($sql_group)) {
+            
+            foreach ($sql_group as $item) {
+                $sql_app = " 
+                SELECT 
+                a.*,
+                c.name_th category_name_th, 
+                c.name_en category_name_en,
+                IFNULL(ss.username, '') as username
+                FROM application a 
+                INNER JOIN category c 
+                ON 
+                a.category_id = c.category_id
+                LEFT JOIN sso ss
+                ON 
+                a.app_id = ss.app_id AND ss.user_id = {$user_id}
+                WHERE a.app_id in ($item->app_id)
+                AND a.active = 1
+                ORDER BY a.app_id
+                ";
+
+                $app = DB::select($sql_app);
+                $app_a = array();
+                foreach ($app as $item_a) {
+                    array_push($app_a, $item_a);
+                    
+                }
+                 
+                $sql_order ="
+                SELECT * FROM user_setting
+                WHERE user_id = {$user_id}
+                ";
+
+                $order = DB::select($sql_order);
+                if (!empty($order)) {
+                    foreach ($order as $item_o) {
+                        $datas = array(
+                            'group_id'    => $item->group_id,
+                            'name_th'     => $item->group_name_th,
+                            'name_en'     => $item->group_name_en,
+                            'order'       => $item_o->app_order,
+                            'app'         => $app_a,
+                        );
+                    }
+                }else{
+                    $datas = array(
+                        'group_id'    => $item->group_id,
+                        'name_th'     => $item->group_name_th,
+                        'name_en'     => $item->group_name_en,
+                        'order'       => '',
+                        'app'         => $app_a,
+                    );
+                }
+               
+            }
+        } else {
+            $datas = array();
+        }
+
+        return response()->json([
+            'success' => [
+                'data' => $datas,
+            ]
+        ], 200);
+    }
+
     public static function add_group_app($name_th, $name_en, $app_id, $user_id)
     {
 
