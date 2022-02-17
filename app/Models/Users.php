@@ -586,6 +586,61 @@ class Users extends Model
         return $datas;
     }
 
+    public static function saveorder($user_id, $emp_code, $order)
+    {
+        $sql = "
+        SELECT * FROM user_setting WHERE
+        user_id = {$user_id}";
+
+        $sql_user = DB::select($sql);
+
+        if (count($sql_user) == 1) {
+            $datetime_now = date('Y-m-d H:i:s');
+            $sql_users = "
+            UPDATE users_setting SET
+            app_order = '{$order}',
+            updatedate = '{$datetime_now}',
+            updateby = {$user_id}
+            WHERE user_id = {$user_id}";
+            $users = DB::select($sql_users);
+
+            return response()->json([
+                'success' => [
+                    'data' => 'Save Success'
+                ]
+            ], 200);
+        } else {
+
+            $datetime_now = date('Y-m-d H:i:s');
+            $sql = "
+            INSERT INTO user_setting 
+            (user_id
+            ,emp_code
+            ,app_order
+            ,createdate
+            ,updatedate
+            ,createby
+            ,updateby
+            ,language)
+            VALUES 
+            ({$user_id}
+            ,'{$emp_code}'
+            ,'{$order}'
+            ,'{$datetime_now}'
+            ,'{$datetime_now}'
+            ,{$user_id}
+            ,{$user_id}
+            ,1)";
+    
+            $sql_user = DB::insert($sql);
+            return response()->json([
+                'success' => [
+                    'data' => 'Save Success'
+                ]
+            ], 200);
+        }
+    }
+
 
     
 }

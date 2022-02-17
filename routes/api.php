@@ -61,3 +61,6 @@ Route::post('/upload-image', [imageController::class, 'upload_img']);
 // font-end
 Route::post('/application-user', [ApplicationGroupController::class, 'appuser']);
 
+//user-setting-order
+Route::post('/save-order', [UserController::class, 'saveorder']);
+

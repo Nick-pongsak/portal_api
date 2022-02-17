@@ -143,12 +143,13 @@ class UserController extends Controller
         }
     }
 
-    public function appuser(Request $request)
+    public function saveorder(Request $request)
     {
 
         $_dataAll = $request->all();
-        $user_s = $this->getUserLogin();
+        $user = $this->getUserLogin();
         $user_id  = $_dataAll['user_id'];
+        $order  = $_dataAll['order'];
 
         $field_error = '';
         if ($user_id == '') {
@@ -161,10 +162,14 @@ class UserController extends Controller
                 ]
             ], 210);
         } else {
-            $user = Users::appuser($user_id);
+            $user = Users::saveorder( 
+                $user->user_id,
+                $user->emp_code,
+                $order,
+            );
 
             return $user;
-        }
+        } 
     }
 
 }
