@@ -63,3 +63,4 @@ Route::post('/save-order', [UserController::class, 'saveorder']);
 Route::post('/upload-image', [UserController::class, 'upload_img']);
 Route::post('/delete-image', [UserController::class, 'delimg']);
 Route::post('/update-profile', [UserController::class, 'update_profile']);
+Route::post('/change-password', [UserController::class, 'change_password']);

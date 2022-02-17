@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Users;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Image;
 
@@ -163,14 +164,14 @@ class UserController extends Controller
                 ]
             ], 210);
         } else {
-            $user = Users::saveorder( 
+            $user = Users::saveorder(
                 $user_id,
                 $user->emp_code,
                 $order,
             );
 
             return $user;
-        } 
+        }
     }
 
     public function upload_img(Request $request)
@@ -187,16 +188,15 @@ class UserController extends Controller
         }
         if ($image == '') {
             $field_error .= ' image,';
-        }
-        else{
+        } else {
             $image = $request->file('image');
-            $input['imagename'] = time().'.'.$image->extension();
-    
+            $input['imagename'] = time() . '.' . $image->extension();
+
             $destinationPath = public_path('images/user-profile');
             $img = Image::make($image->path());
-            $img->resize(240,180, function($constraint){
+            $img->resize(240, 180, function ($constraint) {
                 $constraint->aspectRatio();
-            })->save($destinationPath.'/'.$input['imagename']);
+            })->save($destinationPath . '/' . $input['imagename']);
         }
         if ($field_error != '') {
             return response()->json([
@@ -205,13 +205,13 @@ class UserController extends Controller
                 ]
             ], 210);
         } else {
-            $user = Users::upload_img( 
+            $user = Users::upload_img(
                 $user_id,
                 $input['imagename']
             );
 
             return $user;
-        } 
+        }
     }
 
     public function delimg(Request $request)
@@ -232,12 +232,12 @@ class UserController extends Controller
                 ]
             ], 210);
         } else {
-            $user = Users::delimg( 
+            $user = Users::delimg(
                 $user_id
             );
 
             return $user;
-        } 
+        }
     }
 
     public function update_profile(Request $request)
@@ -330,4 +330,59 @@ class UserController extends Controller
         }
     }
 
+    public function change_password(Request $request)
+    {
+
+        $_dataAll = $request->all();
+        $user_update = $this->getUserLogin();
+        $user_id = $_dataAll['user_id'];
+        $odd_password  = $_dataAll['odd_password'];
+
+        $field_error = '';
+        if ($odd_password == '') {
+            $field_error .= ' odd_password,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+
+            $sql = "
+        SELECT * FROM users WHERE
+        user_id = {$user_id}
+        AND active = 1";
+
+            $sql_user = DB::select($sql);
+
+            if (count($sql_user) == 1) {
+                foreach ($sql_user as $item) {
+                    $hash = $item->password;
+                }
+                // $hash = '$2y$10$f.AOeKBpQkYZyYEX5ULW0OfExjpfhxBJUYilbCH2BptVV6KBK9gDK';
+
+                if (password_verify($odd_password, $hash)) {
+                    return response()->json([
+                        'success' => [
+                            'data' => 'password corrected',
+                        ]
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'error' => [
+                            'data' => 'password incorrected',
+                        ]
+                    ], 400);
+                }
+            } else {
+                return response()->json([
+                    'error' => [
+                        'data' => 'password incorrected',
+                    ]
+                ], 400);
+            }
+        }
+    }
 }

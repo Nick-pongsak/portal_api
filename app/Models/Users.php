@@ -699,7 +699,7 @@ class Users extends Model
 
             return response()->json([
                 'success' => [
-                    'data' => 'Save Success'
+                    'data' => 'http://10.7.200.229/apiweb/images/user-profile/'.$image
                 ]
             ], 200);
         }else{
