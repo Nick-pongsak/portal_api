@@ -336,11 +336,11 @@ class UserController extends Controller
         $_dataAll = $request->all();
         $user_update = $this->getUserLogin();
         $user_id = $_dataAll['user_id'];
-        $odd_password  = $_dataAll['odd_password'];
+        $old_password  = $_dataAll['old_password'];
 
         $field_error = '';
-        if ($odd_password == '') {
-            $field_error .= ' odd_password,';
+        if ($old_password == '') {
+            $field_error .= ' old_password,';
         }
         if ($field_error != '') {
             return response()->json([
@@ -363,7 +363,7 @@ class UserController extends Controller
                 }
                 // $hash = '$2y$10$f.AOeKBpQkYZyYEX5ULW0OfExjpfhxBJUYilbCH2BptVV6KBK9gDK';
 
-                if (password_verify($odd_password, $hash)) {
+                if (password_verify($old_password, $hash)) {
                     return response()->json([
                         'success' => [
                             'data' => 'password corrected',
@@ -382,6 +382,59 @@ class UserController extends Controller
                         'data' => 'password incorrected',
                     ]
                 ], 400);
+            }
+        }
+    }
+
+    public function change_password_new(Request $request)
+    {
+
+        $_dataAll = $request->all();
+        $user_update = $this->getUserLogin();
+        $user_id = $_dataAll['user_id'];
+        $new_password  = $_dataAll['new_password'];
+
+        $field_error = '';
+        if ($new_password == '') {
+            $field_error .= ' new_password,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+
+            $sql = "
+            SELECT * FROM users WHERE
+            user_id = {$user_id}
+            AND active = 1";
+
+            $sql_user = DB::select($sql);
+
+            if (count($sql_user) == 1) {
+                $sql = "
+                UPDATE users SET
+                password = '{$new_password}'
+                WHERE
+                user_id = {$user_id}
+                AND active = 1";
+    
+                $sql_user = DB::select($sql);
+
+                return response()->json([
+                    'success' => [
+                        'data' => 'password updated',
+                    ]
+                ], 200);
+                
+            } else {
+                return response()->json([
+                    'error' => [
+                        'data' => 'ไม่พบ user_id ที่ต้องการเปลี่ยน password ',
+                    ]
+                ], 225);
             }
         }
     }

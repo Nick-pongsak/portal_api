@@ -64,3 +64,4 @@ Route::post('/upload-image', [UserController::class, 'upload_img']);
 Route::post('/delete-image', [UserController::class, 'delimg']);
 Route::post('/update-profile', [UserController::class, 'update_profile']);
 Route::post('/change-password', [UserController::class, 'change_password']);
+Route::post('/change-password-new', [UserController::class, 'change_password_new']);
