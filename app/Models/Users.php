@@ -152,7 +152,8 @@ class Users extends Model
 
             $sql_delete_order = "
             UPDATE user_setting SET
-            app_order = '' ";
+            app_order = '' 
+            WHERE user_id = {$user_id}";
     
             $sql_delete = DB::insert($sql_delete_order);
 
