@@ -142,6 +142,22 @@ class Users extends Model
 
     public static function edit_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu)
     {
+        $sql_order = "
+        SELECT * FROM user_profile
+        WHERE NOT(group_id = {$group_id})
+        AND user_id = {$user_id}";
+
+        $sql_or = DB::select($sql_order);
+        if(!empty($sql_or)){
+
+            $sql_delete_order = "
+            UPDATE user_setting SET
+            app_order = '' ";
+    
+            $sql_delete = DB::insert($sql_delete_order);
+
+        }
+        
         $datetime_now = date('Y-m-d H:i:s');
 
         $sql = "UPDATE user_profile SET 

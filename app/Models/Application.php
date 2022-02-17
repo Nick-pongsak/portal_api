@@ -711,6 +711,7 @@ class Application extends Model
                             'name_th'     => $item->group_name_th,
                             'name_en'     => $item->group_name_en,
                             'order'       => $item_o->app_order,
+                            'path'        => 'http://10.7.200.229/apiweb/images/banner-app/',
                             'app'         => $app_a,
                         );
                     }
@@ -720,6 +721,7 @@ class Application extends Model
                         'name_th'     => $item->group_name_th,
                         'name_en'     => $item->group_name_en,
                         'order'       => '',
+                        'path'        => 'http://10.7.200.229/apiweb/images/banner-app/',
                         'app'         => $app_a,
                     );
                 }
