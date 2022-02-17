@@ -55,12 +55,11 @@ Route::post('/get-user-list', [UserController::class, 'userlist']);
 Route::post('/update-user', [UserController::class, 'updateuser']);
 Route::post('/delete-user', [UserController::class, 'deleteuser']);
 
-// image
-Route::post('/upload-image', [imageController::class, 'upload_img']);
-
 // font-end
 Route::post('/application-user', [ApplicationGroupController::class, 'appuser']);
 
-//user-setting-order
+//user-setting
 Route::post('/save-order', [UserController::class, 'saveorder']);
-
+Route::post('/upload-image', [UserController::class, 'upload_img']);
+Route::post('/delete-image', [UserController::class, 'delimg']);
+Route::post('/update-profile', [UserController::class, 'update_profile']);

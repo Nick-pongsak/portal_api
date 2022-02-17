@@ -458,6 +458,42 @@ class Users extends Model
         }
     }
 
+    public static function update_profile($user_id, $name_th, $name_en, $postname_th, $postname_en, $email, $user_update, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone)
+    {
+        $sql = "
+        SELECT * FROM users WHERE
+        user_id = {$user_id}
+        AND active = 1";
+
+        $sql_user = DB::select($sql);
+
+        if (count($sql_user) == 1) {
+            // $user = Users::edit_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update);
+
+
+            $user_profile = Users::edit_profile($user_id, $name_th, $name_en, $postname_th, $postname_en, $email, $user_update, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone);
+
+            // foreach ($app as $item) {
+            //     $app_id =  $item->app_id;
+            //     $username =  $item->username;
+            //     $password_sso =  $item->password;
+            //     $user_sso = Users::edit_username_sso($user_id, $emp_code, $app_id, $username, $password_sso, $user_update);
+            // }
+
+            return response()->json([
+                'success' => [
+                    'data' => 'User Updated'
+                ]
+            ], 200);
+        } else {
+            return response()->json([
+                'error' => [
+                    'data' => 'ไม่พบ user ที่จะแก้ไข'
+                ]
+            ], 400);
+        }
+    }
+
     public static function delete_user($user_id)
     {
         $sql = "
@@ -597,7 +633,7 @@ class Users extends Model
         if (count($sql_user) == 1) {
             $datetime_now = date('Y-m-d H:i:s');
             $sql_users = "
-            UPDATE users_setting SET
+            UPDATE user_setting SET
             app_order = '{$order}',
             updatedate = '{$datetime_now}',
             updateby = {$user_id}
@@ -639,6 +675,119 @@ class Users extends Model
                 ]
             ], 200);
         }
+    }
+
+
+    public static function upload_img($user_id, $image)
+    {
+        $sql = "
+        SELECT * FROM user_profile WHERE
+        user_id = {$user_id}
+        AND active = 1";
+
+        $sql_user = DB::select($sql);
+
+        if (count($sql_user) == 1) {
+            $datetime_now = date('Y-m-d H:i:s');
+            $sql_users = "
+            UPDATE user_profile SET
+            image = '{$image}',
+            updatedate = '{$datetime_now}',
+            updateby = {$user_id}
+            WHERE user_id = {$user_id}";
+            $users = DB::select($sql_users);
+
+            return response()->json([
+                'success' => [
+                    'data' => 'Save Success'
+                ]
+            ], 200);
+        }else{
+            return response()->json([
+                'error' => [
+                    'data' => 'ไม่พบ user_id ที่ต้องการ upload image'
+                ]
+            ], 223);
+        }
+    }
+
+    public static function delimg($user_id)
+    {
+        $sql = "
+        SELECT * FROM user_profile WHERE
+        user_id = {$user_id}
+        AND active = 1";
+
+        $sql_user = DB::select($sql);
+
+        if (count($sql_user) == 1) {
+            $datetime_now = date('Y-m-d H:i:s');
+            $sql_users = "
+            UPDATE user_profile SET
+            image = '',
+            updatedate = '{$datetime_now}',
+            updateby = {$user_id}
+            WHERE user_id = {$user_id}";
+            $users = DB::select($sql_users);
+
+            return response()->json([
+                'success' => [
+                    'data' => 'Image Deleted'
+                ]
+            ], 200);
+        }else{
+            return response()->json([
+                'error' => [
+                    'data' => 'ไม่พบ user_id ที่ต้องการ delete image'
+                ]
+            ], 224);
+        }
+    }
+
+    public static function edit_profile($user_id, $name_th, $name_en, $postname_th, $postname_en, $email, $user_update, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone)
+    {
+        // $sql_order = "
+        // SELECT * FROM user_profile
+        // WHERE NOT(group_id = {$group_id})
+        // AND user_id = {$user_id}";
+
+        // $sql_or = DB::select($sql_order);
+        // if(!empty($sql_or)){
+
+        //     $sql_delete_order = "
+        //     UPDATE user_setting SET
+        //     app_order = '' 
+        //     WHERE user_id = {$user_id}";
+    
+        //     $sql_delete = DB::insert($sql_delete_order);
+
+        // }
+        
+        $datetime_now = date('Y-m-d H:i:s');
+
+        $sql = "UPDATE user_profile SET
+         name_th  = '{$name_th}'
+        ,name_en  = '{$name_en}'
+        ,nickname1_th = '{$nickname1_th}'
+        ,nickname1_en = '{$nickname1_en}'
+        ,nickname2_th = '{$nickname2_th}'
+        ,nickname2_en = '{$nickname2_en}'
+        ,postname_th  = '{$postname_th}'
+        ,postname_en  = '{$postname_en}'
+        ,email = '{$email}'
+        ,3cx   = '{$cx}'
+        ,phone = '{$phone}'
+        ,updatedate = '{$datetime_now}'
+        ,updateby   = '{$user_update}'
+        WHERE user_id = {$user_id}";
+
+        $sql_user = DB::insert($sql);
+
+        $datas = array();
+        if (!empty($sql_user)) {
+            $datas = $sql_user;
+        }
+        return $datas;
     }
 
 
