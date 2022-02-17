@@ -154,22 +154,40 @@ class Application extends Model
     public static function update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id)
     {
         $datetime_now = date('Y-m-d H:i:s');
-        $sql = "UPDATE application SET
-         name_th = '{$name_th}'
-        ,name_en = '{$name_en}'
-        ,description_th = '{$description_th}'
-        ,description_en = '{$description_en}'
-        ,category_id = {$category_id}
-        ,key_app = '{$key_app}'
-        ,type_login = {$type_login}
-        ,status = {$status}
-        ,status_sso = {$status_sso}
-        ,updatedate = '{$datetime_now}'
-        ,updateby = '{$user_id}'
-        ,image = '{$image}'
-        ,url = '{$url}'
-        ,active = 1
-        WHERE app_id = {$app_id}";
+        if($image != ''){
+            $sql = "UPDATE application SET
+            name_th = '{$name_th}'
+           ,name_en = '{$name_en}'
+           ,description_th = '{$description_th}'
+           ,description_en = '{$description_en}'
+           ,category_id = {$category_id}
+           ,key_app = '{$key_app}'
+           ,type_login = {$type_login}
+           ,status = {$status}
+           ,status_sso = {$status_sso}
+           ,updatedate = '{$datetime_now}'
+           ,updateby = '{$user_id}'
+           ,image = '{$image}'
+           ,url = '{$url}'
+           ,active = 1
+           WHERE app_id = {$app_id}";
+        }else{
+            $sql = "UPDATE application SET
+            name_th = '{$name_th}'
+            ,name_en = '{$name_en}'
+            ,description_th = '{$description_th}'
+            ,description_en = '{$description_en}'
+            ,category_id = {$category_id}
+            ,key_app = '{$key_app}'
+            ,type_login = {$type_login}
+            ,status = {$status}
+            ,status_sso = {$status_sso}
+            ,updatedate = '{$datetime_now}'
+            ,updateby = '{$user_id}'
+            ,url = '{$url}'
+            ,active = 1
+            WHERE app_id = {$app_id}";
+        }
 
         $sql_app = DB::insert($sql);
 
@@ -311,7 +329,7 @@ class Application extends Model
                     'type_login' => $item->type_login,
                     'status_sso' => $item->status_sso,
                     'status' => $item->status,
-                    'image' => 'http://10.7.200.229/apiweb/images/banner-app/'.$item->image,
+                    'image' => 'http://10.7.200.229/apiweb/images/banner-app/' . $item->image,
                     'url' => $item->url,
                 );
                 $i++;
@@ -654,7 +672,7 @@ class Application extends Model
 
 
         if (!empty($sql_group)) {
-            
+
             foreach ($sql_group as $item) {
                 $sql_app = " 
                 SELECT 
@@ -678,10 +696,9 @@ class Application extends Model
                 $app_a = array();
                 foreach ($app as $item_a) {
                     array_push($app_a, $item_a);
-                    
                 }
-                 
-                $sql_order ="
+
+                $sql_order = "
                 SELECT * FROM user_setting
                 WHERE user_id = {$user_id}
                 ";
@@ -697,7 +714,7 @@ class Application extends Model
                             'app'         => $app_a,
                         );
                     }
-                }else{
+                } else {
                     $datas = array(
                         'group_id'    => $item->group_id,
                         'name_th'     => $item->group_name_th,
@@ -706,7 +723,6 @@ class Application extends Model
                         'app'         => $app_a,
                     );
                 }
-               
             }
         } else {
             $datas = array();

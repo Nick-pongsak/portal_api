@@ -195,10 +195,7 @@ class ApplicationController extends Controller
             $field_error .= ' status_sso,';
         }
 
-        if ($image == '') {
-            $field_error .= ' image,';
-        }
-        else{
+        if ($image != ''){
             $image = $request->file('image');
             $input['imagename'] = time().'.'.$image->extension();
     
@@ -230,7 +227,7 @@ class ApplicationController extends Controller
                 $type_login,
                 $status,
                 $status_sso,
-                $input['imagename'],
+                ($image == '' ? '' : $input['imagename']),
                 $url,
                 $user->user_id
             );
