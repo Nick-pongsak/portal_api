@@ -17,7 +17,9 @@ class Users extends Model
     public static function create_user($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create)
     {
         $datetime_now = date('Y-m-d H:i:s');
-        $password = bcrypt($password);
+        if ($type == 1) {
+            $password = bcrypt($password);
+        }
         $sql = "INSERT INTO users 
         (id
         ,emp_code
@@ -77,7 +79,7 @@ class Users extends Model
     public static function create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu)
     {
         $datetime_now = date('Y-m-d H:i:s');
-        $sql_id = "UPDATE users SET id = {$user_id} WHERE type = {$type} AND emp_code = '{$emp_code}'";
+        $sql_id = "UPDATE users SET id = {$user_id} WHERE type = {$type} AND emp_code = '{$emp_code}' AND active = 1";
         $sql_add_id = DB::insert($sql_id);
 
         $sql = "INSERT INTO user_profile 
@@ -148,17 +150,16 @@ class Users extends Model
         AND user_id = {$user_id}";
 
         $sql_or = DB::select($sql_order);
-        if(!empty($sql_or)){
+        if (!empty($sql_or)) {
 
             $sql_delete_order = "
             UPDATE user_setting SET
             app_order = '' 
             WHERE user_id = {$user_id}";
-    
-            $sql_delete = DB::insert($sql_delete_order);
 
+            $sql_delete = DB::insert($sql_delete_order);
         }
-        
+
         $datetime_now = date('Y-m-d H:i:s');
 
         $sql = "UPDATE user_profile SET 
@@ -355,7 +356,7 @@ class Users extends Model
                     'group_name_th' => $item->group_name_th,
                     'group_name_en' => $item->group_name_en,
                     'type_login' => $item->type_login,
-                    'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/'.$item->image),
+                    'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
                     'status_permission' => $item->status_permission,
                     'admin_menu' => $item->admin_menu,
                 );
@@ -372,7 +373,6 @@ class Users extends Model
                 ]
             ], 400);
         }
-
     }
 
 
@@ -608,15 +608,12 @@ class Users extends Model
                         'group_name_th' => $item_gorup_id->group_name_th,
                         'group_name_en' => $item_gorup_id->group_name_en,
                         'type_login' => $item->type_login,
-                        'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/'.$item->image),
+                        'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
                         'status_permission' => $item->status_permission,
                         'admin_menu' => $item->admin_menu,
                     );
                     $i++;
                 }
-
-
-                
             }
         }
         return $datas;
@@ -667,7 +664,7 @@ class Users extends Model
             ,{$user_id}
             ,{$user_id}
             ,1)";
-    
+
             $sql_user = DB::insert($sql);
             return response()->json([
                 'success' => [
@@ -699,10 +696,10 @@ class Users extends Model
 
             return response()->json([
                 'success' => [
-                    'data' => 'http://10.7.200.229/apiweb/images/user-profile/'.$image
+                    'data' => 'http://10.7.200.229/apiweb/images/user-profile/' . $image
                 ]
             ], 200);
-        }else{
+        } else {
             return response()->json([
                 'error' => [
                     'data' => 'ไม่พบ user_id ที่ต้องการ upload image'
@@ -735,7 +732,7 @@ class Users extends Model
                     'data' => 'Image Deleted'
                 ]
             ], 200);
-        }else{
+        } else {
             return response()->json([
                 'error' => [
                     'data' => 'ไม่พบ user_id ที่ต้องการ delete image'
@@ -758,11 +755,11 @@ class Users extends Model
         //     UPDATE user_setting SET
         //     app_order = '' 
         //     WHERE user_id = {$user_id}";
-    
+
         //     $sql_delete = DB::insert($sql_delete_order);
 
         // }
-        
+
         $datetime_now = date('Y-m-d H:i:s');
 
         $sql = "UPDATE user_profile SET
@@ -789,7 +786,4 @@ class Users extends Model
         }
         return $datas;
     }
-
-
-    
 }
