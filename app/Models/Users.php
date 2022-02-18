@@ -322,7 +322,7 @@ class Users extends Model
         $sql_user = DB::select($sql);
 
         if (count($sql_user) == 1) {
-            $credentials = array('username' => $username, 'password' => $password, 'type' => $type);
+            $credentials = array('username' => $username, 'password' => $password, 'type' => $type, 'active' => 1);
 
             if (!$token = JwtAuth::attempt($credentials)) {
                 return response()->json([
