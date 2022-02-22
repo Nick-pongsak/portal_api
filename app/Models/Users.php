@@ -540,7 +540,7 @@ class Users extends Model
             (pro.emp_code like '%{$keyword}%') OR
             (pro.postname_th like '%{$keyword}%') OR
             (pro.postname_en like '%{$keyword}%') OR
-            (gp.name_th like '%{$keyword}%')
+            (gp.name_th like '%{$keyword}%') OR
             (gp.name_en like '%{$keyword}%')
             )";
         }
