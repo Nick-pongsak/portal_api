@@ -535,7 +535,14 @@ class Users extends Model
         $search = '';
         $order_by = '';
         if ($keyword != '') {
-            $search = "AND ((pro.name_th like '%{$keyword}%') OR (pro.name_en like '%{$keyword}%') OR (pro.emp_code like '%{$keyword}%'))";
+            $search = "AND ((pro.name_th like '%{$keyword}%') OR 
+            (pro.name_en like '%{$keyword}%') OR 
+            (pro.emp_code like '%{$keyword}%') OR
+            (pro.postname_th like '%{$keyword}%') OR
+            (pro.postname_en like '%{$keyword}%') OR
+            (gp.name_th like '%{$keyword}%')
+            (gp.name_en like '%{$keyword}%')
+            )";
         }
         if ($field != '') {
             $order_by = "ORDER BY {$field} {$sort}";
@@ -564,9 +571,13 @@ class Users extends Model
         ,IFNULL(pro.image,'') as image
         ,pro.status_permission
         ,pro.admin_menu
+        ,gp.name_th as group_name_th
+        ,gp.name_en as group_name_en
         FROM users user
         JOIN user_profile pro 
         ON user.user_id=pro.user_id
+        JOIN application_group gp
+        ON pro.group_id=gp.group_id
         WHERE user.active = 1
         {$search}
         {$order_by}
@@ -578,14 +589,6 @@ class Users extends Model
         if (!empty($sql_app)) {
             $i = 0;
             foreach ($sql_app as $item) {
-                $sql = "
-                SELECT name_th as group_name_th, name_en as group_name_en
-                FROM application_group
-                WHERE group_id = {$item->group_id}";
-
-                $sql_group_id = DB::select($sql);
-
-                foreach ($sql_group_id as $item_gorup_id) {
                     $datas[] = array(
                         'index'  => $i,
                         'user_id' => $item->user_id,
@@ -605,15 +608,14 @@ class Users extends Model
                         'phone' => $item->phone,
                         'status' => $item->status,
                         'group_id' => $item->group_id,
-                        'group_name_th' => $item_gorup_id->group_name_th,
-                        'group_name_en' => $item_gorup_id->group_name_en,
+                        'group_name_th' => $item->group_name_th,
+                        'group_name_en' => $item->group_name_en,
                         'type_login' => $item->type_login,
                         'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
                         'status_permission' => $item->status_permission,
                         'admin_menu' => $item->admin_menu,
                     );
                     $i++;
-                }
             }
         }
         return $datas;

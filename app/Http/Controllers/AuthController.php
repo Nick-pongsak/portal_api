@@ -61,8 +61,6 @@ class AuthController extends Controller
             $field_error .= ' postname_th,';
         }if ($postname_en == '') {
             $field_error .= ' postname_en,';
-        }if ($email == '') {
-            $field_error .= ' email,';
         }if ($status == '') {
             $field_error .= ' status,';
         }if ($group_id == '') {

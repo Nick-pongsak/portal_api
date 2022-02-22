@@ -279,7 +279,11 @@ class Application extends Model
         $search = '';
         $order_by = '';
         if ($keyword != '') {
-            $search = "AND ((app.name_th like '%{$keyword}%') OR (app.name_en like '%{$keyword}%'))";
+            $search = "AND ((app.name_th like '%{$keyword}%') OR 
+            (app.name_en like '%{$keyword}%') OR
+            (cat.name_th like '%{$keyword}%') OR
+            (cat.name_en like '%{$keyword}%')
+            )";
         }
         if ($field != '') {
             $order_by = "ORDER BY {$field} {$sort}";

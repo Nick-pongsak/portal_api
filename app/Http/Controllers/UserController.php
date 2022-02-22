@@ -81,9 +81,6 @@ class UserController extends Controller
         if ($postname_en == '') {
             $field_error .= ' postname_en,';
         }
-        if ($email == '') {
-            $field_error .= ' email,';
-        }
         if ($status == '') {
             $field_error .= ' status,';
         }
