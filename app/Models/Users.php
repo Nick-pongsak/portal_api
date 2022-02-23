@@ -57,7 +57,9 @@ class Users extends Model
     public static function edit_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update)
     {
         $datetime_now = date('Y-m-d H:i:s');
-        // $password = bcrypt($password);
+        if($password == 'LDAP'){
+            $password = bcrypt($password);
+        }
         $sql = "UPDATE users SET
          emp_code = '{$emp_code}'
         ,type = {$type}
