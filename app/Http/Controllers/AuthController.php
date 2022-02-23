@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Users;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -137,7 +138,81 @@ class AuthController extends Controller
 
     public function me()
     {
-        return response()->json(auth()->user());
+        // return response()->json(auth()->user());
+        $user_create = $this->getUserLogin();
+
+        $sql = "
+        SELECT
+         pro.user_id
+        ,pro.emp_code
+        ,pro.name_th
+        ,pro.name_en
+        ,pro.postname_th
+        ,pro.postname_en
+        ,pro.nickname1_th
+        ,pro.nickname1_en
+        ,pro.nickname2_th
+        ,pro.nickname2_en
+        ,pro.email
+        ,pro.3cx as cx
+        ,pro.phone
+        ,pro.status
+        ,pro.group_id
+        ,pro.type as type_login
+        ,IFNULL(pro.image,'') as image
+        ,pro.status_permission
+        ,pro.admin_menu,
+        g.name_en as group_name_en,
+        g.name_th as group_name_th 
+        FROM users u
+        INNER JOIN user_profile pro
+        ON u.user_id = pro.user_id
+        INNER JOIN application_group g
+        ON pro.group_id = g.group_id
+        WHERE
+        u.user_id = {$user_create->user_id}
+        AND u.active = 1";
+
+        $sql_user = DB::select($sql);
+
+        if (count($sql_user) == 1) {
+            foreach ($sql_user as $item) {
+                $datas = array(
+                    'user_id' => $item->user_id,
+                    'emp_code' => $item->emp_code,
+                    'name_th' => $item->name_th,
+                    'name_en' => $item->name_en,
+                    'postname_th' => $item->postname_th,
+                    'postname_en' => $item->postname_en,
+                    'nickname1_th' => $item->nickname1_th,
+                    'nickname1_en' => $item->nickname1_en,
+                    'nickname2_th' => $item->nickname2_th,
+                    'nickname2_en' => $item->nickname2_en,
+                    'email' => $item->email,
+                    'cx' => $item->cx,
+                    'phone' => $item->phone,
+                    'status' => $item->status,
+                    'group_id' => $item->group_id,
+                    'group_name_th' => $item->group_name_th,
+                    'group_name_en' => $item->group_name_en,
+                    'type_login' => $item->type_login,
+                    'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
+                    'status_permission' => $item->status_permission,
+                    'admin_menu' => $item->admin_menu,
+                );
+            }
+            return response()->json([
+                'success' => [
+                    'data' => $datas
+                ]
+            ], 200);
+        } else {
+            return response()->json([
+                'error' => [
+                    'data' => 'token expired'
+                ]
+            ], 401);
+        }
     }
 
     public function tokenExpired()
