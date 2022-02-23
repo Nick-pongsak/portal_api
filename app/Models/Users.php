@@ -575,6 +575,7 @@ class Users extends Model
         ,pro.admin_menu
         ,gp.name_th as group_name_th
         ,gp.name_en as group_name_en
+        ,gp.active
         FROM users user
         JOIN user_profile pro 
         ON user.user_id=pro.user_id
@@ -610,8 +611,8 @@ class Users extends Model
                         'phone' => $item->phone,
                         'status' => $item->status,
                         'group_id' => $item->group_id,
-                        'group_name_th' => $item->group_name_th,
-                        'group_name_en' => $item->group_name_en,
+                        'group_name_th' => ($item->active == 0 ? '' : $item->group_name_th),
+                        'group_name_en' => ($item->active == 0 ? '' : $item->group_name_en),
                         'type_login' => $item->type_login,
                         'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
                         'status_permission' => $item->status_permission,
