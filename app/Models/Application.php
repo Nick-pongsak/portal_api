@@ -115,37 +115,22 @@ class Application extends Model
 
         $sql = "
         SELECT * FROM application WHERE
-        app_id = '{$app_id}'";
+        app_id = '{$app_id}'
+        AND active = 1";
 
         $sql_app = DB::select($sql);
 
         if (count($sql_app) == 1) {
-            $sql_name = "
-            SELECT * FROM application WHERE
-            name_th = '{$name_th}'
-            AND name_en = '{$name_en}'
-            AND active = 1";
-
-            $sql_check_name = DB::select($sql_name);
-
-            if (count($sql_check_name) == 1) {
-                $app = Application::update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id);
-                return response()->json([
-                    'success' => [
-                        'data' => 'Application Updated',
-                    ]
-                ], 200);
-            } else {
-                return response()->json([
-                    'error' => [
-                        'data' => 'Validate Name Application!',
-                    ]
-                ], 400);
-            }
+            $app = Application::update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id);
+            return response()->json([
+                'success' => [
+                    'data' => 'Application Updated',
+                ]
+            ], 200);
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'ไม่สามารถแก้ไขมาใช้ชื่อ app นี้ได้เนื่องจากมีการใช้ชื่อนี้เเล้ว (API : update-application)',
+                    'data' => 'ไม่สามารถแก้ไข รบกวนตรวจสอบ app_id (API : update-application)',
                 ]
             ], 214);
         }
@@ -618,6 +603,16 @@ class Application extends Model
 
         $sql_group = DB::select($sql_gp);
 
+        // count group app active
+        $count_sql_gp = "
+        SELECT *
+        FROM application_group app
+        WHERE  app.group_id = {$group_id}
+        AND app.active = 0
+        ";
+
+        $co_sql_group = DB::select($count_sql_gp);
+
 
         if (!empty($sql_group)) {
             foreach ($sql_group as $item) {
@@ -648,6 +643,7 @@ class Application extends Model
                     'name_th'     => $item->group_name_th,
                     'name_en'     => $item->group_name_en,
                     'app'         => $app_a,
+                    'app'         => (!empty($co_sql_group) ? [] : $app_a),
                 );
             }
         } else {
@@ -838,7 +834,8 @@ class Application extends Model
         $sql_u = "
         SELECT * FROM user_profile WHERE
         group_id = '{$group_id}'
-        AND active = 1";
+        AND active = 1
+        AND status = 1";
 
         $sql_user = DB::select($sql_u);
 
