@@ -16,7 +16,7 @@ class ApplicationController extends Controller
      */
     public function __construct()
     {
-        //
+        $this->middleware('jwtauth');
     }
 
     private function getUserLogin()

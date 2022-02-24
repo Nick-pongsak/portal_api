@@ -16,7 +16,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'searchLDAP']]);
+        $this->middleware('jwtauth', ['except' => ['login', 'register', 'searchLDAP']]);
     }
 
     private function getUserLogin()

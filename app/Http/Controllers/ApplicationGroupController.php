@@ -8,6 +8,16 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ApplicationGroupController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('jwtauth');
+    }
+    
     private function getUserLogin()
     {
         $token = JWTAuth::parseToken();
