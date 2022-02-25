@@ -182,7 +182,6 @@ class Users extends Model
         ,type = {$type}
         ,updatedate = '{$datetime_now}'
         ,updateby   = '{$user_update}'
-        ,image      = ''
         ,status_permission = '{$permission}'
         ,admin_menu = '{$admin_menu}'
         WHERE user_id = {$user_id}";
@@ -382,8 +381,8 @@ class Users extends Model
     {
         $sql = "
         SELECT * FROM users WHERE
-        emp_code = '{$emp_code}'
-        OR username = '{$username}'
+        (emp_code = '{$emp_code}'
+        OR username = '{$username}')
         AND type = '{$type}'
         AND active = 1";
 
