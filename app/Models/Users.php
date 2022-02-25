@@ -383,6 +383,7 @@ class Users extends Model
         $sql = "
         SELECT * FROM users WHERE
         emp_code = '{$emp_code}'
+        OR username = '{$username}'
         AND type = '{$type}'
         AND active = 1";
 
