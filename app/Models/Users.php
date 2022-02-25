@@ -419,7 +419,7 @@ class Users extends Model
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'User type นี้มีการใช้งานเเล้ว (API : register)'
+                    'data' => 'ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสพนักงานหรือชื่อผู้ใช้งานนี้ ถูกใช้งานแล้ว'
                 ]
             ], 211);
         }
