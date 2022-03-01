@@ -444,4 +444,67 @@ class UserController extends Controller
             }
         }
     }
+    public function checkaccess(Request $request){
+        
+        $_dataAll = $request->all();
+        #$user_s = $this->getUserLogin();
+        $host = $_dataAll['host'];
+        $url = $_dataAll['url'];
+        $username = $_dataAll['username'];
+        $pwd = $_dataAll['password'];
+        $access = $this->cypherapi($host,$url,$username,$pwd);
+        
+        if($access){
+            return response()->json([
+                'success' => [
+                    'data' => 'true',
+                ]
+            ], 200);
+        }else{
+            return response()->json([
+                'success' => [
+                    'data' => 'false',
+                ]
+            ], 401);
+        }
+        
+    }
+    private function cypherapi($host='',$url='' , $username = '', $pwd ='')
+    {
+        $curl = curl_init();
+        
+        curl_setopt_array($curl, array(
+            //CURLOPT_PORT => API_Cipher_PORT,
+            //CURLOPT_URL => $host.$url."username={$username}&password={$pwd}",
+            CURLOPT_URL => "http://".$host.$url."&username={$username}&password={$pwd}",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            ));
+        
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        
+        curl_close($curl);
+        
+        if ($err) {
+            echo "cURL Error #:" . $err;
+        } else {
+            
+            
+            # print_r($response);die;
+            $resource = json_decode($response);
+            if(isset($resource->success->token)){
+                return $resource->success->token;
+            }else{
+                return false;
+            }
+            
+        }
+        
+    }
+    
 }
