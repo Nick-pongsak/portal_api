@@ -836,4 +836,81 @@ class Users extends Model
             "iv"  => substr($derivedBytes, $keySize * 4, $ivSize * 4)
         );
     }
+
+    public static function update_username_sso($user_id, $emp_code, $app_id, $username, $user_update)
+    {
+            $sql = "
+            SELECT * FROM sso WHERE
+            user_id = {$user_id}
+            AND app_id = {$app_id}
+            AND emp_code = '{$emp_code}'";
+
+            $sql_user = DB::select($sql);
+
+            $sql_user_id = "
+            SELECT * FROM users WHERE
+            user_id = {$user_id}
+            AND active = 1";
+
+            $sql_user_id = DB::select($sql_user_id);
+
+            if (count($sql_user) == 1 && count($sql_user_id) == 1) {
+                $datetime_now = date('Y-m-d H:i:s');
+                $sql = "
+                UPDATE sso SET
+                username = '{$username}',
+                updateby = '{$user_update}',
+                updatedate = '{$datetime_now}'
+                WHERE
+                user_id = {$user_id}
+                AND app_id = {$app_id}
+                AND emp_code = '{$emp_code}'";
+    
+                $sql_user = DB::select($sql);
+
+                return response()->json([
+                    'success' => [
+                        'data' => 'update username sso success',
+                    ]
+                ], 200);
+                
+            } else if (count($sql_user) == 0 && count($sql_user_id) == 1) {
+                $datetime_now = date('Y-m-d H:i:s');
+                $sql = "INSERT INTO sso 
+                (emp_code
+                ,user_id
+                ,app_id
+                ,username
+                ,password
+                ,createdate
+                ,updatedate
+                ,createby
+                ,updateby)
+                VALUES 
+                (
+                 '{$emp_code}'
+                , {$user_id}
+                , {$app_id}
+                ,'{$username}'
+                ,''
+                ,'{$datetime_now}'
+                ,'{$datetime_now}'
+                ,'{$user_update}'
+                ,'{$user_update}')";
+                $sql_user = DB::insert($sql);
+
+                return response()->json([
+                    'success' => [
+                        'data' => 'update username sso success',
+                    ]
+                ], 200);
+
+            } else {
+                return response()->json([
+                    'error' => [
+                        'data' => 'ไม่พบ user ที่ต้องการเพิ่ม/แก้ไข username',
+                    ]
+                ], 227);
+            }
+    }
 }

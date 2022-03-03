@@ -542,5 +542,41 @@ class UserController extends Controller
             ]
         ], 200);
     }
+
+    public function update_username_sso(Request $request)
+    {
+
+        $_dataAll = $request->all();
+        $user_update = $this->getUserLogin();
+        $user_id  = $_dataAll['user_id'];
+        $emp_code = $_dataAll['emp_code'];
+        $app_id   = $_dataAll['app_id'];
+        $username = $_dataAll['username'];
+
+        $field_error = '';
+        if ($user_id == '') {
+            $field_error .= ' user_id,';
+        }
+        if ($emp_code == '') {
+            $field_error .= ' emp_code,';
+        }
+        if ($app_id == '') {
+            $field_error .= ' app_id,';
+        }
+        if ($username == '') {
+            $field_error .= ' username,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $user = Users::update_username_sso($user_id, $emp_code, $app_id, $username, $user_update->user_id);
+
+            return $user;
+        }
+    }
     
 }
