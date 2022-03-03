@@ -71,5 +71,5 @@ Route::post('/aes-encrypt', [UserController::class, 'aes_encrypt']);
 Route::post('/aes-decrypt', [UserController::class, 'aes_decrypt']);
 
 // sso sales_ops
-Route::post('/check-user-access', [UserController::class, 'checkaccess']); // login app
+Route::post('/check-authen-app', [UserController::class, 'checkaccess']); // login app
 Route::post('/update-username-sso', [UserController::class, 'update_username_sso']);
