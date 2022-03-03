@@ -7,6 +7,10 @@ use App\Models\Users;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Image;
+use AesCtr;
+
+include 'lib/aes.php';
+include 'lib/aesctr.php';
 
 class UserController extends Controller
 {
@@ -505,6 +509,42 @@ class UserController extends Controller
             
         }
         
+    }
+
+    public function aes_decrypt(Request $request)
+    {
+
+        $_dataAll = $request->all();
+        $user_update = $this->getUserLogin();
+        $text = $_dataAll['text'];
+        $key  = $_dataAll['key'];
+          
+        $rawText = Users::decrypt_crypto($text, $key);
+
+        return response()->json([
+            'success' => [
+                'encrypted' => $rawText,
+            ]
+        ], 200);
+    }
+
+
+    public function aes_encrypt(Request $request)
+    {
+
+        $_dataAll = $request->all();
+        $user_update = $this->getUserLogin();
+        $text = $_dataAll['text'];
+        $key  = $_dataAll['key'];
+
+        // $encFile = AesCtr::decrypt($text,$key,256);
+        $decrypted = openssl_decrypt($text, 'aes-256-ecb', $key);
+        
+        return response()->json([
+            'success' => [
+                'data' => $decrypted,
+            ]
+        ], 200);
     }
     
 }

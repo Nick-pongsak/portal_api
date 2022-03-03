@@ -56,7 +56,7 @@ Route::post('/update-user', [UserController::class, 'updateuser']);
 Route::post('/delete-user', [UserController::class, 'deleteuser']);
 Route::post('/check-user-access', [UserController::class, 'checkaccess']); // login app
 
-// font-end
+// front-end
 Route::post('/application-user', [ApplicationGroupController::class, 'appuser']);
 
 //user-setting
@@ -66,3 +66,7 @@ Route::post('/delete-image', [UserController::class, 'delimg']);
 Route::post('/update-profile', [UserController::class, 'update_profile']);
 Route::post('/change-password', [UserController::class, 'change_password']);
 Route::post('/change-password-new', [UserController::class, 'change_password_new']);
+
+// AES256
+Route::post('/aes-encrypt', [UserController::class, 'aes_encrypt']);
+Route::post('/aes-decrypt', [UserController::class, 'aes_decrypt']);
