@@ -7,10 +7,6 @@ use App\Models\Users;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Image;
-use AesCtr;
-
-include 'lib/aes.php';
-include 'lib/aesctr.php';
 
 class UserController extends Controller
 {
