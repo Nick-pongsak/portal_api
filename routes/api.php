@@ -65,6 +65,7 @@ Route::post('/delete-image', [UserController::class, 'delimg']);
 Route::post('/update-profile', [UserController::class, 'update_profile']);
 Route::post('/change-password', [UserController::class, 'change_password']);
 Route::post('/change-password-new', [UserController::class, 'change_password_new']);
+Route::post('/update-language', [UserController::class, 'update_language']);
 
 // AES256
 Route::post('/aes-encrypt', [UserController::class, 'aes_encrypt']);

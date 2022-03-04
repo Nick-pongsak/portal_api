@@ -610,4 +610,37 @@ class UserController extends Controller
         }
         
     }
+
+    public function update_language(Request $request)
+    {
+        
+        $_dataAll = $request->all();
+        $user_update = $this->getUserLogin();
+        $user_id  = $_dataAll['user_id'];
+        $emp_code  = $_dataAll['emp_code'];
+        $language = $_dataAll['language'];
+        
+        $field_error = '';
+        if ($user_id == '') {
+            $field_error .= ' user_id,';
+        }
+        if ($language == '') {
+            $field_error .= ' language,';
+        }
+        if ($emp_code == '') {
+            $field_error .= ' emp_code,';
+        }
+        if ($field_error != '') {
+            return response()->json([
+                'error' => [
+                    'data' => 'ส่ง parameter ไม่ครบ feild',
+                ]
+            ], 210);
+        } else {
+            $user = Users::update_language($user_id, $emp_code, $language, $user_update->user_id);
+            
+            return $user;
+        }
+    }
+
 }

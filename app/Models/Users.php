@@ -322,7 +322,48 @@ class Users extends Model
 
         $sql_user = DB::select($sql);
 
-        if (count($sql_user) == 1) {
+
+
+
+        $sql_language = "
+        SELECT
+         pro.user_id
+        ,pro.emp_code
+        ,pro.name_th
+        ,pro.name_en
+        ,pro.postname_th
+        ,pro.postname_en
+        ,pro.nickname1_th
+        ,pro.nickname1_en
+        ,pro.nickname2_th
+        ,pro.nickname2_en
+        ,pro.email
+        ,pro.3cx as cx
+        ,pro.phone
+        ,pro.status
+        ,pro.group_id
+        ,pro.type as type_login
+        ,IFNULL(pro.image,'') as image
+        ,pro.status_permission
+        ,pro.admin_menu,
+        g.name_en as group_name_en,
+        g.name_th as group_name_th,
+        s.language
+        FROM users u
+        INNER JOIN user_profile pro
+        ON u.user_id = pro.user_id
+        INNER JOIN user_setting s
+        ON u.user_id = s.user_id
+        INNER JOIN application_group g
+        ON pro.group_id = g.group_id
+        WHERE
+        u.username = '{$username}'
+        AND u.type = '{$type}'
+        AND u.active = 1";
+
+        $sql_language = DB::select($sql_language);
+
+        if (count($sql_user) == 1 && count($sql_language) == 0) {
             $credentials = array('username' => $username, 'password' => $password, 'type' => $type, 'active' => 1);
 
             if (!$token = JwtAuth::attempt($credentials)) {
@@ -360,6 +401,7 @@ class Users extends Model
                     'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
                     'status_permission' => $item->status_permission,
                     'admin_menu' => $item->admin_menu,
+                    'language' => 'th',
                 );
             }
             return response()->json([
@@ -367,7 +409,53 @@ class Users extends Model
                     'data' => $datas
                 ]
             ], 200);
-        } else {
+        }else if (count($sql_user) == 1 && count($sql_language) == 1) {
+            $credentials = array('username' => $username, 'password' => $password, 'type' => $type, 'active' => 1);
+
+            if (!$token = JwtAuth::attempt($credentials)) {
+                return response()->json([
+                    'error' => [
+                        'data' => $credentials
+                    ]
+                ], 400);
+            }
+            foreach ($sql_language as $item) {
+                $datas = array(
+                    'access_token' => $token,
+                    'username' => $username,
+                    'token_type' => 'bearer',
+                    'expires_in' => config('jwt.ttl'),
+                    'user_id' => $item->user_id,
+                    'emp_code' => $item->emp_code,
+                    'username' => $username,
+                    'name_th' => $item->name_th,
+                    'name_en' => $item->name_en,
+                    'postname_th' => $item->postname_th,
+                    'postname_en' => $item->postname_en,
+                    'nickname1_th' => $item->nickname1_th,
+                    'nickname1_en' => $item->nickname1_en,
+                    'nickname2_th' => $item->nickname2_th,
+                    'nickname2_en' => $item->nickname2_en,
+                    'email' => $item->email,
+                    'cx' => $item->cx,
+                    'phone' => $item->phone,
+                    'status' => $item->status,
+                    'group_id' => $item->group_id,
+                    'group_name_th' => $item->group_name_th,
+                    'group_name_en' => $item->group_name_en,
+                    'type_login' => $item->type_login,
+                    'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
+                    'status_permission' => $item->status_permission,
+                    'admin_menu' => $item->admin_menu,
+                    'language' => $item->language,
+                );
+            }
+            return response()->json([
+                'success' => [
+                    'data' => $datas
+                ]
+            ], 200);
+        }else {
             return response()->json([
                 'error' => [
                     'data' => 'Validate Username or Password'
@@ -668,7 +756,7 @@ class Users extends Model
             ,'{$datetime_now}'
             ,{$user_id}
             ,{$user_id}
-            ,1)";
+            ,'th')";
 
             $sql_user = DB::insert($sql);
             return response()->json([
@@ -912,5 +1000,60 @@ class Users extends Model
                     ]
                 ], 227);
             }
+    }
+
+    public static function update_language($user_id, $emp_code, $language, $user_update)
+    {
+        $sql = "
+        SELECT * FROM user_setting WHERE
+        user_id = {$user_id}";
+
+        $sql_user = DB::select($sql);
+
+        if (count($sql_user) == 1) {
+            $datetime_now = date('Y-m-d H:i:s');
+            $sql_users = "
+            UPDATE user_setting SET
+            language = '{$language}',
+            updatedate = '{$datetime_now}',
+            updateby = {$user_id}
+            WHERE user_id = {$user_id}";
+            $users = DB::select($sql_users);
+
+            return response()->json([
+                'success' => [
+                    'data' => 'Save Success'
+                ]
+            ], 200);
+        } else {
+
+            $datetime_now = date('Y-m-d H:i:s');
+            $sql = "
+            INSERT INTO user_setting 
+            (user_id
+            ,emp_code
+            ,app_order
+            ,createdate
+            ,updatedate
+            ,createby
+            ,updateby
+            ,language)
+            VALUES 
+            ({$user_id}
+            ,'{$emp_code}'
+            ,'0'
+            ,'{$datetime_now}'
+            ,'{$datetime_now}'
+            ,{$user_id}
+            ,{$user_id}
+            ,'{$language}')";
+
+            $sql_user = DB::insert($sql);
+            return response()->json([
+                'success' => [
+                    'data' => 'Save Success'
+                ]
+            ], 200);
+        }
     }
 }
