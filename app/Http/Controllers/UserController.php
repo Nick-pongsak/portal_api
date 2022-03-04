@@ -587,6 +587,9 @@ class UserController extends Controller
         $url = $_dataAll['url'];
         $username = $_dataAll['username'];
         $pwd = $_dataAll['password'];
+
+        $key = $username.'SalesOpsKEY';
+        $pwd = Users::decrypt_crypto($pwd, $key);
         
         $access = $this->cypherapi($host,$url,$username,$pwd);
         
