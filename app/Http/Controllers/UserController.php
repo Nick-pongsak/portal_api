@@ -470,8 +470,6 @@ class UserController extends Controller
             echo "cURL Error #:" . $err;
         } else {
             
-            
-            print_r($response);die;
             $resource = json_decode($response);
             if(isset($resource->success->token)){
                 return $resource->success->token;
@@ -590,10 +588,7 @@ class UserController extends Controller
         $username = $_dataAll['username'];
         $pwd = $_dataAll['password'];
         
-        //         print_r($_dataAll);die;
         $access = $this->cypherapi($host,$url,$username,$pwd);
-        
-        print_r($access);die;
         
         if($access){
             return response()->json([
