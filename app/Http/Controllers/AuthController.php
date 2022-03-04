@@ -95,6 +95,11 @@ class AuthController extends Controller
         $_dataAll = $request->all();
         $username = $_dataAll['username'];
         $password = $_dataAll['password'];
+
+        // decrypt password AES-256
+        $key      = 'WebPortalKey';
+        $password = Users::decrypt_crypto($password, $key);
+
         $type   = $_dataAll['type'];
         if ($type == 1) {
             $url = API_Sync . 'iauthen/ldap-authen';
