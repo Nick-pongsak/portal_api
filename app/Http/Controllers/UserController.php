@@ -448,13 +448,13 @@ class UserController extends Controller
     private function cypherapi($host='',$url='' , $username = '', $pwd ='')
     {
         $curl = curl_init();
-        
+        $pwd = urlencode($pwd);
         curl_setopt_array($curl, array(
             //CURLOPT_PORT => API_Cipher_PORT,
             //CURLOPT_URL => $host.$url."username={$username}&password={$pwd}",
             CURLOPT_URL => "http://".$host.$url."&username={$username}&password={$pwd}",
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
+            CURLOPT_ENCODING => "utf-8",
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
@@ -588,8 +588,8 @@ class UserController extends Controller
         $username = $_dataAll['username'];
         $pwd = $_dataAll['password'];
 
-        $key = $username.'SalesOpsKEY';
-        $pwd = Users::decrypt_crypto($pwd, $key);
+        // $key = $username.'SalesOpsKEY';
+        // $pwd = Users::decrypt_crypto($pwd, $key);
         
         $access = $this->cypherapi($host,$url,$username,$pwd);
         
