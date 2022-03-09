@@ -679,11 +679,16 @@ class Application extends Model
                 a.*,
                 c.name_th category_name_th, 
                 c.name_en category_name_en,
-                IFNULL(ss.username, '') as username
+                IFNULL(ss.username, '') as username,
+                u.username as user_ldap,
+                IFNULL(ss.verify, 0) as verify
                 FROM application a 
                 INNER JOIN category c 
                 ON 
                 a.category_id = c.category_id
+                INNER JOIN users u 
+                ON 
+                u.user_id = {$user_id}
                 LEFT JOIN sso ss
                 ON 
                 a.app_id = ss.app_id AND ss.user_id = {$user_id}

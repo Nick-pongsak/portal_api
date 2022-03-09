@@ -208,7 +208,8 @@ class Users extends Model
         ,createdate
         ,updatedate
         ,createby
-        ,updateby)
+        ,updateby
+        ,verify)
         VALUES 
         (
          '{$emp_code}'
@@ -219,7 +220,8 @@ class Users extends Model
         ,'{$datetime_now}'
         ,'{$datetime_now}'
         ,'{$user_create}'
-        ,'{$user_create}')";
+        ,'{$user_create}'
+        , 0)";
 
         $sql_user = DB::insert($sql);
 
@@ -262,7 +264,8 @@ class Users extends Model
             ,createdate
             ,updatedate
             ,createby
-            ,updateby)
+            ,updateby
+            ,verify)
             VALUES 
             (
              '{$emp_code}'
@@ -273,7 +276,8 @@ class Users extends Model
             ,'{$datetime_now}'
             ,'{$datetime_now}'
             ,'{$user_update}'
-            ,'{$user_update}')";
+            ,'{$user_update}'
+            , 0)";
             $sql_user = DB::insert($sql);
         }
 
@@ -947,6 +951,7 @@ class Users extends Model
                 $sql = "
                 UPDATE sso SET
                 username = '{$username}',
+                verify   = 1,
                 updateby = '{$user_update}',
                 updatedate = '{$datetime_now}'
                 WHERE
@@ -973,7 +978,8 @@ class Users extends Model
                 ,createdate
                 ,updatedate
                 ,createby
-                ,updateby)
+                ,updateby
+                ,verify)
                 VALUES 
                 (
                  '{$emp_code}'
@@ -984,7 +990,8 @@ class Users extends Model
                 ,'{$datetime_now}'
                 ,'{$datetime_now}'
                 ,'{$user_update}'
-                ,'{$user_update}')";
+                ,'{$user_update}'
+                , 1)";
                 $sql_user = DB::insert($sql);
 
                 return response()->json([
