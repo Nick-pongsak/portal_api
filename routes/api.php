@@ -75,3 +75,7 @@ Route::post('/aes-decrypt', [UserController::class, 'aes_decrypt']);
 Route::post('/check-user-access', [UserController::class, 'checkaccess']); // login app
 Route::post('/check-authen-app', [UserController::class, 'chkapp']); // login app
 Route::post('/update-username-sso', [UserController::class, 'update_username_sso']);
+
+// sso corporate
+Route::post('/check-authen-corp', [UserController::class, 'corp_verify']); // verify
+
