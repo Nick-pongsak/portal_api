@@ -494,8 +494,8 @@ class UserController extends Controller
           CURLOPT_FOLLOWLOCATION => true,
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
           CURLOPT_CUSTOMREQUEST => 'POST',
-        //   CURLOPT_POSTFIELDS =>'{"username":"'.$username.'", "password":"'.$pwd.'"}',
-          CURLOPT_POSTFIELDS =>'{"username":"fake_channel_2", "password":"+ZJFhyUsjqcDQtThwnATHQ=="}',
+          CURLOPT_POSTFIELDS =>'{"username":"'.$username.'", "password":"'.$pwd.'"}',
+        //   CURLOPT_POSTFIELDS =>'{"username":"fake_channel_2", "password":"+ZJFhyUsjqcDQtThwnATHQ=="}',
           CURLOPT_HTTPHEADER => array(
             'Content-Type: application/json'
           ),
