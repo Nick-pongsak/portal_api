@@ -502,8 +502,8 @@ class UserController extends Controller
         ));
         
         $response = curl_exec($curl);
-        print_r($response);
-        die;
+        // print_r($response);
+        // die;
 
         $err = curl_error($curl);
         
