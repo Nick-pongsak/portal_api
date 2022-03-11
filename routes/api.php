@@ -79,3 +79,5 @@ Route::post('/update-username-sso', [UserController::class, 'update_username_sso
 // sso corporate
 Route::post('/check-authen-corp', [UserController::class, 'corp_verify']); // verify
 
+// sso mktops
+Route::post('/check-authen-mktops', [UserController::class, 'mktops_verify']); // verify

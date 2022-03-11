@@ -523,6 +523,46 @@ class UserController extends Controller
             
         }
     }
+
+    private function mktops_verify_curl($host='',$url='' , $username = '', $pwd ='')
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "http://".$host.$url,
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => 'utf-8',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'POST',
+          CURLOPT_POSTFIELDS =>'{"username":"'.$username.'", "password":"'.$pwd.'"}',
+          CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json'
+          ),
+        ));
+        
+        $response = curl_exec($curl);
+
+        $err = curl_error($curl);
+        
+        curl_close($curl);
+        
+        if ($err) {
+            echo "cURL Error #:" . $err;
+        } else {
+            
+            $resource = json_decode($response);
+            // print_r($resource);die;
+            if(isset($resource->auth)){
+                return true;
+            }else{
+                return false;
+            }
+            
+        }
+    }
     
     public function aes_decrypt(Request $request)
     {
@@ -665,6 +705,36 @@ class UserController extends Controller
         // $pwd = Users::decrypt_crypto($pwd, $key);
         
         $access = $this->corp_verify_curl($host,$url,$username,$pwd);
+        
+        if($access){
+            return response()->json([
+                'success' => [
+                    'data' => 'true',
+                ]
+            ], 200);
+        }else{
+            return response()->json([
+                'success' => [
+                    'data' => 'false',
+                ]
+            ], 401);
+        }
+        
+    }
+
+    public function mktops_verify(Request $request){
+        
+        $_dataAll = $request->all();
+        #$user_s = $this->getUserLogin();
+        $host = $_dataAll['host'];
+        $url = $_dataAll['url'];
+        $username = $_dataAll['username'];
+        $pwd = $_dataAll['password'];
+
+        // $key = $username.'SalesOpsKEY';
+        // $pwd = Users::decrypt_crypto($pwd, $key);
+        
+        $access = $this->mktops_verify_curl($host,$url,$username,$pwd);
         
         if($access){
             return response()->json([
