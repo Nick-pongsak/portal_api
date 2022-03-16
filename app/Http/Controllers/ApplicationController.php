@@ -182,7 +182,7 @@ class ApplicationController extends Controller
         if ($category_id == '') {
             $field_error .= ' category_id,';
         }
-        if ($key_app == '') {
+        if ($key_app == '' && $status_sso == 1) {
             $field_error .= ' key_app,';
         }
         if ($type_login == '') {
