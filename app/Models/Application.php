@@ -447,9 +447,16 @@ class Application extends Model
         category_id = '{$category_id}'
         AND active = 1";
 
-        $sql_cat = DB::select($sql);
+        $sql_cat_active = DB::select($sql);
 
-        if (count($sql_cat) == 1) {
+        $sql_count = "
+        SELECT * FROM application WHERE
+        category_id = '{$category_id}'
+        AND active = 1";
+
+        $sql_cat_app = DB::select($sql_count);
+
+        if ((count($sql_cat_active) == 1) && (count($sql_cat_app) == 0))  {
             $datetime_now = date('Y-m-d H:i:s');
             $sql = "UPDATE category SET 
              active = 0
@@ -463,6 +470,13 @@ class Application extends Model
                     'data' => 'Catagory Deleted',
                 ]
             ], 200);
+        }
+        else if ((count($sql_cat_active) == 1) && (count($sql_cat_app) > 0))  {
+            return response()->json([
+                'error' => [
+                    'data' => 'category_id ที่ต้องการลบ มี application ใช้งานอยู่ (API : delete-category)',
+                ]
+            ], 228);
         } else {
             return response()->json([
                 'error' => [
