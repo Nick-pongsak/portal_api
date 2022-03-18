@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Users;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Image;
 
@@ -782,6 +783,36 @@ class UserController extends Controller
             
             return $user;
         }
+    }
+
+    public function import_user(Request $request)
+    {
+        Users::delete_temporary();
+        File::delete(base_path('resources/csv/import-user.csv'));
+        // $user_update = $this->getUserLogin();
+        $request->validate([
+            'csv' => 'required|mimes:csv,txt'
+        ]);
+
+        $file = file($request->csv->getRealPath());
+        $data = array_slice($file, 1);
+        $filename = resource_path('csv/import-user.csv');
+        file_put_contents($filename, $data);
+
+        $path = resource_path('csv/import-user.csv');
+        $g = glob($path);
+        foreach ($g as $file){
+            $data = array_map('str_getcsv', file($file));
+            foreach($data as $row){
+                $user = Users::insert_temporary($row[0], $row[1]);
+            }
+            return response()->json([
+                'success' => [
+                    'data' => 'import sucess',
+                ]
+            ], 200);
+        }
+        
     }
 
 }

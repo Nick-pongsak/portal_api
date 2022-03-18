@@ -322,7 +322,8 @@ class Users extends Model
         WHERE
         u.username = '{$username}'
         AND u.type = '{$type}'
-        AND u.active = 1";
+        AND u.active = 1
+        AND pro.status = 1";
 
         $sql_user = DB::select($sql);
 
@@ -363,7 +364,8 @@ class Users extends Model
         WHERE
         u.username = '{$username}'
         AND u.type = '{$type}'
-        AND u.active = 1";
+        AND u.active = 1
+        AND pro.status = 1";
 
         $sql_language = DB::select($sql_language);
 
@@ -1062,5 +1064,27 @@ class Users extends Model
                 ]
             ], 200);
         }
+    }
+
+    public static function insert_temporary($name, $email)
+    {
+        $sql = "
+        INSERT INTO temporary 
+        (name
+        ,email)
+        VALUES 
+        ('{$name}'
+        ,'{$email}'
+        )";
+
+        $sql_user = DB::insert($sql);
+            
+    }
+
+    public static function delete_temporary()
+    {
+        $sql = " DELETE FROM temporary";
+        $delete_temporary = DB::select($sql);
+            
     }
 }

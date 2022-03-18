@@ -81,3 +81,5 @@ Route::post('/check-authen-corp', [UserController::class, 'corp_verify']); // ve
 
 // sso mktops
 Route::post('/check-authen-mktops', [UserController::class, 'mktops_verify']); // verify
+
+Route::post('/import-user', [UserController::class, 'import_user']);
