@@ -527,7 +527,14 @@ class Users extends Model
 
         $sql_user = DB::select($sql);
 
-        if (count($sql_user) == 1) {
+        $sql_emp = "
+        SELECT * FROM users WHERE
+        emp_code = '{$emp_code}'
+        AND active = 1";
+
+        $sql_check_emp = DB::select($sql_emp);
+
+        if (count($sql_user) == 1 && count($sql_check_emp) < 2) {
             $user = Users::edit_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update);
 
 
@@ -545,12 +552,18 @@ class Users extends Model
                     'data' => 'User Updated'
                 ]
             ], 200);
+        } else if (count($sql_user) == 1 && count($sql_check_emp) == 2) {
+            return response()->json([
+                'error' => [
+                    'data' => 'ไม่สามารถแก้ไขได้เนื่องจาก emp_code นี้มีการใช้งานเเล้ว ทั้ง user(LDAP) เเละ user ในระบบ'
+                ]
+            ], 229);
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'ไม่พบ user ที่จะแก้ไข'
+                    'data' => 'ไม่พบ user ที่ต้องการแก้ไข'
                 ]
-            ], 400);
+            ], 230);
         }
     }
 
