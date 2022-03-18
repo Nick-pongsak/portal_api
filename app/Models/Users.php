@@ -530,6 +530,7 @@ class Users extends Model
         $sql_emp = "
         SELECT * FROM users WHERE
         emp_code = '{$emp_code}'
+        AND type = {$type}
         AND active = 1";
 
         $sql_check_emp = DB::select($sql_emp);
@@ -542,8 +543,8 @@ class Users extends Model
 
         $sql_check_username = DB::select($sql_username);
 
-        if ((count($sql_user) == 1 && count($sql_check_emp) < 2 && count($sql_check_username) < 1) ||
-            (count($sql_user) == 1 && count($sql_check_emp) == 2 && $sql_user[0]->emp_code == $emp_code
+        if ((count($sql_user) == 1 && count($sql_check_emp) < 1 && count($sql_check_username) < 1) ||
+            (count($sql_user) == 1 && count($sql_check_emp) == 1 && $sql_user[0]->emp_code == $emp_code
             && count($sql_check_username) == 1 && $sql_user[0]->username == $username)) {
             $user = Users::edit_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update);
 
@@ -562,10 +563,10 @@ class Users extends Model
                     'data' => 'User Updated'
                 ]
             ], 200);
-        } else if (count($sql_user) == 1 && count($sql_check_emp) == 2) {
+        } else if (count($sql_user) == 1 && count($sql_check_emp) == 1 && count($sql_check_username) == 1) {
             return response()->json([
                 'error' => [
-                    'data' => 'ไม่สามารถแก้ไขได้เนื่องจาก emp_code นี้มีการใช้งานเเล้ว ทั้ง user(LDAP) เเละ user ในระบบ'
+                    'data' => 'ไม่สามารถแก้ไขได้เนื่องจาก emp_code หรือ username นี้มีการใช้งานเเล้วใน user(LDAP) หรือ user ในระบบ'
                 ]
             ], 229);
         } else {
