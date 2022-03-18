@@ -364,6 +364,7 @@ class UserController extends Controller
 
             $sql_user = DB::select($sql);
 
+            $old_password = Users::decrypt_crypto($old_password, 'WebPortalKey');
             if (count($sql_user) == 1) {
                 foreach ($sql_user as $item) {
                     $hash = $item->password;
