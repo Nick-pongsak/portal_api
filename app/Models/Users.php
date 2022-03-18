@@ -534,8 +534,17 @@ class Users extends Model
 
         $sql_check_emp = DB::select($sql_emp);
 
-        if ((count($sql_user) == 1 && count($sql_check_emp) < 2) ||
-            (count($sql_user) == 1 && count($sql_check_emp) == 2 && $sql_user[0]->emp_code == $emp_code)) {
+        $sql_username = "
+        SELECT * FROM users WHERE
+        username = '{$username}'
+        AND type = {$type}
+        AND active = 1";
+
+        $sql_check_username = DB::select($sql_username);
+
+        if ((count($sql_user) == 1 && count($sql_check_emp) < 2 && count($sql_check_username) < 1) ||
+            (count($sql_user) == 1 && count($sql_check_emp) == 2 && $sql_user[0]->emp_code == $emp_code
+            && count($sql_check_username) == 1 && $sql_user[0]->username == $username)) {
             $user = Users::edit_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update);
 
 
