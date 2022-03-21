@@ -336,11 +336,7 @@ class ApplicationController extends Controller
                 $user->user_id
             );
 
-            return $this->createSuccessResponse([
-                'success' => [
-                    'data' => 'Categoty Updated'
-                ]
-            ], 200);
+            return $app;
         }
     }
 

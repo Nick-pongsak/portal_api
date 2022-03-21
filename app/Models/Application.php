@@ -128,19 +128,31 @@ class Application extends Model
 
         $sql_duplicate = DB::select($sql_duplicate);
 
-        if (count($sql_app) == 1 && count($sql_duplicate) == 0) {
-            $app = Application::update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id);
-            return response()->json([
-                'success' => [
-                    'data' => 'Application Updated',
-                ]
-            ], 200);
-        } else if (count($sql_duplicate) > 0) {
-            return response()->json([
-                'error' => [
-                    'data' => 'Application มีอยู่เเล้วไม่สามารถเพิ่มได้ โปรดเช็คชื่อของ Application (API : update-application)',
-                ]
-            ], 213);
+        if (count($sql_app) == 1) {
+            if($sql_app[0]->name_th == $name_th && $sql_app[0]->name_en == $name_en){
+                $app = Application::update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id);
+                return response()->json([
+                    'success' => [
+                        'data' => 'Application Updated',
+                    ]
+                ], 200);
+            }else{
+                if(count($sql_duplicate) == 0){
+                    $app = Application::update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id);
+                    return response()->json([
+                        'success' => [
+                            'data' => 'Application Updated',
+                        ]
+                    ], 200);
+                }else{
+                    return response()->json([
+                        'error' => [
+                            'data' => 'Application มีอยู่เเล้วไม่สามารถเพิ่มได้ โปรดเช็คชื่อของ Application (API : update-application)',
+                        ]
+                    ], 213);
+                }
+            }
+            
         } else {
             return response()->json([
                 'error' => [
@@ -437,27 +449,47 @@ class Application extends Model
 
         $sql_duplicate = DB::select($sql_duplicate);
 
-        if (count($sql_cat) == 1 && count($sql_duplicate) == 0) {
-            $datetime_now = date('Y-m-d H:i:s');
-            $sql = "UPDATE category SET 
-             name_th = '{$name_th}'
-            ,name_en = '{$name_en}'
-            ,updatedate = '{$datetime_now}'
-            ,updateby = '{$user_id}'
-            WHERE category_id = $category_id";
-
-            $sql_cat = DB::select($sql);
-            return response()->json([
-                'success' => [
-                    'data' => 'Catagory Updated',
-                ]
-            ], 200);
-        } else if (count($sql_duplicate) > 0) {
-            return response()->json([
-                'error' => [
-                    'data' => 'ไม่สามารถเพิ่ม category ชื่อนี้ได้เนื่องจากซ้ำ (API : update-category)',
-                ]
-            ], 217);
+        if (count($sql_cat) == 1){
+            if($sql_cat[0]->name_th == $name_th && $sql_cat[0]->name_en == $name_en){
+                $datetime_now = date('Y-m-d H:i:s');
+                $sql = "UPDATE category SET 
+                 name_th = '{$name_th}'
+                ,name_en = '{$name_en}'
+                ,updatedate = '{$datetime_now}'
+                ,updateby = '{$user_id}'
+                WHERE category_id = $category_id";
+    
+                $sql_cat = DB::select($sql);
+                return response()->json([
+                    'success' => [
+                        'data' => 'Catagory Updated',
+                    ]
+                ], 200);
+            } else {
+                if(count($sql_duplicate) == 0){
+                    $datetime_now = date('Y-m-d H:i:s');
+                    $sql = "UPDATE category SET 
+                     name_th = '{$name_th}'
+                    ,name_en = '{$name_en}'
+                    ,updatedate = '{$datetime_now}'
+                    ,updateby = '{$user_id}'
+                    WHERE category_id = $category_id";
+        
+                    $sql_cat = DB::select($sql);
+                    return response()->json([
+                        'success' => [
+                            'data' => 'Catagory Updated',
+                        ]
+                    ], 200);          
+                }else{
+                    return response()->json([
+                        'error' => [
+                            'data' => 'ไม่สามารถเพิ่ม category ชื่อนี้ได้เนื่องจากซ้ำ (API : update-category)',
+                        ]
+                    ], 217);
+                }
+            }
+            
         } else {
             return response()->json([
                 'error' => [
@@ -847,31 +879,54 @@ class Application extends Model
 
         $sql_duplicate = DB::select($sql_duplicate);
 
-        if (count($sql_group) == 1 && count($sql_duplicate) == 0) {
-            $datetime_now = date('Y-m-d H:i:s');
-            $sql = "UPDATE application_group SET
-            name_th = '{$name_th}',
-            name_en = '{$name_en}',
-            app_id  = '{$app_id}',
-            updatedate = '{$datetime_now}',
-            updateby   = '{$user_id}'
-            WHERE group_id = {$group_id}
-            AND active = 1
-            ";
-
-            $sql_group = DB::select($sql);
-            return response()->json([
-                'success' => [
-                    'data' => 'Group Updated',
-                ]
-            ], 200);
-        } else if (count($sql_duplicate) > 0) {
-            return response()->json([
-                'error' => [
-                    'data' => 'ไม่สามาถเพิ่ม group นี้ได้เนื่องจากชื่อ group นี้มีการใช้งานเเล้ว (API : update-group)',
-                ]
-            ], 220);
-        } else {
+        if (count($sql_group) == 1) {
+            if($sql_group[0]->name_th == $name_th && $sql_group[0]->name_en == $name_en){
+                $datetime_now = date('Y-m-d H:i:s');
+                $sql = "UPDATE application_group SET
+                name_th = '{$name_th}',
+                name_en = '{$name_en}',
+                app_id  = '{$app_id}',
+                updatedate = '{$datetime_now}',
+                updateby   = '{$user_id}'
+                WHERE group_id = {$group_id}
+                AND active = 1
+                ";
+    
+                $sql_group = DB::select($sql);
+                return response()->json([
+                    'success' => [
+                        'data' => 'Group Updated',
+                    ]
+                ], 200);
+            } else {
+                if(count($sql_duplicate) == 0){
+                    $datetime_now = date('Y-m-d H:i:s');
+                    $sql = "UPDATE application_group SET
+                    name_th = '{$name_th}',
+                    name_en = '{$name_en}',
+                    app_id  = '{$app_id}',
+                    updatedate = '{$datetime_now}',
+                    updateby   = '{$user_id}'
+                    WHERE group_id = {$group_id}
+                    AND active = 1
+                    ";
+        
+                    $sql_group = DB::select($sql);
+                    return response()->json([
+                        'success' => [
+                            'data' => 'Group Updated',
+                        ]
+                    ], 200);                 
+                } else {
+                    return response()->json([
+                        'error' => [
+                            'data' => 'ไม่สามาถเพิ่ม group นี้ได้เนื่องจากชื่อ group นี้มีการใช้งานเเล้ว (API : update-group)',
+                        ]
+                    ], 220);
+                }
+            }
+            
+        }  else {
             return response()->json([
                 'error' => [
                     'data' => 'ไม่สามารถ update ได้เนื่องจากไม่พบ group_id ที่ส่งมา (API : update-group)',
