@@ -43,7 +43,7 @@ class Application extends Model
         } else {
             return response()->json([
                 'error' => [
-                    'data' => 'Application มีอยู่เเล้วไม่สามารถเพิ่มได้ โปรดเช็คชื่อของ Application (API : application-detail)',
+                    'data' => 'Application มีอยู่เเล้วไม่สามารถเพิ่มได้ โปรดเช็คชื่อของ Application (API : add-application)',
                 ]
             ], 213);
         }
@@ -120,13 +120,27 @@ class Application extends Model
 
         $sql_app = DB::select($sql);
 
-        if (count($sql_app) == 1) {
+        $sql_duplicate = "
+        SELECT * FROM application WHERE
+        name_th = '{$name_th}'
+        AND name_en = '{$name_en}'
+        AND active = 1";
+
+        $sql_duplicate = DB::select($sql_duplicate);
+
+        if (count($sql_app) == 1 && count($sql_duplicate) == 0) {
             $app = Application::update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id);
             return response()->json([
                 'success' => [
                     'data' => 'Application Updated',
                 ]
             ], 200);
+        } else if (count($sql_duplicate) > 0) {
+            return response()->json([
+                'error' => [
+                    'data' => 'Application มีอยู่เเล้วไม่สามารถเพิ่มได้ โปรดเช็คชื่อของ Application (API : update-application)',
+                ]
+            ], 213);
         } else {
             return response()->json([
                 'error' => [
@@ -415,7 +429,15 @@ class Application extends Model
 
         $sql_cat = DB::select($sql);
 
-        if (count($sql_cat) == 1) {
+        $sql_duplicate = "
+        SELECT * FROM category WHERE
+        name_th = '{$name_th}'
+        AND name_en = '{$name_en}'
+        AND active = 1";
+
+        $sql_duplicate = DB::select($sql_duplicate);
+
+        if (count($sql_cat) == 1 && count($sql_duplicate) == 0) {
             $datetime_now = date('Y-m-d H:i:s');
             $sql = "UPDATE category SET 
              name_th = '{$name_th}'
@@ -430,6 +452,12 @@ class Application extends Model
                     'data' => 'Catagory Updated',
                 ]
             ], 200);
+        } else if (count($sql_duplicate) > 0) {
+            return response()->json([
+                'error' => [
+                    'data' => 'ไม่สามารถเพิ่ม category ชื่อนี้ได้เนื่องจากซ้ำ (API : update-category)',
+                ]
+            ], 217);
         } else {
             return response()->json([
                 'error' => [
@@ -812,7 +840,14 @@ class Application extends Model
 
         $sql_group = DB::select($sql);
 
-        if (count($sql_group) == 1) {
+        $sql_duplicate = "
+        SELECT * FROM application_group WHERE
+        name_th = '{$name_th}' OR name_en = '{$name_en}'
+        AND active = 1";
+
+        $sql_duplicate = DB::select($sql_duplicate);
+
+        if (count($sql_group) == 1 && count($sql_duplicate) == 0) {
             $datetime_now = date('Y-m-d H:i:s');
             $sql = "UPDATE application_group SET
             name_th = '{$name_th}',
@@ -830,6 +865,12 @@ class Application extends Model
                     'data' => 'Group Updated',
                 ]
             ], 200);
+        } else if (count($sql_duplicate) > 0) {
+            return response()->json([
+                'error' => [
+                    'data' => 'ไม่สามาถเพิ่ม group นี้ได้เนื่องจากชื่อ group นี้มีการใช้งานเเล้ว (API : update-group)',
+                ]
+            ], 220);
         } else {
             return response()->json([
                 'error' => [
