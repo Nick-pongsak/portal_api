@@ -543,32 +543,89 @@ class Users extends Model
 
         $sql_check_username = DB::select($sql_username);
 
-        if ((count($sql_user) == 1 && count($sql_check_emp) < 1 && count($sql_check_username) < 1) ||
-            (count($sql_user) == 1 && count($sql_check_emp) == 1 && $sql_user[0]->emp_code == $emp_code
-            && count($sql_check_username) == 1 && $sql_user[0]->username == $username)) {
-            $user = Users::edit_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update);
+        if (count($sql_user) == 1) {
+            if ($sql_user[0]->emp_code == $emp_code && $sql_user[0]->username == $username){
+                $user = Users::edit_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update);
 
 
-            $user_profile = Users::edit_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu);
+                $user_profile = Users::edit_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu);
+    
+                foreach ($app as $item) {
+                    $app_id =  $item->app_id;
+                    $username =  $item->username;
+                    $password_sso =  $item->password;
+                    $user_sso = Users::edit_username_sso($user_id, $emp_code, $app_id, $username, $password_sso, $user_update);
+                }
+    
+                return response()->json([
+                    'success' => [
+                        'data' => 'User Updated'
+                    ]
+                ], 200);
+            }else{
+                if ($sql_user[0]->emp_code == $emp_code && count($sql_check_username) == 0){
+                    $user = Users::edit_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update);
 
-            foreach ($app as $item) {
-                $app_id =  $item->app_id;
-                $username =  $item->username;
-                $password_sso =  $item->password;
-                $user_sso = Users::edit_username_sso($user_id, $emp_code, $app_id, $username, $password_sso, $user_update);
+
+                    $user_profile = Users::edit_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu);
+        
+                    foreach ($app as $item) {
+                        $app_id =  $item->app_id;
+                        $username =  $item->username;
+                        $password_sso =  $item->password;
+                        $user_sso = Users::edit_username_sso($user_id, $emp_code, $app_id, $username, $password_sso, $user_update);
+                    }
+        
+                    return response()->json([
+                        'success' => [
+                            'data' => 'User Updated'
+                        ]
+                    ], 200);              
+                }else if (count($sql_check_emp) == 0 && $sql_user[0]->username == $username){
+                    $user = Users::edit_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update);
+
+
+                    $user_profile = Users::edit_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu);
+        
+                    foreach ($app as $item) {
+                        $app_id =  $item->app_id;
+                        $username =  $item->username;
+                        $password_sso =  $item->password;
+                        $user_sso = Users::edit_username_sso($user_id, $emp_code, $app_id, $username, $password_sso, $user_update);
+                    }
+        
+                    return response()->json([
+                        'success' => [
+                            'data' => 'User Updated'
+                        ]
+                    ], 200);              
+                }else if (count($sql_check_emp) == 0 && count($sql_check_username) == 0){
+                    $user = Users::edit_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update);
+
+
+                    $user_profile = Users::edit_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu);
+        
+                    foreach ($app as $item) {
+                        $app_id =  $item->app_id;
+                        $username =  $item->username;
+                        $password_sso =  $item->password;
+                        $user_sso = Users::edit_username_sso($user_id, $emp_code, $app_id, $username, $password_sso, $user_update);
+                    }
+        
+                    return response()->json([
+                        'success' => [
+                            'data' => 'User Updated'
+                        ]
+                    ], 200);              
+                }else{
+                    return response()->json([
+                        'error' => [
+                            'data' => 'ไม่สามารถแก้ไขได้เนื่องจาก emp_code หรือ username นี้มีการใช้งานเเล้วใน user(LDAP) หรือ user ในระบบ'
+                        ]
+                    ], 229);        
+                }
             }
-
-            return response()->json([
-                'success' => [
-                    'data' => 'User Updated'
-                ]
-            ], 200);
-        } else if (count($sql_user) == 1 && count($sql_check_emp) == 1 && count($sql_check_username) == 1) {
-            return response()->json([
-                'error' => [
-                    'data' => 'ไม่สามารถแก้ไขได้เนื่องจาก emp_code หรือ username นี้มีการใช้งานเเล้วใน user(LDAP) หรือ user ในระบบ'
-                ]
-            ], 229);
+            
         } else {
             return response()->json([
                 'error' => [
@@ -1090,15 +1147,53 @@ class Users extends Model
         }
     }
 
-    public static function insert_temporary($name, $email)
+    public static function insert_temporary(
+    $type, $emp_code, $name_th, 
+    $name_en, $postname_th, $postname_en, 
+    $email, $cx, $group_id, 
+    $username, $password, 
+    $status,$user_create)
     {
+
+        $datetime_now = date('Y-m-d H:i:s');
         $sql = "
         INSERT INTO temporary 
-        (name
-        ,email)
+        (type
+        ,emp_code,name_th,name_en
+        ,postname_th,postname_en,email
+        ,3cx,group_id,username,password,phone
+        ,status_permission,admin_menu,status
+        ,nickname1_th,nickname1_en
+        ,nickname2_th,nickname2_en
+        ,createdate,updatedate,createby,updateby
+        ,active,data_status,error_note)
         VALUES 
-        ('{$name}'
+        ('{$type}'
+        ,'{$emp_code}'
+        ,'{$name_th}'
+        ,'{$name_en}'
+        ,'{$postname_th}'
+        ,'{$postname_en}'
         ,'{$email}'
+        ,'{$cx}'
+        , {$group_id}
+        ,'{$username}'
+        ,'{$password}'
+        ,''
+        , 0
+        , 0
+        ,'{$status}'
+        ,''
+        ,''
+        ,''
+        ,''
+        ,'{$datetime_now}'
+        ,'{$datetime_now}'
+        ,'{$user_create}'
+        ,'{$user_create}'
+        , 1
+        , 0
+        ,''
         )";
 
         $sql_user = DB::insert($sql);

@@ -790,7 +790,7 @@ class UserController extends Controller
     {
         Users::delete_temporary();
         File::delete(base_path('resources/csv/import-user.csv'));
-        // $user_update = $this->getUserLogin();
+        $user_update = $this->getUserLogin();
         $request->validate([
             'csv' => 'required|mimes:csv,txt'
         ]);
@@ -805,7 +805,8 @@ class UserController extends Controller
         foreach ($g as $file){
             $data = array_map('str_getcsv', file($file));
             foreach($data as $row){
-                $user = Users::insert_temporary($row[0], $row[1]);
+                $user = Users::insert_temporary($row[1], $row[2], $row[3], $row[4],  $row[5],     $row[6],     $row[7], $row[8],   $row[9],    $row[10],  $row[11],     $row[12],  $user_update->user_id);
+                //                               type,  emp_code, name_th, name_en, postname_th, postname_en,   email,    3cx      group_id    username   password       status         user create
             }
             return response()->json([
                 'success' => [
