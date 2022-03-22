@@ -120,13 +120,19 @@ class Application extends Model
 
         $sql_app = DB::select($sql);
 
-        $sql_duplicate = "
+        $sql_name_th = "
         SELECT * FROM application WHERE
-        (name_th = '{$name_th}'
-        OR name_en = '{$name_en}')
+        name_th = '{$name_th}'
         AND active = 1";
 
-        $sql_duplicate = DB::select($sql_duplicate);
+        $check_name_th = DB::select($sql_name_th);
+
+        $sql_name_en = "
+        SELECT * FROM application WHERE
+        name_en = '{$name_en}'
+        AND active = 1";
+
+        $check_name_en = DB::select($sql_name_en);
 
         if (count($sql_app) == 1) {
             if($sql_app[0]->name_th == $name_th && $sql_app[0]->name_en == $name_en){
@@ -137,7 +143,21 @@ class Application extends Model
                     ]
                 ], 200);
             }else{
-                if(count($sql_duplicate) == 0){
+                if(count($check_name_th) == 0 && $sql_app[0]->name_en == $name_en){
+                    $app = Application::update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id);
+                    return response()->json([
+                        'success' => [
+                            'data' => 'Application Updated',
+                        ]
+                    ], 200);
+                }else if($sql_app[0]->name_th == $name_th && count($check_name_en) == 0 ){
+                    $app = Application::update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id);
+                    return response()->json([
+                        'success' => [
+                            'data' => 'Application Updated',
+                        ]
+                    ], 200);
+                }else if(count($check_name_th) == 0 && count($check_name_en) == 0 ){
                     $app = Application::update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id);
                     return response()->json([
                         'success' => [
@@ -441,13 +461,19 @@ class Application extends Model
 
         $sql_cat = DB::select($sql);
 
-        $sql_duplicate = "
+        $sql_name_th = "
         SELECT * FROM category WHERE
-        (name_th = '{$name_th}'
-        OR name_en = '{$name_en}')
+        name_th = '{$name_th}'
         AND active = 1";
 
-        $sql_duplicate = DB::select($sql_duplicate);
+        $check_name_th = DB::select($sql_name_th);
+
+        $sql_name_en = "
+        SELECT * FROM category WHERE
+        name_en = '{$name_en}'
+        AND active = 1";
+
+        $check_name_en = DB::select($sql_name_en);
 
         if (count($sql_cat) == 1){
             if($sql_cat[0]->name_th == $name_th && $sql_cat[0]->name_en == $name_en){
@@ -466,7 +492,37 @@ class Application extends Model
                     ]
                 ], 200);
             } else {
-                if(count($sql_duplicate) == 0){
+                if(count($check_name_th) == 0 && $sql_cat[0]->name_en == $name_en){
+                    $datetime_now = date('Y-m-d H:i:s');
+                    $sql = "UPDATE category SET 
+                     name_th = '{$name_th}'
+                    ,name_en = '{$name_en}'
+                    ,updatedate = '{$datetime_now}'
+                    ,updateby = '{$user_id}'
+                    WHERE category_id = $category_id";
+        
+                    $sql_cat = DB::select($sql);
+                    return response()->json([
+                        'success' => [
+                            'data' => 'Catagory Updated',
+                        ]
+                    ], 200);          
+                }else if($sql_cat[0]->name_th == $name_th && count($check_name_en) == 0){
+                    $datetime_now = date('Y-m-d H:i:s');
+                    $sql = "UPDATE category SET 
+                     name_th = '{$name_th}'
+                    ,name_en = '{$name_en}'
+                    ,updatedate = '{$datetime_now}'
+                    ,updateby = '{$user_id}'
+                    WHERE category_id = $category_id";
+        
+                    $sql_cat = DB::select($sql);
+                    return response()->json([
+                        'success' => [
+                            'data' => 'Catagory Updated',
+                        ]
+                    ], 200);          
+                }else if(count($check_name_th) == 0 && count($check_name_en) == 0){
                     $datetime_now = date('Y-m-d H:i:s');
                     $sql = "UPDATE category SET 
                      name_th = '{$name_th}'
@@ -872,12 +928,19 @@ class Application extends Model
 
         $sql_group = DB::select($sql);
 
-        $sql_duplicate = "
+        $sql_name_th = "
         SELECT * FROM application_group WHERE
-        (name_th = '{$name_th}' OR name_en = '{$name_en}')
+        name_th = '{$name_th}'
         AND active = 1";
 
-        $sql_duplicate = DB::select($sql_duplicate);
+        $check_name_th = DB::select($sql_name_th);
+
+        $sql_name_en = "
+        SELECT * FROM application_group WHERE
+        name_en = '{$name_en}'
+        AND active = 1";
+
+        $check_name_en = DB::select($sql_name_en);
 
         if (count($sql_group) == 1) {
             if($sql_group[0]->name_th == $name_th && $sql_group[0]->name_en == $name_en){
@@ -899,7 +962,43 @@ class Application extends Model
                     ]
                 ], 200);
             } else {
-                if(count($sql_duplicate) == 0){
+                if(count($check_name_th) == 0 && $sql_group[0]->name_en == $name_en){
+                    $datetime_now = date('Y-m-d H:i:s');
+                    $sql = "UPDATE application_group SET
+                    name_th = '{$name_th}',
+                    name_en = '{$name_en}',
+                    app_id  = '{$app_id}',
+                    updatedate = '{$datetime_now}',
+                    updateby   = '{$user_id}'
+                    WHERE group_id = {$group_id}
+                    AND active = 1
+                    ";
+        
+                    $sql_group = DB::select($sql);
+                    return response()->json([
+                        'success' => [
+                            'data' => 'Group Updated',
+                        ]
+                    ], 200);                 
+                }else if($sql_group[0]->name_th == $name_th && count($check_name_en) == 0 ){
+                    $datetime_now = date('Y-m-d H:i:s');
+                    $sql = "UPDATE application_group SET
+                    name_th = '{$name_th}',
+                    name_en = '{$name_en}',
+                    app_id  = '{$app_id}',
+                    updatedate = '{$datetime_now}',
+                    updateby   = '{$user_id}'
+                    WHERE group_id = {$group_id}
+                    AND active = 1
+                    ";
+        
+                    $sql_group = DB::select($sql);
+                    return response()->json([
+                        'success' => [
+                            'data' => 'Group Updated',
+                        ]
+                    ], 200);                 
+                }else if(count($check_name_th) == 0 && count($check_name_en) == 0 ){
                     $datetime_now = date('Y-m-d H:i:s');
                     $sql = "UPDATE application_group SET
                     name_th = '{$name_th}',
