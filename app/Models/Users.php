@@ -1152,9 +1152,15 @@ class Users extends Model
     $name_en, $postname_th, $postname_en, 
     $email, $cx, $group_id, 
     $username, $password, 
-    $status,$user_create)
+    $status,$user_create,
+    $data_status,$note)
     {
-
+        if($type == ''){
+            $type = -1;
+        }
+        if($status == ''){
+            $status = -1;
+        }
         $datetime_now = date('Y-m-d H:i:s');
         $sql = "
         INSERT INTO temporary 
@@ -1166,7 +1172,7 @@ class Users extends Model
         ,nickname1_th,nickname1_en
         ,nickname2_th,nickname2_en
         ,createdate,updatedate,createby,updateby
-        ,active,data_status,error_note)
+        ,active,data_status,note)
         VALUES 
         ('{$type}'
         ,'{$emp_code}'
@@ -1192,8 +1198,8 @@ class Users extends Model
         ,'{$user_create}'
         ,'{$user_create}'
         , 1
-        , 0
-        ,''
+        , {$data_status}
+        ,'{$note}'
         )";
 
         $sql_user = DB::insert($sql);
@@ -1205,5 +1211,583 @@ class Users extends Model
         $sql = " DELETE FROM temporary";
         $delete_temporary = DB::select($sql);
             
+    }
+
+    public static function checkdata_status($type, $emp_code, $name_th, 
+    $name_en, $postname_th, $postname_en, 
+    $email, $cx, $group_id, 
+    $username, $password, 
+    $status,$user_create)
+    {
+        // 0 = error
+        // 1 = new
+        // 2 = update
+        if ($type == '' || $emp_code == ''){
+            return 0;
+        }else{
+            $sql = "
+            SELECT * FROM user_profile
+            WHERE emp_code = '{$emp_code}'
+            AND type = {$type}";
+            $check_user = DB::select($sql);
+    
+            if(count($check_user) == 0){
+                if ($type == 0){
+                    if(
+                        $type == '' ||
+                        $emp_code =='' ||
+                        $name_th == '' ||
+                        $name_en == '' ||
+                        $postname_th == '' ||
+                        $postname_en == '' ||
+                        // $email  == ''
+                        // $cx == ''
+                        $group_id == '' ||
+                        $username  == '' ||
+                        $password == '' ||
+                        $status == '' ||
+                        $user_create  == ''
+                    ){
+                        return 0;
+                    }else{
+                        return 1;
+                    }
+                }
+                if ($type == 1){
+                    if(
+                        $type == '' ||
+                        $emp_code =='' ||
+                        $name_th == '' ||
+                        $name_en == '' ||
+                        $postname_th == '' ||
+                        $postname_en == '' ||
+                        $email  == '' ||
+                        // $cx == ''
+                        $group_id == '' ||
+                        // $username  == '' ||
+                        // $password == '' ||
+                        $status == '' ||
+                        $user_create  == ''
+                    ){
+                        return 0;
+                    }else if(
+                        $username  != '' ||
+                        $password  != '' 
+                    ){
+                        return 0;
+                    }else{
+                        return 1;
+                    }
+                }
+            } else {
+                if ($type == 0){
+                    if(
+                        $type == '' ||
+                        $emp_code =='' ||
+                        // $name_th == '' ||
+                        // $name_en == '' ||
+                        // $postname_th == '' ||
+                        // $postname_en == '' ||
+                        // $email  == ''
+                        // $cx == ''
+                        // $group_id == '' ||
+                        // $username  == '' ||
+                        // $password == '' ||
+                        $status == '' ||
+                        $user_create  == ''
+                    ){
+                        return 0;
+                    }else{
+                        return 2;
+                    }
+                }
+                if ($type == 1){
+                    if(
+                        $type == '' ||
+                        $emp_code =='' ||
+                        // $name_th == '' ||
+                        // $name_en == '' ||
+                        // $postname_th == '' ||
+                        // $postname_en == '' ||
+                        // $email  == '' ||
+                        // $cx == ''
+                        // $group_id == '' ||
+                        // $username  == '' ||
+                        // $password == '' ||
+                        $status == '' ||
+                        $user_create  == ''
+                    ){
+                        return 0;
+                    }else if(
+                        $username  != '' ||
+                        $password  != '' 
+                    ){
+                        return 0;
+                    }else{
+                        return 2;
+                    }
+                }
+            }           
+        }
+
+        
+            
+    }
+
+    public static function checkerror_note($type, $emp_code, $name_th, 
+    $name_en, $postname_th, $postname_en, 
+    $email, $cx, $group_id, 
+    $username, $password, 
+    $status,$user_create)
+    {
+        if ($type == '' || $emp_code == ''){
+            return 'ข้อมูลไม่ถูกต้อง';
+        }else{
+            $sql = "
+            SELECT * FROM users
+            WHERE emp_code = '{$emp_code}'
+            AND type = {$type}";
+            $check_user = DB::select($sql);
+    
+            if(count($check_user) == 0){
+                if ($type == 0){
+                    if(
+                        $type == '' ||
+                        $emp_code =='' ||
+                        $name_th == '' ||
+                        $name_en == '' ||
+                        $postname_th == '' ||
+                        $postname_en == '' ||
+                        // $email  == ''
+                        // $cx == ''
+                        $group_id == '' ||
+                        $username  == '' ||
+                        $password == '' ||
+                        $status == '' ||
+                        $user_create  == ''
+                    ){
+                        return 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง';
+                    }else{
+                        return 'new user';
+                    }
+                }
+                if ($type == 1){
+                    if(
+                        $type == '' ||
+                        $emp_code =='' ||
+                        $name_th == '' ||
+                        $name_en == '' ||
+                        $postname_th == '' ||
+                        $postname_en == '' ||
+                        $email  == '' ||
+                        // $cx == ''
+                        $group_id == '' ||
+                        // $username  == '' ||
+                        // $password == '' ||
+                        $status == '' ||
+                        $user_create  == ''
+                    ){
+                        return 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง';
+                    }else if(
+                        $username  != '' ||
+                        $password  != '' 
+                    ){
+                        return 'ไม่สามารถเพิ่มข้อมูล Username&Password';
+                    }else{
+                        return 'new user LDAP';
+                    }
+                }
+            } else {
+                if ($type == 0){
+                    if(
+                        $type == '' ||
+                        $emp_code =='' ||
+                        // $name_th == '' ||
+                        // $name_en == '' ||
+                        // $postname_th == '' ||
+                        // $postname_en == '' ||
+                        // // $email  == ''
+                        // // $cx == ''
+                        // $group_id == '' ||
+                        // $username  == '' ||
+                        // $password == '' ||
+                        $status == '' ||
+                        $user_create  == ''
+                    ){
+                        return 'ไม่สามารถอัปเดตข้อมูลได้';
+                    }else{
+                        return 'update user';
+                    }
+                }
+                if ($type == 1){
+                    if(
+                        $type == '' ||
+                        $emp_code =='' ||
+                        // $name_th == '' ||
+                        // $name_en == '' ||
+                        // $postname_th == '' ||
+                        // $postname_en == '' ||
+                        // $email  == '' ||
+                        // $cx == ''
+                        // $group_id == '' ||
+                        // $username  == '' ||
+                        // $password == '' ||
+                        $status == '' ||
+                        $user_create  == ''
+                    ){
+                        return 'ไม่สามารถอัปเดตข้อมูลได้';
+                    }else if(
+                        $username  != '' ||
+                        $password  != '' 
+                    ){
+                        return 'ไม่สามารถอัปเดตข้อมูล Username&Password';
+                    }else{
+                        return 'update user LDAP';
+                    }
+                }
+            }
+        }
+
+        
+            
+    }
+
+    public static function get_temporary_new($keyword, $field, $sort)
+    {
+        $search = '';
+        $order_by = '';
+        if ($keyword != '') {
+            $search = "AND ((temp.name_th like '%{$keyword}%') OR 
+            (temp.name_en like '%{$keyword}%') OR 
+            (temp.emp_code like '%{$keyword}%') OR
+            (temp.postname_th like '%{$keyword}%') OR
+            (temp.postname_en like '%{$keyword}%') OR
+            (gp.name_th like '%{$keyword}%') OR
+            (gp.name_en like '%{$keyword}%')
+            )";
+        }
+        if ($field != '') {
+            $order_by = "ORDER BY {$field} {$sort}";
+        } else {
+            $order_by = "ORDER BY temp.emp_code";
+        }
+        $sql_new = "
+        SELECT 
+         temp.emp_code
+        ,temp.username
+        ,temp.password
+        ,temp.name_th
+        ,temp.name_en
+        ,temp.postname_th
+        ,temp.postname_en
+        ,temp.nickname1_th
+        ,temp.nickname1_en
+        ,temp.nickname2_th
+        ,temp.nickname2_en
+        ,temp.email
+        ,temp.3cx as cx
+        ,temp.phone
+        ,temp.status
+        ,temp.group_id
+        ,temp.type as type_login
+        ,temp.status_permission
+        ,temp.admin_menu
+        ,temp.data_status
+        ,temp.note
+        ,gp.name_th as group_name_th
+        ,gp.name_en as group_name_en
+        ,gp.active
+        FROM temporary temp
+        JOIN application_group gp
+        ON temp.group_id=gp.group_id
+        WHERE temp.active = 1
+        AND temp.data_status = 1
+        {$search}
+        {$order_by}
+        ";
+        // {$search}
+        // {$order_by}
+
+        $sql_new = DB::select($sql_new);
+
+        $new = array();
+        if (!empty($sql_new)) {
+            $i = 0;
+            foreach ($sql_new as $item) {
+                    $new[] = array(
+                        'index'  => $i,
+                        'type_login' => ($item->type_login == -1 ? '' : $item->type_login),
+                        'emp_code' => $item->emp_code,
+                        'username' => $item->username,
+                        'password' => $item->password,
+                        'name_th' => $item->name_th,
+                        'name_en' => $item->name_en,
+                        'postname_th' => $item->postname_th,
+                        'postname_en' => $item->postname_en,
+                        'nickname1_th' => $item->nickname1_th,
+                        'nickname1_en' => $item->nickname1_en,
+                        'nickname2_th' => $item->nickname2_th,
+                        'nickname2_en' => $item->nickname2_en,
+                        'email' => $item->email,
+                        'cx' => $item->cx,
+                        'phone' => $item->phone,
+                        'status' => ($item->status == -1 ? '' : $item->status),
+                        'group_id' => $item->group_id,
+                        'group_name_th' => ($item->active == 0 ? '' : $item->group_name_th),
+                        'group_name_en' => ($item->active == 0 ? '' : $item->group_name_en),
+                        // 'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
+                        'status_permission' => $item->status_permission,
+                        'admin_menu' => $item->admin_menu,
+                        'data_status' => $item->data_status,
+                        'note' => $item->note
+                    );
+
+                    $i++;
+            }
+        }
+        
+        return $new;
+    }
+
+    public static function get_temporary_update($keyword, $field, $sort)
+    {
+        $search = '';
+        $order_by = '';
+        if ($keyword != '') {
+            $search = "AND ((temp.name_th like '%{$keyword}%') OR 
+            (temp.name_en like '%{$keyword}%') OR 
+            (temp.emp_code like '%{$keyword}%') OR
+            (temp.postname_th like '%{$keyword}%') OR
+            (temp.postname_en like '%{$keyword}%') OR
+            (gp.name_th like '%{$keyword}%') OR
+            (gp.name_en like '%{$keyword}%')
+            )";
+        }
+        if ($field != '') {
+            $order_by = "ORDER BY {$field} {$sort}";
+        } else {
+            $order_by = "ORDER BY temp.emp_code";
+        }
+        $sql_update = "
+        SELECT 
+         temp.emp_code
+        ,temp.username
+        ,temp.password
+        ,temp.name_th
+        ,temp.name_en
+        ,temp.postname_th
+        ,temp.postname_en
+        ,temp.nickname1_th
+        ,temp.nickname1_en
+        ,temp.nickname2_th
+        ,temp.nickname2_en
+        ,temp.email
+        ,temp.3cx as cx
+        ,temp.phone
+        ,temp.status
+        ,temp.group_id
+        ,temp.type as type_login
+        ,temp.status_permission
+        ,temp.admin_menu
+        ,temp.data_status
+        ,temp.note
+        ,gp.name_th as group_name_th
+        ,gp.name_en as group_name_en
+        ,gp.active
+        FROM temporary temp
+        JOIN application_group gp
+        ON temp.group_id=gp.group_id
+        WHERE temp.active = 1
+        AND temp.data_status = 2
+        {$search}
+        {$order_by}
+        ";
+        // {$search}
+        // {$order_by}
+
+        $sql_update = DB::select($sql_update);
+
+        $update = array();
+        if (!empty($sql_update)) {
+            $i = 0;
+            foreach ($sql_update as $item) {
+                    $update[] = array(
+                        'index'  => $i,
+                        'type_login' => ($item->type_login == -1 ? '' : $item->type_login),
+                        'emp_code' => $item->emp_code,
+                        'username' => $item->username,
+                        'password' => $item->password,
+                        'name_th' => $item->name_th,
+                        'name_en' => $item->name_en,
+                        'postname_th' => $item->postname_th,
+                        'postname_en' => $item->postname_en,
+                        'nickname1_th' => $item->nickname1_th,
+                        'nickname1_en' => $item->nickname1_en,
+                        'nickname2_th' => $item->nickname2_th,
+                        'nickname2_en' => $item->nickname2_en,
+                        'email' => $item->email,
+                        'cx' => $item->cx,
+                        'phone' => $item->phone,
+                        'status' => ($item->status == -1 ? '' : $item->status),
+                        'group_id' => $item->group_id,
+                        'group_name_th' => ($item->active == 0 ? '' : $item->group_name_th),
+                        'group_name_en' => ($item->active == 0 ? '' : $item->group_name_en),
+                        // 'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
+                        'status_permission' => $item->status_permission,
+                        'admin_menu' => $item->admin_menu,
+                        'data_status' => $item->data_status,
+                        'note' => $item->note
+                    );
+
+                    $i++;
+            }
+        }
+        
+        return $update;
+    }
+
+    public static function get_temporary_error($keyword, $field, $sort)
+    {
+        $search = '';
+        $order_by = '';
+        if ($keyword != '') {
+            $search = "AND ((temp.name_th like '%{$keyword}%') OR 
+            (temp.name_en like '%{$keyword}%') OR 
+            (temp.emp_code like '%{$keyword}%') OR
+            (temp.postname_th like '%{$keyword}%') OR
+            (temp.postname_en like '%{$keyword}%') OR
+            (gp.name_th like '%{$keyword}%') OR
+            (gp.name_en like '%{$keyword}%')
+            )";
+        }
+        if ($field != '') {
+            $order_by = "ORDER BY {$field} {$sort}";
+        } else {
+            $order_by = "ORDER BY temp.emp_code";
+        }
+        $sql_error = "
+        SELECT 
+         temp.emp_code
+        ,temp.username
+        ,temp.password
+        ,temp.name_th
+        ,temp.name_en
+        ,temp.postname_th
+        ,temp.postname_en
+        ,temp.nickname1_th
+        ,temp.nickname1_en
+        ,temp.nickname2_th
+        ,temp.nickname2_en
+        ,temp.email
+        ,temp.3cx as cx
+        ,temp.phone
+        ,temp.status
+        ,temp.group_id
+        ,temp.type as type_login
+        ,temp.status_permission
+        ,temp.admin_menu
+        ,temp.data_status
+        ,temp.note
+        ,gp.name_th as group_name_th
+        ,gp.name_en as group_name_en
+        ,gp.active
+        FROM temporary temp
+        JOIN application_group gp
+        ON temp.group_id=gp.group_id
+        WHERE temp.active = 1
+        AND temp.data_status = 0
+        {$search}
+        {$order_by}
+        ";
+        // {$search}
+        // {$order_by}
+
+        $sql_error = DB::select($sql_error);
+
+        $mistake = array();
+        if (!empty($sql_error)) {
+            $i = 0;
+            foreach ($sql_error as $item) {
+                    $mistake[] = array(
+                        'index'  => $i,
+                        'type_login' => ($item->type_login == -1 ? '' : $item->type_login),
+                        'emp_code' => $item->emp_code,
+                        'username' => $item->username,
+                        'password' => $item->password,
+                        'name_th' => $item->name_th,
+                        'name_en' => $item->name_en,
+                        'postname_th' => $item->postname_th,
+                        'postname_en' => $item->postname_en,
+                        'nickname1_th' => $item->nickname1_th,
+                        'nickname1_en' => $item->nickname1_en,
+                        'nickname2_th' => $item->nickname2_th,
+                        'nickname2_en' => $item->nickname2_en,
+                        'email' => $item->email,
+                        'cx' => $item->cx,
+                        'phone' => $item->phone,
+                        'status' => ($item->status == -1 ? '' : $item->status),
+                        'group_id' => $item->group_id,
+                        'group_name_th' => ($item->active == 0 ? '' : $item->group_name_th),
+                        'group_name_en' => ($item->active == 0 ? '' : $item->group_name_en),
+                        // 'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
+                        'status_permission' => $item->status_permission,
+                        'admin_menu' => $item->admin_menu,
+                        'data_status' => $item->data_status,
+                        'note' => $item->note
+                    );
+
+                    $i++;
+            }
+        }
+        
+        return $mistake;
+    }
+
+    public static function count_temporary_new()
+    {
+
+        $sql_count_temporary_new = "
+        SELECT * FROM temporary
+        WHERE active = 1
+        AND data_status = 1
+        ";
+
+        $sql_count = DB::select($sql_count_temporary_new);
+
+        $count = count($sql_count);
+        
+        return $count;
+    }
+
+    public static function count_temporary_update()
+    {
+
+        $sql_count_temporary_update = "
+        SELECT * FROM temporary
+        WHERE active = 1
+        AND data_status = 2
+        ";
+
+        $sql_count = DB::select($sql_count_temporary_update);
+
+        $count = count($sql_count);
+        
+        return $count;
+    }
+
+    public static function count_temporary_error()
+    {
+
+        $sql_count_temporary_error = "
+        SELECT * FROM temporary
+        WHERE active = 1
+        AND data_status = 0
+        ";
+
+        $sql_count = DB::select($sql_count_temporary_error);
+
+        $count = count($sql_count);
+        
+        return $count;
     }
 }

@@ -805,8 +805,10 @@ class UserController extends Controller
         foreach ($g as $file){
             $data = array_map('str_getcsv', file($file));
             foreach($data as $row){
-                $user = Users::insert_temporary($row[1], $row[2], $row[3], $row[4],  $row[5],     $row[6],     $row[7], $row[8],   $row[9],    $row[10],  $row[11],     $row[12],  $user_update->user_id);
-                //                               type,  emp_code, name_th, name_en, postname_th, postname_en,   email,    3cx      group_id    username   password       status         user create
+                $data_status = Users::checkdata_status($row[1], $row[2], $row[3], $row[4],  $row[5],     $row[6],     $row[7], $row[8],   $row[9],    $row[10],  $row[11],     $row[12],  $user_update->user_id);
+                $note         = Users::checkerror_note($row[1], $row[2], $row[3], $row[4],  $row[5],     $row[6],     $row[7], $row[8],   $row[9],    $row[10],  $row[11],     $row[12],  $user_update->user_id);
+                $user        = Users::insert_temporary($row[1], $row[2], $row[3], $row[4],  $row[5],     $row[6],     $row[7], $row[8],   $row[9],    $row[10],  $row[11],     $row[12],  $user_update->user_id, $data_status, $note);
+                /////////////////////////////////////// type,  emp_code, name_th, name_en, postname_th, postname_en,   email,    3cx      group_id    username   password       status         user create
             }
             return response()->json([
                 'success' => [
@@ -815,6 +817,37 @@ class UserController extends Controller
             ], 200);
         }
         
+    }
+
+    public function get_temporary(Request $request)
+    {
+        $_dataAll = $request->all();
+        $user_s = $this->getUserLogin();
+        $keyword  = $_dataAll['keyword'];
+        $field  = $_dataAll['field'];
+        $sort  = $_dataAll['sort'];
+        
+        $new     = Users::get_temporary_new($keyword, $field, $sort);
+        $update  = Users::get_temporary_update($keyword, $field, $sort);
+        $mistake = Users::get_temporary_error($keyword, $field, $sort);
+        $count_new     = Users::count_temporary_new();
+        $count_update  = Users::count_temporary_update();
+        $count_mistake = Users::count_temporary_error();
+
+        return response()->json([
+            'success' => [
+                'data' => [
+                    'count_new' => $count_new,
+                    'count_update' => $count_update,
+                    'count_mistake' => $count_mistake,
+                    'new' => $new,
+                    'update' => $update,
+                    'mistake' => $mistake,
+                    
+                ]
+            ]
+        ], 200);
+       
     }
 
 }
