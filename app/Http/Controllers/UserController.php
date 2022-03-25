@@ -870,7 +870,7 @@ class UserController extends Controller
             $data_status = Users::checkdata_status_update($item->type, $item->emp_code, $item->name_th, $item->name_en,  $item->postname_th,     $item->postname_en,     $item->email, $item->cx,   $item->group_id,    $item->username,  $item->password,     $item->status,  $user_update->user_id);
             $note         = Users::checkerror_note_update($item->type, $item->emp_code, $item->name_th, $item->name_en,  $item->postname_th,     $item->postname_en,     $item->email, $item->cx,   $item->group_id,    $item->username,  $item->password,     $item->status,  $user_update->user_id);
             if($item->data_status != $data_status){
-                array_push($emp_update, $item->emp_code);
+                array_push($emp_update, $item->emp_code, $item->note);
                 $user     = Users::update_temporary($item->type, $item->emp_code, $item->name_th, $item->name_en,  $item->postname_th,     $item->postname_en,     $item->email, $item->cx,   $item->group_id,    $item->username,  $item->password,     $item->status,  $user_update->user_id, $data_status, $note);
             }
             //////////////////////////////////////////// type,       emp_code,       name_th,       name_en,        postname_th,           postname_en,           zemail,     3cx          group_id           username         password            status             user create
@@ -884,7 +884,7 @@ class UserController extends Controller
         $sql_temp = DB::select($sql_temporary);
 
         $datas = array();
-        if (!empty($sql_temp)) {
+        if (!empty($sql_temp) && count($emp_update) == 0) {
             foreach ($sql_temp as $item) {
                 $datas = array(
                     'data' => $item
