@@ -2227,7 +2227,7 @@ class Users extends Model
         $sql = "
         SELECT * FROM users WHERE
         emp_code = '{$item->emp_code}'
-        AND type = '{$item->type}'
+        AND type = {$item->type}
         AND active = 1";
         $sql_user = DB::select($sql);
         $user_id = 0;
@@ -2246,7 +2246,7 @@ class Users extends Model
         $sql = "
         SELECT * FROM users WHERE
         emp_code = '{$item->emp_code}'
-        AND type = '{$item->type}'
+        AND type = {$item->type}
         AND active = 1";
         $sql_user = DB::select($sql);
         $user_id = 0;
@@ -2280,14 +2280,14 @@ class Users extends Model
             $update .= "emp_code = '{$item->emp_code}'";
         }
         if($item->type != -1){
-            $update .= ",type = '{$item->type}'";
+            $update .= ",type = {$item->type}";
         }
         $update .= ",updatedate = '{$datetime_now}'";
         $update .= ",updateby = '{$user_create}'";
         
         $sql = "UPDATE users SET
         {$update}
-        WHERE emp_code = {$item->emp_code}
+        WHERE emp_code = '{$item->emp_code}'
         AND type = {$item->type}
         AND active = 1";
 
@@ -2296,7 +2296,7 @@ class Users extends Model
         // update user_profile
         $sql_order = "
         SELECT * FROM user_profile
-        WHERE emp_code = {$item->emp_code}
+        WHERE emp_code = '{$item->emp_code}'
         AND type = {$item->type}
         AND NOT(group_id = {$item->group_id})
         AND active = 1";
@@ -2345,17 +2345,17 @@ class Users extends Model
             $update_pro .= "3cx = '{$item->cx}',";
         }
         if($item->status != -1){
-            $update_pro .= "status = '{$item->status}',";
+            $update_pro .= "status = {$item->status},";
         }
         if($item->group_id != ''){
-            $update_pro .= "group_id = '{$item->group_id}',";
+            $update_pro .= "group_id = {$item->group_id},";
         }
 
         if($item->emp_code != ''){
             $update_pro .= "emp_code = '{$item->emp_code}'";
         }
         if($item->type != -1){
-            $update_pro .= ",type = '{$item->type}'";
+            $update_pro .= ",type = {$item->type}";
         }
         $datetime_now = date('Y-m-d H:i:s');
         $update_pro .= ",updatedate = '{$datetime_now}'";
@@ -2363,7 +2363,7 @@ class Users extends Model
 
         $sql_pro = "UPDATE user_profile SET
         {$update_pro}
-        WHERE emp_code = {$item->emp_code}
+        WHERE emp_code = '{$item->emp_code}'
         AND type = {$item->type}
         AND active = 1";
 
@@ -2384,14 +2384,14 @@ class Users extends Model
             $update .= "emp_code = '{$item->emp_code}'";
         }
         if($item->type != -1){
-            $update .= ",type = '{$item->type}'";
+            $update .= ",type = {$item->type}";
         }
         $update .= ",updatedate = '{$datetime_now}'";
         $update .= ",updateby = '{$user_create}'";
         
         $sql = "UPDATE users SET
         {$update}
-        WHERE emp_code = {$item->emp_code}
+        WHERE emp_code = '{$item->emp_code}'
         AND type = {$item->type}
         AND active = 1";
 
@@ -2400,7 +2400,7 @@ class Users extends Model
         // update user_profile
         $sql_order = "
         SELECT * FROM user_profile
-        WHERE emp_code = {$item->emp_code}
+        WHERE emp_code = '{$item->emp_code}'
         AND type = {$item->type}
         AND NOT(group_id = {$item->group_id})
         AND active = 1";
@@ -2466,7 +2466,7 @@ class Users extends Model
 
         $sql_pro = "UPDATE user_profile SET
         {$update_pro}
-        WHERE emp_code = {$item->emp_code}
+        WHERE emp_code = '{$item->emp_code}'
         AND type = {$item->type}
         AND active = 1";
 
