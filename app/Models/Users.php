@@ -2234,7 +2234,7 @@ class Users extends Model
         foreach ($sql_user as $user) {
             $user_id =  $user->user_id;
         }
-        $user_profile = Users::create_user_profile($user_id, $item->emp_code, $item->name_th, $item->name_en, $item->postname_th, $item->postname_en, $item->email, $item->status, $item->group_id, $item->type, $item->username, $item->password, $user_create, $item->cx, $item->nickname1_th, $item->nickname1_en, $item->nickname2_th, $item->nickname2_en, $item->phone, $item->permission_status, $item->admin_menu);
+        $user_profile = Users::create_user_profile($user_id, $item->emp_code, $item->name_th, $item->name_en, $item->postname_th, $item->postname_en, $item->email, $item->status, $item->group_id, $item->type, $item->username, $item->password, $user_create, $item->cx, $item->nickname1_th, $item->nickname1_en, $item->nickname2_th, $item->nickname2_en, $item->phone, $item->status_permission, $item->admin_menu);
         
         return $item;
     }
