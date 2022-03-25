@@ -788,8 +788,10 @@ class UserController extends Controller
 
     public function import_user(Request $request)
     {
-        Users::delete_temporary();
-        File::delete(base_path('resources/csv/import-user.csv'));
+        $user_s = $this->getUserLogin();
+        $user_s = $user_s->user_id;
+        Users::delete_temporary($user_s);
+        File::delete(base_path('resources/csv/import-user-'.$user_s.'.csv'));
         $user_update = $this->getUserLogin();
         $request->validate([
             'csv' => 'required|mimes:csv,txt'
@@ -797,10 +799,10 @@ class UserController extends Controller
 
         $file = file($request->csv->getRealPath());
         $data = array_slice($file, 1);
-        $filename = resource_path('csv/import-user.csv');
+        $filename = resource_path('csv/import-user-'.$user_s.'.csv');
         file_put_contents($filename, $data);
 
-        $path = resource_path('csv/import-user.csv');
+        $path = resource_path('csv/import-user-'.$user_s.'.csv');
         $g = glob($path);
         foreach ($g as $file){
             $data = array_map('str_getcsv', file($file));
@@ -821,18 +823,19 @@ class UserController extends Controller
 
     public function get_temporary(Request $request)
     {
-        $_dataAll = $request->all();
         $user_s = $this->getUserLogin();
+        $user_id = $user_s->user_id;
+        $_dataAll = $request->all();
         $keyword  = $_dataAll['keyword'];
         $field  = $_dataAll['field'];
         $sort  = $_dataAll['sort'];
         
-        $new     = Users::get_temporary_new($keyword, $field, $sort);
-        $update  = Users::get_temporary_update($keyword, $field, $sort);
-        $mistake = Users::get_temporary_error($keyword, $field, $sort);
-        $count_new     = Users::count_temporary_new();
-        $count_update  = Users::count_temporary_update();
-        $count_mistake = Users::count_temporary_error();
+        $new     = Users::get_temporary_new($keyword, $field, $sort ,$user_id);
+        $update  = Users::get_temporary_update($keyword, $field, $sort, $user_id);
+        $mistake = Users::get_temporary_error($keyword, $field, $sort, $user_id);
+        $count_new     = Users::count_temporary_new($user_id);
+        $count_update  = Users::count_temporary_update($user_id);
+        $count_mistake = Users::count_temporary_error($user_id);
 
         return response()->json([
             'success' => [
@@ -845,6 +848,65 @@ class UserController extends Controller
                     'mistake' => $mistake,
                     
                 ]
+            ]
+        ], 200);
+       
+    }
+
+    public function import_temporary_to_user_profile(Request $request)
+    {
+        // $_dataAll = $request->all();
+        $user_update = $this->getUserLogin();
+        $user_s = $this->getUserLogin();
+        $user_id = $user_s->user_id;
+
+        $sql_temporary_s = "
+        SELECT *, 3cx as cx FROM temporary
+        WHERE active = 1 AND createby = '{$user_id}'
+        ";
+        $data = DB::select($sql_temporary_s);
+        $emp_update = array();
+        foreach($data as $item){
+            $data_status = Users::checkdata_status_update($item->type, $item->emp_code, $item->name_th, $item->name_en,  $item->postname_th,     $item->postname_en,     $item->email, $item->cx,   $item->group_id,    $item->username,  $item->password,     $item->status,  $user_update->user_id);
+            $note         = Users::checkerror_note_update($item->type, $item->emp_code, $item->name_th, $item->name_en,  $item->postname_th,     $item->postname_en,     $item->email, $item->cx,   $item->group_id,    $item->username,  $item->password,     $item->status,  $user_update->user_id);
+            if($item->data_status != $data_status){
+                array_push($emp_update, $item->emp_code, $item->data_status, $data_status, $note);
+                $user     = Users::update_temporary($item->type, $item->emp_code, $item->name_th, $item->name_en,  $item->postname_th,     $item->postname_en,     $item->email, $item->cx,   $item->group_id,    $item->username,  $item->password,     $item->status,  $user_update->user_id, $data_status, $note);
+            }
+            //////////////////////////////////////////// type,       emp_code,       name_th,       name_en,        postname_th,           postname_en,           zemail,     3cx          group_id           username         password            status             user create
+        }
+        $user_s = $this->getUserLogin();
+
+        $sql_temporary = "
+        SELECT *, 3cx as cx FROM temporary
+        WHERE active = 1 AND createby = '{$user_id}'
+        ";
+        $sql_temp = DB::select($sql_temporary);
+
+        $datas = array();
+        if (!empty($sql_temp)) {
+            foreach ($sql_temp as $item) {
+                $datas = array(
+                    'data' => $item
+                );
+                // if($item->data_status == 1 && $item->type == 0){
+                //     $insert = Users::insert_new_user_csv($item,$user_s->user_id);
+                // }
+                // if($item->data_status == 1 && $item->type == 1){
+                //     $insert_user_ldap = Users::insert_new_user_ldap_csv($item,$user_s->user_id);
+                // }
+                // if($item->data_status == 2 && $item->type == 0){
+                //     $update_user = Users::update_user_csv($item,$user_s->user_id);
+                // }
+                // if($item->data_status == 2 && $item->type == 1){
+                //     $update_user_ldap = Users::update_user_ldap_csv($item,$user_s->user_id);
+                // }
+            }
+        }
+        return response()->json([
+            'success' => [
+                'data' => 'import temporary to users and user_porfile is success!!',
+                'emp_update' => (count($emp_update) == 0 ? [] : $emp_update)
             ]
         ], 200);
        

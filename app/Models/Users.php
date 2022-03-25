@@ -1206,9 +1206,31 @@ class Users extends Model
             
     }
 
-    public static function delete_temporary()
+    public static function update_temporary(
+        $type, $emp_code, $name_th, 
+        $name_en, $postname_th, $postname_en, 
+        $email, $cx, $group_id, 
+        $username, $password, 
+        $status,$user_create,
+        $data_status,$note)
+        {
+            // $datetime_now = date('Y-m-d H:i:s');
+            $sql = "
+            UPDATE temporary SET
+            data_status = {$data_status},
+            note = '{$note}'
+            WHERE emp_code = '{$emp_code}' 
+            AND type = '{$type}' 
+            AND createby = '{$user_create}'
+            AND status = '{$status}'";
+    
+            $sql_user = DB::insert($sql);
+                
+        }
+
+    public static function delete_temporary($user_id)
     {
-        $sql = " DELETE FROM temporary";
+        $sql = " DELETE FROM temporary WHERE createby = '{$user_id}'";
         $delete_temporary = DB::select($sql);
             
     }
@@ -1226,12 +1248,20 @@ class Users extends Model
             return 0;
         }else{
             $sql = "
-            SELECT * FROM user_profile
+            SELECT *, 3cx as cx FROM user_profile
             WHERE emp_code = '{$emp_code}'
-            AND type = {$type}";
-            $check_user = DB::select($sql);
+            AND type = {$type}
+            AND active = 1";
+            $check_user_profile = DB::select($sql);
+
+            $sql_user = "
+            SELECT * FROM users
+            WHERE emp_code = '{$emp_code}'
+            AND type = {$type}
+            AND active = 1";
+            $check_user = DB::select($sql_user);
     
-            if(count($check_user) == 0){
+            if(count($check_user_profile) == 0 && count($check_user) == 0){
                 if ($type == 0){
                     if(
                         $type == '' ||
@@ -1281,7 +1311,27 @@ class Users extends Model
                 }
             } else {
                 if ($type == 0){
+                    $hash = $check_user[0]->password;
+                    $sh = 0;
+                    if(password_verify($password, $hash)){
+                        $sh = 1;
+                    }
                     if(
+                        ($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == $check_user_profile[0]->name_th) &&
+                        ($name_en == $check_user_profile[0]->name_en) &&
+                        ($postname_th == $check_user_profile[0]->postname_th) &&
+                        ($postname_en == $check_user_profile[0]->postname_en) &&
+                        ($email  == $check_user_profile[0]->email) &&
+                        ($cx == $check_user_profile[0]->cx) &&
+                        ($group_id == $check_user_profile[0]->group_id) &&
+                        ($username  == $check_user[0]->username) &&
+                        ($sh == 1) &&
+                        ($status == $check_user_profile[0]->status)
+                    ){
+                        return 0;
+                    }else if(
                         $type == '' ||
                         $emp_code =='' ||
                         // $name_th == '' ||
@@ -1300,9 +1350,23 @@ class Users extends Model
                     }else{
                         return 2;
                     }
+
                 }
                 if ($type == 1){
                     if(
+                        ($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == $check_user_profile[0]->name_th) &&
+                        ($name_en == $check_user_profile[0]->name_en) &&
+                        ($postname_th == $check_user_profile[0]->postname_th) &&
+                        ($postname_en == $check_user_profile[0]->postname_en) &&
+                        ($email  == $check_user_profile[0]->email) &&
+                        ($cx == $check_user_profile[0]->cx) &&
+                        ($group_id == $check_user_profile[0]->group_id) &&
+                        ($status == $check_user_profile[0]->status)
+                    ){
+                        return 0;
+                    }else if(
                         $type == '' ||
                         $emp_code =='' ||
                         // $name_th == '' ||
@@ -1334,6 +1398,169 @@ class Users extends Model
             
     }
 
+    public static function checkdata_status_update($type, $emp_code, $name_th, 
+    $name_en, $postname_th, $postname_en, 
+    $email, $cx, $group_id, 
+    $username, $password, 
+    $status,$user_create)
+    {
+        // 0 = error
+        // 1 = new
+        // 2 = update
+        if ($type == -1 || $emp_code == ''){
+            return 0;
+        }else{
+            $sql = "
+            SELECT *, 3cx as cx FROM user_profile
+            WHERE emp_code = '{$emp_code}'
+            AND type = {$type}
+            AND active = 1";
+            $check_user_profile = DB::select($sql);
+
+            $sql_user = "
+            SELECT * FROM users
+            WHERE emp_code = '{$emp_code}'
+            AND type = {$type}
+            AND active = 1";
+            $check_user = DB::select($sql_user);
+    
+            if(count($check_user_profile) == 0 && count($check_user) == 0){
+                if ($type == 0){
+                    if(
+                        $type == -1 ||
+                        $emp_code =='' ||
+                        $name_th == '' ||
+                        $name_en == '' ||
+                        $postname_th == '' ||
+                        $postname_en == '' ||
+                        // $email  == ''
+                        // $cx == ''
+                        $group_id == '' ||
+                        $username  == '' ||
+                        $password == '' ||
+                        $status == -1 ||
+                        $user_create  == ''
+                    ){
+                        return 0;
+                    }else{
+                        return 1;
+                    }
+                }
+                if ($type == 1){
+                    if(
+                        $type == -1 ||
+                        $emp_code =='' ||
+                        $name_th == '' ||
+                        $name_en == '' ||
+                        $postname_th == '' ||
+                        $postname_en == '' ||
+                        $email  == '' ||
+                        // $cx == ''
+                        $group_id == '' ||
+                        // $username  == '' ||
+                        // $password == '' ||
+                        $status == -1 ||
+                        $user_create  == ''
+                    ){
+                        return 0;
+                    }else if(
+                        $username  != '' ||
+                        $password  != '' 
+                    ){
+                        return 0;
+                    }else{
+                        return 1;
+                    }
+                }
+            } else {
+                if ($type == 0){
+                    $hash = $check_user[0]->password;
+                    $sh = 0;
+                    if(password_verify($password, $hash)){
+                        $sh = 1;
+                    }
+                    if(
+                        ($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == $check_user_profile[0]->name_th) &&
+                        ($name_en == $check_user_profile[0]->name_en) &&
+                        ($postname_th == $check_user_profile[0]->postname_th) &&
+                        ($postname_en == $check_user_profile[0]->postname_en) &&
+                        ($email  == $check_user_profile[0]->email) &&
+                        ($cx == $check_user_profile[0]->cx) &&
+                        ($group_id == $check_user_profile[0]->group_id) &&
+                        ($username  == $check_user[0]->username) &&
+                        ($sh == 1) &&
+                        ($status == $check_user_profile[0]->status)
+                    ){
+                        return 0;
+                    }else if(
+                        $type == -1 ||
+                        $emp_code =='' ||
+                        // $name_th == '' ||
+                        // $name_en == '' ||
+                        // $postname_th == '' ||
+                        // $postname_en == '' ||
+                        // $email  == ''
+                        // $cx == ''
+                        // $group_id == '' ||
+                        // $username  == '' ||
+                        // $password == '' ||
+                        $status == -1 ||
+                        $user_create  == ''
+                    ){
+                        return 0;
+                    }else{
+                        return 2;
+                    }
+
+                }
+                if ($type == 1){
+                    if(
+                        ($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == $check_user_profile[0]->name_th) &&
+                        ($name_en == $check_user_profile[0]->name_en) &&
+                        ($postname_th == $check_user_profile[0]->postname_th) &&
+                        ($postname_en == $check_user_profile[0]->postname_en) &&
+                        ($email  == $check_user_profile[0]->email) &&
+                        ($cx == $check_user_profile[0]->cx) &&
+                        ($group_id == $check_user_profile[0]->group_id) &&
+                        ($status == $check_user_profile[0]->status)
+                    ){
+                        return 0;
+                    }else if(
+                        $type == -1 ||
+                        $emp_code =='' ||
+                        // $name_th == '' ||
+                        // $name_en == '' ||
+                        // $postname_th == '' ||
+                        // $postname_en == '' ||
+                        // $email  == '' ||
+                        // $cx == ''
+                        // $group_id == '' ||
+                        // $username  == '' ||
+                        // $password == '' ||
+                        $status == -1 ||
+                        $user_create  == ''
+                    ){
+                        return 0;
+                    }else if(
+                        $username  != '' ||
+                        $password  != '' 
+                    ){
+                        return 0;
+                    }else{
+                        return 2;
+                    }
+                }
+            }           
+        }
+
+        
+            
+    }
+
     public static function checkerror_note($type, $emp_code, $name_th, 
     $name_en, $postname_th, $postname_en, 
     $email, $cx, $group_id, 
@@ -1344,12 +1571,20 @@ class Users extends Model
             return 'ข้อมูลไม่ถูกต้อง';
         }else{
             $sql = "
+            SELECT *, 3cx as cx FROM user_profile
+            WHERE emp_code = '{$emp_code}'
+            AND type = {$type}
+            AND active = 1";
+            $check_user_profile = DB::select($sql);
+
+            $sql_user = "
             SELECT * FROM users
             WHERE emp_code = '{$emp_code}'
-            AND type = {$type}";
-            $check_user = DB::select($sql);
+            AND type = {$type}
+            AND active = 1";
+            $check_user = DB::select($sql_user);
     
-            if(count($check_user) == 0){
+            if(count($check_user_profile) == 0 && count($check_user) == 0){
                 if ($type == 0){
                     if(
                         $type == '' ||
@@ -1392,14 +1627,34 @@ class Users extends Model
                         $username  != '' ||
                         $password  != '' 
                     ){
-                        return 'ไม่สามารถเพิ่มข้อมูล Username&Password';
+                        return 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง';
                     }else{
                         return 'new user LDAP';
                     }
                 }
             } else {
                 if ($type == 0){
+                    $hash = $check_user[0]->password;
+                    $sh = 0;
+                    if(password_verify($password, $hash)){
+                        $sh = 1;
+                    }
                     if(
+                        ($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == $check_user_profile[0]->name_th) &&
+                        ($name_en == $check_user_profile[0]->name_en) &&
+                        ($postname_th == $check_user_profile[0]->postname_th) &&
+                        ($postname_en == $check_user_profile[0]->postname_en) &&
+                        ($email  == $check_user_profile[0]->email) &&
+                        ($cx == $check_user_profile[0]->cx) &&
+                        ($group_id == $check_user_profile[0]->group_id) &&
+                        ($username  == $check_user[0]->username) &&
+                        ($sh == 1) &&
+                        ($status == $check_user_profile[0]->status)
+                    ){
+                        return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
+                    }else if(
                         $type == '' ||
                         $emp_code =='' ||
                         // $name_th == '' ||
@@ -1418,9 +1673,23 @@ class Users extends Model
                     }else{
                         return 'update user';
                     }
+
                 }
                 if ($type == 1){
                     if(
+                        ($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == $check_user_profile[0]->name_th) &&
+                        ($name_en == $check_user_profile[0]->name_en) &&
+                        ($postname_th == $check_user_profile[0]->postname_th) &&
+                        ($postname_en == $check_user_profile[0]->postname_en) &&
+                        ($email  == $check_user_profile[0]->email) &&
+                        ($cx == $check_user_profile[0]->cx) &&
+                        ($group_id == $check_user_profile[0]->group_id) &&
+                        ($status == $check_user_profile[0]->status)
+                    ){
+                        return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
+                    }else if(
                         $type == '' ||
                         $emp_code =='' ||
                         // $name_th == '' ||
@@ -1452,7 +1721,167 @@ class Users extends Model
             
     }
 
-    public static function get_temporary_new($keyword, $field, $sort)
+    public static function checkerror_note_update($type, $emp_code, $name_th, 
+    $name_en, $postname_th, $postname_en, 
+    $email, $cx, $group_id, 
+    $username, $password, 
+    $status,$user_create)
+    {
+        if ($type == -1 || $emp_code == ''){
+            return 'ข้อมูลไม่ถูกต้อง';
+        }else{
+            $sql = "
+            SELECT *, 3cx as cx FROM user_profile
+            WHERE emp_code = '{$emp_code}'
+            AND type = {$type}
+            AND active = 1";
+            $check_user_profile = DB::select($sql);
+
+            $sql_user = "
+            SELECT * FROM users
+            WHERE emp_code = '{$emp_code}'
+            AND type = {$type}
+            AND active = 1";
+            $check_user = DB::select($sql_user);
+    
+            if(count($check_user_profile) == 0 && count($check_user) == 0){
+                if ($type == 0){
+                    if(
+                        $type == -1 ||
+                        $emp_code =='' ||
+                        $name_th == '' ||
+                        $name_en == '' ||
+                        $postname_th == '' ||
+                        $postname_en == '' ||
+                        // $email  == ''
+                        // $cx == ''
+                        $group_id == '' ||
+                        $username  == '' ||
+                        $password == '' ||
+                        $status == -1 ||
+                        $user_create  == ''
+                    ){
+                        return 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง';
+                    }else{
+                        return 'new user';
+                    }
+                }
+                if ($type == 1){
+                    if(
+                        $type == -1 ||
+                        $emp_code =='' ||
+                        $name_th == '' ||
+                        $name_en == '' ||
+                        $postname_th == '' ||
+                        $postname_en == '' ||
+                        $email  == '' ||
+                        // $cx == ''
+                        $group_id == '' ||
+                        // $username  == '' ||
+                        // $password == '' ||
+                        $status == -1 ||
+                        $user_create  == ''
+                    ){
+                        return 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง';
+                    }else if(
+                        $username  != '' ||
+                        $password  != '' 
+                    ){
+                        return 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง';
+                    }else{
+                        return 'new user LDAP';
+                    }
+                }
+            } else {
+                if ($type == 0){
+                    $hash = $check_user[0]->password;
+                    $sh = 0;
+                    if(password_verify($password, $hash)){
+                        $sh = 1;
+                    }
+                    if(
+                        ($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == $check_user_profile[0]->name_th) &&
+                        ($name_en == $check_user_profile[0]->name_en) &&
+                        ($postname_th == $check_user_profile[0]->postname_th) &&
+                        ($postname_en == $check_user_profile[0]->postname_en) &&
+                        ($email  == $check_user_profile[0]->email) &&
+                        ($cx == $check_user_profile[0]->cx) &&
+                        ($group_id == $check_user_profile[0]->group_id) &&
+                        ($username  == $check_user[0]->username) &&
+                        ($sh == 1) &&
+                        ($status == $check_user_profile[0]->status)
+                    ){
+                        return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
+                    }else if(
+                        $type == -1 ||
+                        $emp_code =='' ||
+                        // $name_th == '' ||
+                        // $name_en == '' ||
+                        // $postname_th == '' ||
+                        // $postname_en == '' ||
+                        // // $email  == ''
+                        // // $cx == ''
+                        // $group_id == '' ||
+                        // $username  == '' ||
+                        // $password == '' ||
+                        $status == -1 ||
+                        $user_create  == ''
+                    ){
+                        return 'ไม่สามารถอัปเดตข้อมูลได้';
+                    }else{
+                        return 'update user';
+                    }
+
+                }
+                if ($type == 1){
+                    if(
+                        ($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == $check_user_profile[0]->name_th) &&
+                        ($name_en == $check_user_profile[0]->name_en) &&
+                        ($postname_th == $check_user_profile[0]->postname_th) &&
+                        ($postname_en == $check_user_profile[0]->postname_en) &&
+                        ($email  == $check_user_profile[0]->email) &&
+                        ($cx == $check_user_profile[0]->cx) &&
+                        ($group_id == $check_user_profile[0]->group_id) &&
+                        ($status == $check_user_profile[0]->status)
+                    ){
+                        return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
+                    }else if(
+                        $type == -1 ||
+                        $emp_code =='' ||
+                        // $name_th == '' ||
+                        // $name_en == '' ||
+                        // $postname_th == '' ||
+                        // $postname_en == '' ||
+                        // $email  == '' ||
+                        // $cx == ''
+                        // $group_id == '' ||
+                        // $username  == '' ||
+                        // $password == '' ||
+                        $status == -1 ||
+                        $user_create  == ''
+                    ){
+                        return 'ไม่สามารถอัปเดตข้อมูลได้';
+                    }else if(
+                        $username  != '' ||
+                        $password  != '' 
+                    ){
+                        return 'ไม่สามารถอัปเดตข้อมูล Username&Password';
+                    }else{
+                        return 'update user LDAP';
+                    }
+                }
+            }
+        }
+
+        
+            
+    }
+
+    public static function get_temporary_new($keyword, $field, $sort, $user_id)
     {
         $search = '';
         $order_by = '';
@@ -1502,11 +1931,10 @@ class Users extends Model
         ON temp.group_id=gp.group_id
         WHERE temp.active = 1
         AND temp.data_status = 1
+        AND temp.createby = '{$user_id}'
         {$search}
         {$order_by}
         ";
-        // {$search}
-        // {$order_by}
 
         $sql_new = DB::select($sql_new);
 
@@ -1549,7 +1977,7 @@ class Users extends Model
         return $new;
     }
 
-    public static function get_temporary_update($keyword, $field, $sort)
+    public static function get_temporary_update($keyword, $field, $sort, $user_id)
     {
         $search = '';
         $order_by = '';
@@ -1599,11 +2027,10 @@ class Users extends Model
         ON temp.group_id=gp.group_id
         WHERE temp.active = 1
         AND temp.data_status = 2
+        AND temp.createby = '{$user_id}'
         {$search}
         {$order_by}
         ";
-        // {$search}
-        // {$order_by}
 
         $sql_update = DB::select($sql_update);
 
@@ -1646,7 +2073,7 @@ class Users extends Model
         return $update;
     }
 
-    public static function get_temporary_error($keyword, $field, $sort)
+    public static function get_temporary_error($keyword, $field, $sort, $user_id)
     {
         $search = '';
         $order_by = '';
@@ -1696,11 +2123,10 @@ class Users extends Model
         ON temp.group_id=gp.group_id
         WHERE temp.active = 1
         AND temp.data_status = 0
+        AND temp.createby = '{$user_id}'
         {$search}
         {$order_by}
         ";
-        // {$search}
-        // {$order_by}
 
         $sql_error = DB::select($sql_error);
 
@@ -1743,13 +2169,14 @@ class Users extends Model
         return $mistake;
     }
 
-    public static function count_temporary_new()
+    public static function count_temporary_new($user_id)
     {
 
         $sql_count_temporary_new = "
         SELECT * FROM temporary
         WHERE active = 1
         AND data_status = 1
+        AND createby = '{$user_id}'
         ";
 
         $sql_count = DB::select($sql_count_temporary_new);
@@ -1759,13 +2186,14 @@ class Users extends Model
         return $count;
     }
 
-    public static function count_temporary_update()
+    public static function count_temporary_update($user_id)
     {
 
         $sql_count_temporary_update = "
         SELECT * FROM temporary
         WHERE active = 1
         AND data_status = 2
+        AND createby = '{$user_id}'
         ";
 
         $sql_count = DB::select($sql_count_temporary_update);
@@ -1775,7 +2203,62 @@ class Users extends Model
         return $count;
     }
 
-    public static function count_temporary_error()
+    public static function count_temporary_error($user_id)
+    {
+
+        $sql_count_temporary_error = "
+        SELECT * FROM temporary
+        WHERE active = 1
+        AND data_status = 0
+        AND createby = '{$user_id}'
+        ";
+
+        $sql_count = DB::select($sql_count_temporary_error);
+
+        $count = count($sql_count);
+        
+        return $count;
+    }
+
+    public static function insert_new_user_csv($item,$user_create)
+    {
+
+        $user = Users::create_user($item->emp_code, $item->name_th, $item->name_en, $item->postname_th, $item->postname_en, $item->email, $item->status, $item->group_id, $item->type, $item->username, $item->password, $user_create);
+        $sql = "
+        SELECT * FROM users WHERE
+        emp_code = '{$item->emp_code}'
+        AND type = '{$item->type}'
+        AND active = 1";
+        $sql_user = DB::select($sql);
+        $user_id = 0;
+        foreach ($sql_user as $user) {
+            $user_id =  $user->user_id;
+        }
+        $user_profile = Users::create_user_profile($user_id, $item->emp_code, $item->name_th, $item->name_en, $item->postname_th, $item->postname_en, $item->email, $item->status, $item->group_id, $item->type, $item->username, $item->password, $user_create, $item->cx, $item->nickname1_th, $item->nickname1_en, $item->nickname2_th, $item->nickname2_en, $item->phone, $item->permission_status, $item->admin_menu);
+        
+        return $item;
+    }
+
+    public static function insert_new_user_ldap_csv($item,$user_create)
+    {
+        $username = Users::searchLDAP($item->emp_code);
+        $user = Users::create_user($item->emp_code, $item->name_th, $item->name_en, $item->postname_th, $item->postname_en, $item->email, $item->status, $item->group_id, $item->type, $username, 'LDAP', $user_create);
+        $sql = "
+        SELECT * FROM users WHERE
+        emp_code = '{$item->emp_code}'
+        AND type = '{$item->type}'
+        AND active = 1";
+        $sql_user = DB::select($sql);
+        $user_id = 0;
+        foreach ($sql_user as $user) {
+            $user_id =  $user->user_id;
+        }
+        $user_profile = Users::create_user_profile($user_id, $item->emp_code, $item->name_th, $item->name_en, $item->postname_th, $item->postname_en, $item->email, $item->status, $item->group_id, $item->type, $username, 'LDAP', $user_create, $item->cx, $item->nickname1_th, $item->nickname1_en, $item->nickname2_th, $item->nickname2_en, $item->phone, $item->status_permission, $item->admin_menu);
+        
+        return $item;
+    }
+
+    public static function update_user_csv()
     {
 
         $sql_count_temporary_error = "
@@ -1789,5 +2272,57 @@ class Users extends Model
         $count = count($sql_count);
         
         return $count;
+    }
+
+    public static function update_user_ldap_csv()
+    {
+
+        $sql_count_temporary_error = "
+        SELECT * FROM temporary
+        WHERE active = 1
+        AND data_status = 0
+        ";
+
+        $sql_count = DB::select($sql_count_temporary_error);
+
+        $count = count($sql_count);
+        
+        return $count;
+    }
+
+    public function searchLDAP($emp_code)
+    {
+        $ldap = file_get_contents(API_Sync . "iauthen/get-all-profile?user_name=&emp_number={$emp_code}");
+        $data = json_decode($ldap);
+        $i = 0;
+        foreach ($data->data as $item) {
+            $user[] = array(
+                'index'       => $i,
+                'user_id'     => '',
+                'emp_code'    => $item->employeenumber,
+                'username'    => $item->uid,
+                'name_th'     => trim($item->fnamethai, ' ') . ' ' . $item->lnamethai,
+                'name_en'     => $item->firstname . ' ' . $item->lastname,
+                'postname_th' => $item->postname_thai,
+                'postname_en' => $item->postname_en,
+                'nickname1_th' => '',
+                'nickname1_en' => '',
+                'nickname2_th' => '',
+                'nickname2_en' => '',
+                'email'       => $item->email,
+                'cx'          => '',
+                'phone'       => '',
+                'group_id'    => '',
+                'group_name_th' => '',
+                'group_name_en' => '',
+                'type_login'  => 1,
+                'image'       => '',
+                'status_permission' => '',
+                'admin_menu'  => '',
+            );
+            $i++;
+        }
+
+        return $user[0]['username'];
     }
 }

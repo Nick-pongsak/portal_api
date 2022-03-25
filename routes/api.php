@@ -85,3 +85,4 @@ Route::post('/check-authen-mktops', [UserController::class, 'mktops_verify']); /
 // import user csv
 Route::post('/import-user', [UserController::class, 'import_user']);
 Route::post('/get-temporary', [UserController::class, 'get_temporary']);
+Route::post('/import-temp-to-users', [UserController::class, 'import_temporary_to_user_profile']);
