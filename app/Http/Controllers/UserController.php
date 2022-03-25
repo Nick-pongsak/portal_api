@@ -870,7 +870,7 @@ class UserController extends Controller
             $data_status = Users::checkdata_status_update($item->type, $item->emp_code, $item->name_th, $item->name_en,  $item->postname_th,     $item->postname_en,     $item->email, $item->cx,   $item->group_id,    $item->username,  $item->password,     $item->status,  $user_update->user_id);
             $note         = Users::checkerror_note_update($item->type, $item->emp_code, $item->name_th, $item->name_en,  $item->postname_th,     $item->postname_en,     $item->email, $item->cx,   $item->group_id,    $item->username,  $item->password,     $item->status,  $user_update->user_id);
             if($item->data_status != $data_status){
-                array_push($emp_update, $item->emp_code, $item->data_status, $data_status, $note);
+                array_push($emp_update, $item->emp_code);
                 $user     = Users::update_temporary($item->type, $item->emp_code, $item->name_th, $item->name_en,  $item->postname_th,     $item->postname_en,     $item->email, $item->cx,   $item->group_id,    $item->username,  $item->password,     $item->status,  $user_update->user_id, $data_status, $note);
             }
             //////////////////////////////////////////// type,       emp_code,       name_th,       name_en,        postname_th,           postname_en,           zemail,     3cx          group_id           username         password            status             user create
@@ -889,18 +889,18 @@ class UserController extends Controller
                 $datas = array(
                     'data' => $item
                 );
-                // if($item->data_status == 1 && $item->type == 0){
-                //     $insert = Users::insert_new_user_csv($item,$user_s->user_id);
-                // }
-                // if($item->data_status == 1 && $item->type == 1){
-                //     $insert_user_ldap = Users::insert_new_user_ldap_csv($item,$user_s->user_id);
-                // }
-                // if($item->data_status == 2 && $item->type == 0){
-                //     $update_user = Users::update_user_csv($item,$user_s->user_id);
-                // }
-                // if($item->data_status == 2 && $item->type == 1){
-                //     $update_user_ldap = Users::update_user_ldap_csv($item,$user_s->user_id);
-                // }
+                if($item->data_status == 1 && $item->type == 0){
+                    $insert = Users::insert_new_user_csv($item,$user_s->user_id);
+                }
+                if($item->data_status == 1 && $item->type == 1){
+                    $insert_user_ldap = Users::insert_new_user_ldap_csv($item,$user_s->user_id);
+                }
+                if($item->data_status == 2 && $item->type == 0){
+                    $update_user = Users::update_user_csv($item,$user_s->user_id);
+                }
+                if($item->data_status == 2 && $item->type == 1){
+                    $update_user_ldap = Users::update_user_ldap_csv($item,$user_s->user_id);
+                }
             }
         }
         return response()->json([

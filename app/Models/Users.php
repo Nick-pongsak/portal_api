@@ -2258,36 +2258,221 @@ class Users extends Model
         return $item;
     }
 
-    public static function update_user_csv()
+    public static function update_user_csv($item,$user_create)
     {
 
-        $sql_count_temporary_error = "
-        SELECT * FROM temporary
-        WHERE active = 1
-        AND data_status = 0
-        ";
+        $datetime_now = date('Y-m-d H:i:s');
+        $update = '';
+        $update_pro = '';
+        $password = '';
 
-        $sql_count = DB::select($sql_count_temporary_error);
-
-        $count = count($sql_count);
+        // update users
+        if($item->password != ''){
+            $password = bcrypt($item->password);
+        }
+        if($item->password != ''){
+            $update .= "password = '{$password}',";
+        }
+        if($item->username != ''){
+            $update .= "username = '{$item->username}',";
+        }
+        if($item->emp_code != ''){
+            $update .= "emp_code = '{$item->emp_code}'";
+        }
+        if($item->type != -1){
+            $update .= ",type = '{$item->type}'";
+        }
+        $update .= ",updatedate = '{$datetime_now}'";
+        $update .= ",updateby = '{$user_create}'";
         
-        return $count;
+        $sql = "UPDATE users SET
+        {$update}
+        WHERE emp_code = {$item->emp_code}
+        AND type = {$item->type}
+        AND active = 1";
+
+        $sql_user = DB::insert($sql);
+
+        // update user_profile
+        $sql_order = "
+        SELECT * FROM user_profile
+        WHERE emp_code = {$item->emp_code}
+        AND type = {$item->type}
+        AND NOT(group_id = {$item->group_id})
+        AND active = 1";
+
+        $sql_or = DB::select($sql_order);
+        if (!empty($sql_or)) {
+
+            $sql_delete_order = "
+            UPDATE user_setting SET
+            app_order = '' 
+            WHERE user_id = {$sql_or[0]->user_id}";
+
+            $sql_delete = DB::insert($sql_delete_order);
+        }
+
+        
+
+        if($item->name_th != ''){
+            $update_pro .= "name_th = '{$item->name_th}',";
+        }
+        if($item->name_en != ''){
+            $update_pro .= "name_en = '{$item->name_en}',";
+        }
+        if($item->nickname1_th != ''){
+            $update_pro .= "nickname1_th = '{$item->nickname1_th}',";
+        }
+        if($item->nickname1_en != ''){
+            $update_pro .= "nickname1_en = '{$item->nickname1_en}',";
+        }
+        if($item->nickname2_th != ''){
+            $update_pro .= "nickname2_th = '{$item->nickname2_th}',";
+        }
+        if($item->nickname2_en != ''){
+            $update_pro .= "nickname2_en = '{$item->nickname2_en}',";
+        }
+        if($item->postname_th != ''){
+            $update_pro .= "postname_th = '{$item->postname_th}',";
+        }
+        if($item->postname_en != ''){
+            $update_pro .= "postname_en = '{$item->postname_en}',";
+        }
+        if($item->email != ''){
+            $update_pro .= "email = '{$item->email}',";
+        }
+        if($item->cx != ''){
+            $update_pro .= "3cx = '{$item->cx}',";
+        }
+        if($item->status != -1){
+            $update_pro .= "status = '{$item->status}',";
+        }
+        if($item->group_id != ''){
+            $update_pro .= "group_id = '{$item->group_id}',";
+        }
+
+        if($item->emp_code != ''){
+            $update_pro .= "emp_code = '{$item->emp_code}'";
+        }
+        if($item->type != -1){
+            $update_pro .= ",type = '{$item->type}'";
+        }
+        $datetime_now = date('Y-m-d H:i:s');
+        $update_pro .= ",updatedate = '{$datetime_now}'";
+        $update_pro .= ",updateby = '{$user_create}'";
+
+        $sql_pro = "UPDATE user_profile SET
+        {$update_pro}
+        WHERE emp_code = {$item->emp_code}
+        AND type = {$item->type}
+        AND active = 1";
+
+        $sql_user_pro = DB::insert($sql_pro);
+        
+        return 'success';
     }
 
-    public static function update_user_ldap_csv()
+    public static function update_user_ldap_csv($item,$user_create)
     {
 
-        $sql_count_temporary_error = "
-        SELECT * FROM temporary
-        WHERE active = 1
-        AND data_status = 0
-        ";
+        $datetime_now = date('Y-m-d H:i:s');
+        $update = '';
+        $update_pro = '';
 
-        $sql_count = DB::select($sql_count_temporary_error);
-
-        $count = count($sql_count);
+        // update users
+        if($item->emp_code != ''){
+            $update .= "emp_code = '{$item->emp_code}'";
+        }
+        if($item->type != -1){
+            $update .= ",type = '{$item->type}'";
+        }
+        $update .= ",updatedate = '{$datetime_now}'";
+        $update .= ",updateby = '{$user_create}'";
         
-        return $count;
+        $sql = "UPDATE users SET
+        {$update}
+        WHERE emp_code = {$item->emp_code}
+        AND type = {$item->type}
+        AND active = 1";
+
+        $sql_user = DB::insert($sql);
+
+        // update user_profile
+        $sql_order = "
+        SELECT * FROM user_profile
+        WHERE emp_code = {$item->emp_code}
+        AND type = {$item->type}
+        AND NOT(group_id = {$item->group_id})
+        AND active = 1";
+
+        $sql_or = DB::select($sql_order);
+        if (!empty($sql_or)) {
+
+            $sql_delete_order = "
+            UPDATE user_setting SET
+            app_order = '' 
+            WHERE user_id = {$sql_or[0]->user_id}";
+
+            $sql_delete = DB::insert($sql_delete_order);
+        }
+
+        $datetime_now = date('Y-m-d H:i:s');
+
+        if($item->name_th != ''){
+            $update_pro .= "name_th = '{$item->name_th}',";
+        }
+        if($item->name_en != ''){
+            $update_pro .= "name_en = '{$item->name_en}',";
+        }
+        if($item->nickname1_th != ''){
+            $update_pro .= "nickname1_th = '{$item->nickname1_th}',";
+        }
+        if($item->nickname1_en != ''){
+            $update_pro .= "nickname1_en = '{$item->nickname1_en}',";
+        }
+        if($item->nickname2_th != ''){
+            $update_pro .= "nickname2_th = '{$item->nickname2_th}',";
+        }
+        if($item->nickname2_en != ''){
+            $update_pro .= "nickname2_en = '{$item->nickname2_en}',";
+        }
+        if($item->postname_th != ''){
+            $update_pro .= "postname_th = '{$item->postname_th}',";
+        }
+        if($item->postname_en != ''){
+            $update_pro .= "postname_en = '{$item->postname_en}',";
+        }
+        if($item->email != ''){
+            $update_pro .= "email = '{$item->email}',";
+        }
+        if($item->cx != ''){
+            $update_pro .= "3cx = '{$item->cx}',";
+        }
+        if($item->status != -1){
+            $update_pro .= "status = {$item->status},";
+        }
+        if($item->group_id != ''){
+            $update_pro .= "group_id = {$item->group_id},";
+        }
+
+        if($item->emp_code != ''){
+            $update_pro .= "emp_code = '{$item->emp_code}'";
+        }
+        if($item->type != -1){
+            $update_pro .= ",type = {$item->type}";
+        }
+        $update .= ",updatedate = '{$datetime_now}'";
+        $update .= ",updateby = '{$user_create}'";
+
+        $sql_pro = "UPDATE user_profile SET
+        {$update_pro}
+        WHERE emp_code = {$item->emp_code}
+        AND type = {$item->type}
+        AND active = 1";
+
+        $sql_user_pro = DB::insert($sql_pro);
+        
+        return 'success';
     }
 
     public function searchLDAP($emp_code)
