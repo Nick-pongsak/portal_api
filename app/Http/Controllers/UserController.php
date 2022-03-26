@@ -789,9 +789,9 @@ class UserController extends Controller
     public function import_user(Request $request)
     {
         $user_s = $this->getUserLogin();
-        $user_s = $user_s->user_id;
-        Users::delete_temporary($user_s);
-        File::delete(base_path('resources/csv/import-user-'.$user_s.'.csv'));
+        $user_id = $user_s->user_id;
+        Users::delete_temporary($user_id);
+        File::delete(base_path('resources/csv/import-user-'.$user_id.'.csv'));
         $user_update = $this->getUserLogin();
         $request->validate([
             'csv' => 'required|mimes:csv,txt'
@@ -799,10 +799,16 @@ class UserController extends Controller
 
         $file = file($request->csv->getRealPath());
         $data = array_slice($file, 1);
-        $filename = resource_path('csv/import-user-'.$user_s.'.csv');
+        $filename = resource_path('csv/import-user-'.$user_id.'.csv');
+        file_put_contents($filename, $data);
+        
+        $datetime_now = date('Ymd');
+        $file = file($request->csv->getRealPath());
+        $data = array_slice($file, 1);
+        $filename = resource_path('csv/import-user-'.$user_id.'_'.$datetime_now.'.csv');
         file_put_contents($filename, $data);
 
-        $path = resource_path('csv/import-user-'.$user_s.'.csv');
+        $path = resource_path('csv/import-user-'.$user_id.'.csv');
         $g = glob($path);
         foreach ($g as $file){
             $data = array_map('str_getcsv', file($file));
