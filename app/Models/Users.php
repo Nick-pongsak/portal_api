@@ -1161,6 +1161,9 @@ class Users extends Model
         if($status == ''){
             $status = -1;
         }
+        if($group_id == ''){
+            $group_id = -1;
+        }
         $datetime_now = date('Y-m-d H:i:s');
         $sql = "
         INSERT INTO temporary 
@@ -1174,7 +1177,7 @@ class Users extends Model
         ,createdate,updatedate,createby,updateby
         ,active,data_status,note)
         VALUES 
-        ('{$type}'
+        ( {$type}
         ,'{$emp_code}'
         ,'{$name_th}'
         ,'{$name_en}'
@@ -1188,7 +1191,7 @@ class Users extends Model
         ,''
         , 0
         , 0
-        ,'{$status}'
+        , {$status}
         ,''
         ,''
         ,''
@@ -1317,34 +1320,24 @@ class Users extends Model
                         $sh = 1;
                     }
                     if(
-                        ($type == $check_user_profile[0]->type) &&
-                        ($emp_code == $check_user_profile[0]->emp_code) &&
-                        ($name_th == $check_user_profile[0]->name_th) &&
-                        ($name_en == $check_user_profile[0]->name_en) &&
-                        ($postname_th == $check_user_profile[0]->postname_th) &&
-                        ($postname_en == $check_user_profile[0]->postname_en) &&
-                        ($email  == $check_user_profile[0]->email) &&
-                        ($cx == $check_user_profile[0]->cx) &&
-                        ($group_id == $check_user_profile[0]->group_id) &&
-                        ($username  == $check_user[0]->username) &&
-                        ($sh == 1) &&
-                        ($status == $check_user_profile[0]->status)
+                        $type != '' &&
+                        $emp_code !='' &&
+                        $user_create  == ''
                     ){
                         return 0;
                     }else if(
-                        $type == '' ||
-                        $emp_code =='' ||
-                        // $name_th == '' ||
-                        // $name_en == '' ||
-                        // $postname_th == '' ||
-                        // $postname_en == '' ||
-                        // $email  == ''
-                        // $cx == ''
-                        // $group_id == '' ||
-                        // $username  == '' ||
-                        // $password == '' ||
-                        $status == '' ||
-                        $user_create  == ''
+                        (($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == '' || ($name_th == $check_user_profile[0]->name_th)) &&
+                        ($name_en == '' || ($name_en == $check_user_profile[0]->name_en)) &&
+                        ($postname_th == '' || ($postname_th == $check_user_profile[0]->postname_th)) &&
+                        ($postname_en == '' || ($postname_en == $check_user_profile[0]->postname_en)) &&
+                        ($email  == '' || ($email  == $check_user_profile[0]->email)) &&
+                        ($cx == '' || ($cx == $check_user_profile[0]->cx)) &&
+                        ($group_id == '' || ($group_id == $check_user_profile[0]->group_id)) &&
+                        ($username  == '' || ($username  == $check_user[0]->username)) &&
+                        ($password == '' || ($sh == 1)) &&
+                        ($status == '' || ($status == $check_user_profile[0]->status)))
                     ){
                         return 0;
                     }else{
@@ -1354,37 +1347,27 @@ class Users extends Model
                 }
                 if ($type == 1){
                     if(
-                        ($type == $check_user_profile[0]->type) &&
-                        ($emp_code == $check_user_profile[0]->emp_code) &&
-                        ($name_th == $check_user_profile[0]->name_th) &&
-                        ($name_en == $check_user_profile[0]->name_en) &&
-                        ($postname_th == $check_user_profile[0]->postname_th) &&
-                        ($postname_en == $check_user_profile[0]->postname_en) &&
-                        ($email  == $check_user_profile[0]->email) &&
-                        ($cx == $check_user_profile[0]->cx) &&
-                        ($group_id == $check_user_profile[0]->group_id) &&
-                        ($status == $check_user_profile[0]->status)
-                    ){
-                        return 0;
-                    }else if(
-                        $type == '' ||
-                        $emp_code =='' ||
-                        // $name_th == '' ||
-                        // $name_en == '' ||
-                        // $postname_th == '' ||
-                        // $postname_en == '' ||
-                        // $email  == '' ||
-                        // $cx == ''
-                        // $group_id == '' ||
-                        // $username  == '' ||
-                        // $password == '' ||
-                        $status == '' ||
+                        $type != '' &&
+                        $emp_code !='' &&
                         $user_create  == ''
                     ){
                         return 0;
                     }else if(
                         $username  != '' ||
-                        $password  != '' 
+                        $password  != ''
+                    ){
+                        return 0;
+                    }else if(
+                        (($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == '' || ($name_th == $check_user_profile[0]->name_th)) &&
+                        ($name_en == '' || ($name_en == $check_user_profile[0]->name_en)) &&
+                        ($postname_th == '' || ($postname_th == $check_user_profile[0]->postname_th)) &&
+                        ($postname_en == '' || ($postname_en == $check_user_profile[0]->postname_en)) &&
+                        ($email  == '' || ($email  == $check_user_profile[0]->email)) &&
+                        ($cx == '' || ($cx == $check_user_profile[0]->cx)) &&
+                        ($group_id == '' || ($group_id == $check_user_profile[0]->group_id)) &&
+                        ($status == '' || ($status == $check_user_profile[0]->status)))
                     ){
                         return 0;
                     }else{
@@ -1435,7 +1418,7 @@ class Users extends Model
                         $postname_en == '' ||
                         // $email  == ''
                         // $cx == ''
-                        $group_id == '' ||
+                        $group_id == -1 ||
                         $username  == '' ||
                         $password == '' ||
                         $status == -1 ||
@@ -1456,7 +1439,7 @@ class Users extends Model
                         $postname_en == '' ||
                         $email  == '' ||
                         // $cx == ''
-                        $group_id == '' ||
+                        $group_id == -1 ||
                         // $username  == '' ||
                         // $password == '' ||
                         $status == -1 ||
@@ -1480,34 +1463,25 @@ class Users extends Model
                         $sh = 1;
                     }
                     if(
-                        ($type == $check_user_profile[0]->type) &&
-                        ($emp_code == $check_user_profile[0]->emp_code) &&
-                        ($name_th == $check_user_profile[0]->name_th) &&
-                        ($name_en == $check_user_profile[0]->name_en) &&
-                        ($postname_th == $check_user_profile[0]->postname_th) &&
-                        ($postname_en == $check_user_profile[0]->postname_en) &&
-                        ($email  == $check_user_profile[0]->email) &&
-                        ($cx == $check_user_profile[0]->cx) &&
-                        ($group_id == $check_user_profile[0]->group_id) &&
-                        ($username  == $check_user[0]->username) &&
-                        ($sh == 1) &&
-                        ($status == $check_user_profile[0]->status)
+                        $type != -1 &&
+                        $emp_code !='' &&
+                        $user_create  == ''
+
                     ){
                         return 0;
                     }else if(
-                        $type == -1 ||
-                        $emp_code =='' ||
-                        // $name_th == '' ||
-                        // $name_en == '' ||
-                        // $postname_th == '' ||
-                        // $postname_en == '' ||
-                        // $email  == ''
-                        // $cx == ''
-                        // $group_id == '' ||
-                        // $username  == '' ||
-                        // $password == '' ||
-                        $status == -1 ||
-                        $user_create  == ''
+                        (($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == '' || ($name_th == $check_user_profile[0]->name_th)) &&
+                        ($name_en == '' || ($name_en == $check_user_profile[0]->name_en)) &&
+                        ($postname_th == '' || ($postname_th == $check_user_profile[0]->postname_th)) &&
+                        ($postname_en == '' || ($postname_en == $check_user_profile[0]->postname_en)) &&
+                        ($email  == '' || ($email  == $check_user_profile[0]->email)) &&
+                        ($cx == '' || ($cx == $check_user_profile[0]->cx)) &&
+                        ($group_id == -1 || ($group_id == $check_user_profile[0]->group_id)) &&
+                        ($username  == '' || ($username  == $check_user[0]->username)) &&
+                        ($password == '' || ($sh == 1)) &&
+                        ($status == -1 || ($status == $check_user_profile[0]->status)))
                     ){
                         return 0;
                     }else{
@@ -1517,37 +1491,27 @@ class Users extends Model
                 }
                 if ($type == 1){
                     if(
-                        ($type == $check_user_profile[0]->type) &&
-                        ($emp_code == $check_user_profile[0]->emp_code) &&
-                        ($name_th == $check_user_profile[0]->name_th) &&
-                        ($name_en == $check_user_profile[0]->name_en) &&
-                        ($postname_th == $check_user_profile[0]->postname_th) &&
-                        ($postname_en == $check_user_profile[0]->postname_en) &&
-                        ($email  == $check_user_profile[0]->email) &&
-                        ($cx == $check_user_profile[0]->cx) &&
-                        ($group_id == $check_user_profile[0]->group_id) &&
-                        ($status == $check_user_profile[0]->status)
-                    ){
-                        return 0;
-                    }else if(
-                        $type == -1 ||
-                        $emp_code =='' ||
-                        // $name_th == '' ||
-                        // $name_en == '' ||
-                        // $postname_th == '' ||
-                        // $postname_en == '' ||
-                        // $email  == '' ||
-                        // $cx == ''
-                        // $group_id == '' ||
-                        // $username  == '' ||
-                        // $password == '' ||
-                        $status == -1 ||
+                        $type != -1 &&
+                        $emp_code !='' &&
                         $user_create  == ''
                     ){
                         return 0;
                     }else if(
                         $username  != '' ||
-                        $password  != '' 
+                        $password  != ''
+                    ){
+                        return 0;
+                    }else if(
+                        (($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == '' || ($name_th == $check_user_profile[0]->name_th)) &&
+                        ($name_en == '' || ($name_en == $check_user_profile[0]->name_en)) &&
+                        ($postname_th == '' || ($postname_th == $check_user_profile[0]->postname_th)) &&
+                        ($postname_en == '' || ($postname_en == $check_user_profile[0]->postname_en)) &&
+                        ($email  == '' || ($email  == $check_user_profile[0]->email)) &&
+                        ($cx == '' || ($cx == $check_user_profile[0]->cx)) &&
+                        ($group_id == -1 || ($group_id == $check_user_profile[0]->group_id)) &&
+                        ($status == -1 || ($status == $check_user_profile[0]->status)))
                     ){
                         return 0;
                     }else{
@@ -1640,36 +1604,26 @@ class Users extends Model
                         $sh = 1;
                     }
                     if(
-                        ($type == $check_user_profile[0]->type) &&
-                        ($emp_code == $check_user_profile[0]->emp_code) &&
-                        ($name_th == $check_user_profile[0]->name_th) &&
-                        ($name_en == $check_user_profile[0]->name_en) &&
-                        ($postname_th == $check_user_profile[0]->postname_th) &&
-                        ($postname_en == $check_user_profile[0]->postname_en) &&
-                        ($email  == $check_user_profile[0]->email) &&
-                        ($cx == $check_user_profile[0]->cx) &&
-                        ($group_id == $check_user_profile[0]->group_id) &&
-                        ($username  == $check_user[0]->username) &&
-                        ($sh == 1) &&
-                        ($status == $check_user_profile[0]->status)
-                    ){
-                        return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
-                    }else if(
-                        $type == '' ||
-                        $emp_code =='' ||
-                        // $name_th == '' ||
-                        // $name_en == '' ||
-                        // $postname_th == '' ||
-                        // $postname_en == '' ||
-                        // // $email  == ''
-                        // // $cx == ''
-                        // $group_id == '' ||
-                        // $username  == '' ||
-                        // $password == '' ||
-                        $status == '' ||
+                        $type != '' &&
+                        $emp_code !='' &&
                         $user_create  == ''
                     ){
                         return 'ไม่สามารถอัปเดตข้อมูลได้';
+                    }else if(
+                        (($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == '' || ($name_th == $check_user_profile[0]->name_th)) &&
+                        ($name_en == '' || ($name_en == $check_user_profile[0]->name_en)) &&
+                        ($postname_th == '' || ($postname_th == $check_user_profile[0]->postname_th)) &&
+                        ($postname_en == '' || ($postname_en == $check_user_profile[0]->postname_en)) &&
+                        ($email  == '' || ($email  == $check_user_profile[0]->email)) &&
+                        ($cx == '' || ($cx == $check_user_profile[0]->cx)) &&
+                        ($group_id == '' || ($group_id == $check_user_profile[0]->group_id)) &&
+                        ($username  == '' || ($username  == $check_user[0]->username)) &&
+                        ($password == '' || ($sh == 1)) &&
+                        ($status == '' || ($status == $check_user_profile[0]->status)))
+                    ){
+                        return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
                     }else{
                         return 'update user';
                     }
@@ -1677,39 +1631,29 @@ class Users extends Model
                 }
                 if ($type == 1){
                     if(
-                        ($type == $check_user_profile[0]->type) &&
-                        ($emp_code == $check_user_profile[0]->emp_code) &&
-                        ($name_th == $check_user_profile[0]->name_th) &&
-                        ($name_en == $check_user_profile[0]->name_en) &&
-                        ($postname_th == $check_user_profile[0]->postname_th) &&
-                        ($postname_en == $check_user_profile[0]->postname_en) &&
-                        ($email  == $check_user_profile[0]->email) &&
-                        ($cx == $check_user_profile[0]->cx) &&
-                        ($group_id == $check_user_profile[0]->group_id) &&
-                        ($status == $check_user_profile[0]->status)
-                    ){
-                        return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
-                    }else if(
-                        $type == '' ||
-                        $emp_code =='' ||
-                        // $name_th == '' ||
-                        // $name_en == '' ||
-                        // $postname_th == '' ||
-                        // $postname_en == '' ||
-                        // $email  == '' ||
-                        // $cx == ''
-                        // $group_id == '' ||
-                        // $username  == '' ||
-                        // $password == '' ||
-                        $status == '' ||
+                        $type != '' &&
+                        $emp_code !='' &&
                         $user_create  == ''
                     ){
                         return 'ไม่สามารถอัปเดตข้อมูลได้';
                     }else if(
                         $username  != '' ||
-                        $password  != '' 
+                        $password  != ''
                     ){
                         return 'ไม่สามารถอัปเดตข้อมูล Username&Password';
+                    }else if(
+                        (($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == '' || ($name_th == $check_user_profile[0]->name_th)) &&
+                        ($name_en == '' || ($name_en == $check_user_profile[0]->name_en)) &&
+                        ($postname_th == '' || ($postname_th == $check_user_profile[0]->postname_th)) &&
+                        ($postname_en == '' || ($postname_en == $check_user_profile[0]->postname_en)) &&
+                        ($email  == '' || ($email  == $check_user_profile[0]->email)) &&
+                        ($cx == '' || ($cx == $check_user_profile[0]->cx)) &&
+                        ($group_id == '' || ($group_id == $check_user_profile[0]->group_id)) &&
+                        ($status == '' || ($status == $check_user_profile[0]->status)))
+                    ){
+                        return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
                     }else{
                         return 'update user LDAP';
                     }
@@ -1755,7 +1699,7 @@ class Users extends Model
                         $postname_en == '' ||
                         // $email  == ''
                         // $cx == ''
-                        $group_id == '' ||
+                        $group_id == -1 ||
                         $username  == '' ||
                         $password == '' ||
                         $status == -1 ||
@@ -1776,7 +1720,7 @@ class Users extends Model
                         $postname_en == '' ||
                         $email  == '' ||
                         // $cx == ''
-                        $group_id == '' ||
+                        $group_id == -1 ||
                         // $username  == '' ||
                         // $password == '' ||
                         $status == -1 ||
@@ -1800,36 +1744,26 @@ class Users extends Model
                         $sh = 1;
                     }
                     if(
-                        ($type == $check_user_profile[0]->type) &&
-                        ($emp_code == $check_user_profile[0]->emp_code) &&
-                        ($name_th == $check_user_profile[0]->name_th) &&
-                        ($name_en == $check_user_profile[0]->name_en) &&
-                        ($postname_th == $check_user_profile[0]->postname_th) &&
-                        ($postname_en == $check_user_profile[0]->postname_en) &&
-                        ($email  == $check_user_profile[0]->email) &&
-                        ($cx == $check_user_profile[0]->cx) &&
-                        ($group_id == $check_user_profile[0]->group_id) &&
-                        ($username  == $check_user[0]->username) &&
-                        ($sh == 1) &&
-                        ($status == $check_user_profile[0]->status)
-                    ){
-                        return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
-                    }else if(
-                        $type == -1 ||
-                        $emp_code =='' ||
-                        // $name_th == '' ||
-                        // $name_en == '' ||
-                        // $postname_th == '' ||
-                        // $postname_en == '' ||
-                        // // $email  == ''
-                        // // $cx == ''
-                        // $group_id == '' ||
-                        // $username  == '' ||
-                        // $password == '' ||
-                        $status == -1 ||
+                        $type != -1 &&
+                        $emp_code !='' &&
                         $user_create  == ''
                     ){
                         return 'ไม่สามารถอัปเดตข้อมูลได้';
+                    }else if(
+                        (($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == '' || ($name_th == $check_user_profile[0]->name_th)) &&
+                        ($name_en == '' || ($name_en == $check_user_profile[0]->name_en)) &&
+                        ($postname_th == '' || ($postname_th == $check_user_profile[0]->postname_th)) &&
+                        ($postname_en == '' || ($postname_en == $check_user_profile[0]->postname_en)) &&
+                        ($email  == '' || ($email  == $check_user_profile[0]->email)) &&
+                        ($cx == '' || ($cx == $check_user_profile[0]->cx)) &&
+                        ($group_id == -1 || ($group_id == $check_user_profile[0]->group_id)) &&
+                        ($username  == '' || ($username  == $check_user[0]->username)) &&
+                        ($password == '' || ($sh == 1)) &&
+                        ($status == -1 || ($status == $check_user_profile[0]->status)))
+                    ){
+                        return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
                     }else{
                         return 'update user';
                     }
@@ -1837,39 +1771,29 @@ class Users extends Model
                 }
                 if ($type == 1){
                     if(
-                        ($type == $check_user_profile[0]->type) &&
-                        ($emp_code == $check_user_profile[0]->emp_code) &&
-                        ($name_th == $check_user_profile[0]->name_th) &&
-                        ($name_en == $check_user_profile[0]->name_en) &&
-                        ($postname_th == $check_user_profile[0]->postname_th) &&
-                        ($postname_en == $check_user_profile[0]->postname_en) &&
-                        ($email  == $check_user_profile[0]->email) &&
-                        ($cx == $check_user_profile[0]->cx) &&
-                        ($group_id == $check_user_profile[0]->group_id) &&
-                        ($status == $check_user_profile[0]->status)
-                    ){
-                        return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
-                    }else if(
-                        $type == -1 ||
-                        $emp_code =='' ||
-                        // $name_th == '' ||
-                        // $name_en == '' ||
-                        // $postname_th == '' ||
-                        // $postname_en == '' ||
-                        // $email  == '' ||
-                        // $cx == ''
-                        // $group_id == '' ||
-                        // $username  == '' ||
-                        // $password == '' ||
-                        $status == -1 ||
+                        $type != -1 &&
+                        $emp_code !='' &&
                         $user_create  == ''
                     ){
                         return 'ไม่สามารถอัปเดตข้อมูลได้';
                     }else if(
                         $username  != '' ||
-                        $password  != '' 
+                        $password  != ''
                     ){
                         return 'ไม่สามารถอัปเดตข้อมูล Username&Password';
+                    }else if(
+                        (($type == $check_user_profile[0]->type) &&
+                        ($emp_code == $check_user_profile[0]->emp_code) &&
+                        ($name_th == '' || ($name_th == $check_user_profile[0]->name_th)) &&
+                        ($name_en == '' || ($name_en == $check_user_profile[0]->name_en)) &&
+                        ($postname_th == '' || ($postname_th == $check_user_profile[0]->postname_th)) &&
+                        ($postname_en == '' || ($postname_en == $check_user_profile[0]->postname_en)) &&
+                        ($email  == '' || ($email  == $check_user_profile[0]->email)) &&
+                        ($cx == '' || ($cx == $check_user_profile[0]->cx)) &&
+                        ($group_id == -1 || ($group_id == $check_user_profile[0]->group_id)) &&
+                        ($status == -1 || ($status == $check_user_profile[0]->status)))
+                    ){
+                        return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
                     }else{
                         return 'update user LDAP';
                     }
@@ -2056,7 +1980,7 @@ class Users extends Model
                         'cx' => $item->cx,
                         'phone' => $item->phone,
                         'status' => ($item->status == -1 ? '' : $item->status),
-                        'group_id' => $item->group_id,
+                        'group_id' => ($item->group_id == -1 ? '' : $item->group_id),
                         'group_name_th' => ($item->active == 0 ? '' : $item->group_name_th),
                         'group_name_en' => ($item->active == 0 ? '' : $item->group_name_en),
                         // 'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
@@ -2152,7 +2076,7 @@ class Users extends Model
                         'cx' => $item->cx,
                         'phone' => $item->phone,
                         'status' => ($item->status == -1 ? '' : $item->status),
-                        'group_id' => $item->group_id,
+                        'group_id' => ($item->group_id == -1 ? '' : $item->group_id),
                         'group_name_th' => ($item->active == 0 ? '' : $item->group_name_th),
                         'group_name_en' => ($item->active == 0 ? '' : $item->group_name_en),
                         // 'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
@@ -2347,7 +2271,7 @@ class Users extends Model
         if($item->status != -1){
             $update_pro .= "status = {$item->status},";
         }
-        if($item->group_id != ''){
+        if($item->group_id != -1){
             $update_pro .= "group_id = {$item->group_id},";
         }
 
@@ -2451,7 +2375,7 @@ class Users extends Model
         if($item->status != -1){
             $update_pro .= "status = {$item->status},";
         }
-        if($item->group_id != ''){
+        if($item->group_id != -1){
             $update_pro .= "group_id = {$item->group_id},";
         }
 
