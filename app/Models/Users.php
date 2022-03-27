@@ -2159,7 +2159,7 @@ class Users extends Model
                         'status_permission' => $item->status_permission,
                         'admin_menu' => $item->admin_menu,
                         'data_status' => $item->data_status,
-                        'note' => $item->note
+                        'note' => ($item->note == 'ข้อมูลไม่ถูกต้อง' ? 1 : ( $item->note == 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง' ? 2 : ( $item->note == 'ไม่สามารถอัปเดตข้อมูลได้' ? 3 : ( $item->note == 'ไม่พบข้อมูลที่ต้องการอัปเดต' ? 4 : ( $item->note == 'ไม่สามารถอัปเดตข้อมูล Username&Password' ? 5 : $item->note ) ) ) )),
                     );
 
                     $i++;
