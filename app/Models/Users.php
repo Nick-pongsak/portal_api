@@ -2419,7 +2419,7 @@ class Users extends Model
         return 'success';
     }
 
-    public function searchLDAP($emp_code)
+    public static function searchLDAP($emp_code)
     {
         $ldap = file_get_contents(API_Sync . "iauthen/get-all-profile?user_name=&emp_number={$emp_code}");
         $data = json_decode($ldap);
