@@ -1287,6 +1287,11 @@ class Users extends Model
                     }
                 }
                 if ($type == 1){
+                    $username = Users::searchLDAP($emp_code);
+                    if($username == ''){
+                        return 0;
+                    }
+
                     if(
                         $type == '' ||
                         $emp_code =='' ||
@@ -1430,6 +1435,11 @@ class Users extends Model
                     }
                 }
                 if ($type == 1){
+                    $username = Users::searchLDAP($emp_code);
+                    if($username == ''){
+                        return 0;
+                    }
+
                     if(
                         $type == -1 ||
                         $emp_code =='' ||
@@ -1571,6 +1581,11 @@ class Users extends Model
                     }
                 }
                 if ($type == 1){
+                    $username = Users::searchLDAP($emp_code);
+                    if($username == ''){
+                        return 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง';
+                    }
+
                     if(
                         $type == '' ||
                         $emp_code =='' ||
@@ -1711,6 +1726,11 @@ class Users extends Model
                     }
                 }
                 if ($type == 1){
+                    $username = Users::searchLDAP($emp_code);
+                    if($username == ''){
+                        return 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง';
+                    }
+
                     if(
                         $type == -1 ||
                         $emp_code =='' ||
@@ -2083,7 +2103,7 @@ class Users extends Model
                         'status_permission' => $item->status_permission,
                         'admin_menu' => $item->admin_menu,
                         'data_status' => $item->data_status,
-                        'note' => ($item->note == 'ข้อมูลไม่ถูกต้อง' ? 1 : ( $item->note == 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง' ? 2 : ( $item->note == 'ไม่สามารถอัปเดตข้อมูลได้' ? 3 : ( $item->note == 'ไม่พบข้อมูลที่ต้องการอัปเดต' ? 4 : ( $item->note == 'ไม่สามารถอัปเดตข้อมูล Username&Password' ? 5 : $item->note ) ) ) )),
+                        'note' => ($item->note == 'ข้อมูลไม่ถูกต้อง' ? 1 : ( $item->note == 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง' ? 2 : ( $item->note == 'ไม่พบข้อมูลที่ต้องการอัปเดต' ? 3 : ( $item->note == 'ไม่สามารถอัปเดตข้อมูล Username&Password' ? 4 : $item->note ) ) ) ),
                     );
 
                     $i++;
@@ -2403,35 +2423,40 @@ class Users extends Model
     {
         $ldap = file_get_contents(API_Sync . "iauthen/get-all-profile?user_name=&emp_number={$emp_code}");
         $data = json_decode($ldap);
-        $i = 0;
-        foreach ($data->data as $item) {
-            $user[] = array(
-                'index'       => $i,
-                'user_id'     => '',
-                'emp_code'    => $item->employeenumber,
-                'username'    => $item->uid,
-                'name_th'     => trim($item->fnamethai, ' ') . ' ' . $item->lnamethai,
-                'name_en'     => $item->firstname . ' ' . $item->lastname,
-                'postname_th' => $item->postname_thai,
-                'postname_en' => $item->postname_en,
-                'nickname1_th' => '',
-                'nickname1_en' => '',
-                'nickname2_th' => '',
-                'nickname2_en' => '',
-                'email'       => $item->email,
-                'cx'          => '',
-                'phone'       => '',
-                'group_id'    => '',
-                'group_name_th' => '',
-                'group_name_en' => '',
-                'type_login'  => 1,
-                'image'       => '',
-                'status_permission' => '',
-                'admin_menu'  => '',
-            );
-            $i++;
+        if (isset($data->data->code)) {
+            return '';
+        }else{
+            $i = 0;
+            foreach ($data->data as $item) {
+                $user[] = array(
+                    'index'       => $i,
+                    'user_id'     => '',
+                    'emp_code'    => $item->employeenumber,
+                    'username'    => $item->uid,
+                    'name_th'     => trim($item->fnamethai, ' ') . ' ' . $item->lnamethai,
+                    'name_en'     => $item->firstname . ' ' . $item->lastname,
+                    'postname_th' => $item->postname_thai,
+                    'postname_en' => $item->postname_en,
+                    'nickname1_th' => '',
+                    'nickname1_en' => '',
+                    'nickname2_th' => '',
+                    'nickname2_en' => '',
+                    'email'       => $item->email,
+                    'cx'          => '',
+                    'phone'       => '',
+                    'group_id'    => '',
+                    'group_name_th' => '',
+                    'group_name_en' => '',
+                    'type_login'  => 1,
+                    'image'       => '',
+                    'status_permission' => '',
+                    'admin_menu'  => '',
+                );
+                $i++;
+            }
+    
+            return $user[0]['username'];
         }
-
-        return $user[0]['username'];
+        
     }
 }
