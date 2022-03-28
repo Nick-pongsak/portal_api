@@ -1163,6 +1163,16 @@ class Users extends Model
         }
         if($group_id == ''){
             $group_id = -1;
+        }else{
+            $sql_group_id = "
+            SELECT * FROM application_group
+            WHERE group_id = {$group_id}
+            AND active = 1";
+            $check_group_id = DB::select($sql_group_id);
+    
+            if(count($check_group_id) == 0){
+                $group_id = -1;
+            }
         }
         $datetime_now = date('Y-m-d H:i:s');
         $sql = "
@@ -1264,6 +1274,18 @@ class Users extends Model
             AND active = 1";
             $check_user = DB::select($sql_user);
     
+            if($group_id != ''){
+                $sql_group_id = "
+                SELECT * FROM application_group
+                WHERE group_id = {$group_id}
+                AND active = 1";
+                $check_group_id = DB::select($sql_group_id);
+        
+                if(count($check_group_id) == 0){
+                    return 0;
+                }
+            }
+            
             if(count($check_user_profile) == 0 && count($check_user) == 0){
                 if ($type == 0){
                     if(
@@ -1411,6 +1433,18 @@ class Users extends Model
             AND type = {$type}
             AND active = 1";
             $check_user = DB::select($sql_user);
+
+            if($group_id != -1){
+                $sql_group_id = "
+                SELECT * FROM application_group
+                WHERE group_id = {$group_id}
+                AND active = 1";
+                $check_group_id = DB::select($sql_group_id);
+        
+                if(count($check_group_id) == 0){
+                    return 0;
+                }
+            }
     
             if(count($check_user_profile) == 0 && count($check_user) == 0){
                 if ($type == 0){
@@ -1558,6 +1592,18 @@ class Users extends Model
             AND active = 1";
             $check_user = DB::select($sql_user);
     
+            if($group_id != ''){
+                $sql_group_id = "
+                SELECT * FROM application_group
+                WHERE group_id = {$group_id}
+                AND active = 1";
+                $check_group_id = DB::select($sql_group_id);
+        
+                if(count($check_group_id) == 0){
+                    return 'ข้อมูลไม่ถูกต้อง';
+                }
+            }
+            
             if(count($check_user_profile) == 0 && count($check_user) == 0){
                 if ($type == 0){
                     if(
@@ -1702,6 +1748,18 @@ class Users extends Model
             AND type = {$type}
             AND active = 1";
             $check_user = DB::select($sql_user);
+
+            if($group_id != -1){
+                $sql_group_id = "
+                SELECT * FROM application_group
+                WHERE group_id = {$group_id}
+                AND active = 1";
+                $check_group_id = DB::select($sql_group_id);
+        
+                if(count($check_group_id) == 0){
+                    return 'ข้อมูลไม่ถูกต้อง';
+                }                
+            }
     
             if(count($check_user_profile) == 0 && count($check_user) == 0){
                 if ($type == 0){
