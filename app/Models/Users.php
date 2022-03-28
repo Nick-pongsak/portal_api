@@ -1287,8 +1287,8 @@ class Users extends Model
                     }
                 }
                 if ($type == 1){
-                    $username = Users::searchLDAP($emp_code);
-                    if($username == ''){
+                    $username_ldap = Users::searchLDAP($emp_code);
+                    if($username_ldap == ''){
                         return 0;
                     }
 
@@ -1435,8 +1435,8 @@ class Users extends Model
                     }
                 }
                 if ($type == 1){
-                    $username = Users::searchLDAP($emp_code);
-                    if($username == ''){
+                    $username_ldap = Users::searchLDAP($emp_code);
+                    if($username_ldap == ''){
                         return 0;
                     }
 
@@ -1581,8 +1581,8 @@ class Users extends Model
                     }
                 }
                 if ($type == 1){
-                    $username = Users::searchLDAP($emp_code);
-                    if($username == ''){
+                    $username_ldap = Users::searchLDAP($emp_code);
+                    if($username_ldap == ''){
                         return 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง';
                     }
 
@@ -1726,8 +1726,8 @@ class Users extends Model
                     }
                 }
                 if ($type == 1){
-                    $username = Users::searchLDAP($emp_code);
-                    if($username == ''){
+                    $username_ldap = Users::searchLDAP($emp_code);
+                    if($username_ldap == ''){
                         return 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง';
                     }
 
