@@ -1509,18 +1509,14 @@ class Users extends Model
             $check_user = DB::select($sql_user);
 
             if($group_id != -1){
-                if(!ctype_digit($group_id)){
+                $sql_group_id = "
+                SELECT * FROM application_group
+                WHERE group_id = {$group_id}
+                AND active = 1";
+                $check_group_id = DB::select($sql_group_id);
+        
+                if(count($check_group_id) == 0){
                     return 0;
-                }else{
-                    $sql_group_id = "
-                    SELECT * FROM application_group
-                    WHERE group_id = {$group_id}
-                    AND active = 1";
-                    $check_group_id = DB::select($sql_group_id);
-            
-                    if(count($check_group_id) == 0){
-                        return 0;
-                    }                    
                 }
             }
     
@@ -1550,14 +1546,7 @@ class Users extends Model
                         AND active = 1";
                         $check_username = DB::select($sql_username);
 
-                        $sql_username_temp = "
-                        SELECT * FROM temporary
-                        WHERE username = '{$username}'
-                        AND type = {$type}
-                        AND createby = '{$user_create}'";
-                        $check_username_temp = DB::select($sql_username_temp);
-
-                        if(count($check_username) != 0 || count($check_username_temp) != 0){
+                        if(count($check_username) != 0){
                             return 0;
                         }else{
                             return 1;
@@ -1634,14 +1623,8 @@ class Users extends Model
                             AND type = {$type}
                             AND active = 1";
                             $check_username = DB::select($sql_username);
-    
-                            $sql_username_temp = "
-                            SELECT * FROM temporary
-                            WHERE username = '{$username}'
-                            AND type = {$type}
-                            AND createby = '{$user_create}'";
-                            $check_username_temp = DB::select($sql_username_temp);
-                            if(count($check_username) == 0 && count($check_username_temp) ==0 ){
+
+                            if(count($check_username) == 0){
                                 return 2;
                             }else{
                                 return 0;
@@ -1927,18 +1910,14 @@ class Users extends Model
             $check_user = DB::select($sql_user);
 
             if($group_id != -1){
-                if(!ctype_digit($group_id)){
+                $sql_group_id = "
+                SELECT * FROM application_group
+                WHERE group_id = {$group_id}
+                AND active = 1";
+                $check_group_id = DB::select($sql_group_id);
+        
+                if(count($check_group_id) == 0){
                     return 'ข้อมูลไม่ถูกต้อง';
-                }else{
-                    $sql_group_id = "
-                    SELECT * FROM application_group
-                    WHERE group_id = {$group_id}
-                    AND active = 1";
-                    $check_group_id = DB::select($sql_group_id);
-            
-                    if(count($check_group_id) == 0){
-                        return 'ข้อมูลไม่ถูกต้อง';
-                    } 
                 }            
             }
     
@@ -1968,14 +1947,7 @@ class Users extends Model
                         AND active = 1";
                         $check_username = DB::select($sql_username);
 
-                        $sql_username_temp = "
-                        SELECT * FROM temporary
-                        WHERE username = '{$username}'
-                        AND type = {$type}
-                        AND createby = '{$user_create}'";
-                        $check_username_temp = DB::select($sql_username_temp);
-
-                        if(count($check_username) != 0 || count($check_username_temp) != 0){
+                        if(count($check_username) != 0){
                             return 'ข้อมูลไม่ถูกต้อง';
                         }else{
                             return 'new user';
@@ -2051,14 +2023,8 @@ class Users extends Model
                             AND type = {$type}
                             AND active = 1";
                             $check_username = DB::select($sql_username);
-    
-                            $sql_username_temp = "
-                            SELECT * FROM temporary
-                            WHERE username = '{$username}'
-                            AND type = {$type}
-                            AND createby = '{$user_create}'";
-                            $check_username_temp = DB::select($sql_username_temp);
-                            if(count($check_username) == 0 && count($check_username_temp) ==0 ){
+
+                            if(count($check_username) == 0){
                                 return 'update user';
                             }else{
                                 return 'ข้อมูลไม่ถูกต้อง';
