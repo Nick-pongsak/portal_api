@@ -1345,7 +1345,21 @@ class Users extends Model
                         AND createby = '{$user_create}'";
                         $check_username_temp = DB::select($sql_username_temp);
 
-                        if(count($check_username) != 0 || count($check_username_temp) != 0){
+                        $sql_empcode = "
+                        SELECT * FROM users
+                        WHERE emp_code = '{$emp_code}'
+                        AND type = {$type}
+                        AND active = 1";
+                        $check_empcode = DB::select($sql_empcode);
+
+                        $sql_empcode_temp = "
+                        SELECT * FROM temporary
+                        WHERE emp_code = '{$emp_code}'
+                        AND type = {$type}
+                        AND createby = '{$user_create}'";
+                        $check_empcode_temp = DB::select($sql_empcode_temp);
+
+                        if(count($check_username) != 0 || count($check_username_temp) != 0 || count($check_empcode) != 0 || count($check_empcode_temp) != 0){
                             return 0;
                         }else{
                             return 1;
@@ -1412,7 +1426,8 @@ class Users extends Model
                     ){
                         return 0;
                     }else{
-                        if(($username  == '' || ($username  == $check_user[0]->username))){
+                        if(($username  == '' || ($username  == $check_user[0]->username)) && 
+                           ($emp_code == $check_user_profile[0]->emp_code)){
                             return 2;
                         }else{
                             $sql_username = "
@@ -1428,15 +1443,32 @@ class Users extends Model
                             AND type = {$type}
                             AND createby = '{$user_create}'";
                             $check_username_temp = DB::select($sql_username_temp);
-                            if(count($check_username) == 0 && count($check_username_temp) ==0 ){
+
+                            // $sql_empcode = "
+                            // SELECT * FROM users
+                            // WHERE emp_code = '{$emp_code}'
+                            // AND type = {$type}
+                            // AND active = 1";
+                            // $check_empcode = DB::select($sql_empcode);
+    
+                            $sql_empcode_temp = "
+                            SELECT * FROM temporary
+                            WHERE emp_code = '{$emp_code}'
+                            AND type = {$type}
+                            AND createby = '{$user_create}'";
+                            $check_empcode_temp = DB::select($sql_empcode_temp);
+                            // if((count($check_username) == 0 && count($check_username_temp) ==0) && ($emp_code == $check_user_profile[0]->emp_code)){
+                            //     return 2;
+                            // }else 
+                            if(($username  == '' || ($username  == $check_user[0]->username)) && (count($check_empcode_temp) == 0)){
+                                return 2;
+                            }else if(count($check_username) == 0 && count($check_username_temp) == 0 && count($check_empcode_temp) == 0){
                                 return 2;
                             }else{
                                 return 0;
                             }
-                            
                         }
                     }
-
                 }
                 if ($type == 1){
                     if(
@@ -1478,7 +1510,7 @@ class Users extends Model
     $name_en, $postname_th, $postname_en, 
     $email, $cx, $group_id, 
     $username, $password, 
-    $status,$user_create)
+    $status,$user_create,$data_status,$note)
     {
         // 0 = error
         // 1 = new
@@ -1546,10 +1578,17 @@ class Users extends Model
                         AND active = 1";
                         $check_username = DB::select($sql_username);
 
-                        if(count($check_username) != 0){
+                        $sql_empcode = "
+                        SELECT * FROM users
+                        WHERE emp_code = '{$emp_code}'
+                        AND type = {$type}
+                        AND active = 1";
+                        $check_empcode = DB::select($sql_empcode);
+
+                        if(count($check_username) != 0 || count($check_empcode) != 0){
                             return 0;
                         }else{
-                            return 1;
+                            return $data_status;
                         }
                     }
                 }
@@ -1614,7 +1653,8 @@ class Users extends Model
                     ){
                         return 0;
                     }else{
-                        if(($username  == '' || ($username  == $check_user[0]->username))){
+                        if(($username  == '' || ($username  == $check_user[0]->username)) &&
+                           ($emp_code == $check_user_profile[0]->emp_code)){
                             return 2;
                         }else{
                             $sql_username = "
@@ -1624,15 +1664,24 @@ class Users extends Model
                             AND active = 1";
                             $check_username = DB::select($sql_username);
 
-                            if(count($check_username) == 0){
-                                return 2;
+                            $sql_empcode = "
+                            SELECT * FROM users
+                            WHERE emp_code = '{$emp_code}'
+                            AND type = {$type}
+                            AND active = 1";
+                            $check_empcode = DB::select($sql_empcode);
+
+                            if(($username  == '' || ($username  == $check_user[0]->username)) && count($check_empcode) == 0){
+                                return $data_status;
+                            }else if(count($check_username) == 0 && ($emp_code == $check_user_profile[0]->emp_code)){
+                                return $data_status;
+                            }else if(count($check_username) == 0 && count($check_empcode) == 0){
+                                return $data_status;
                             }else{
                                 return 0;
                             }
-                            
                         }
                     }
-
                 }
                 if ($type == 1){
                     if(
@@ -1750,7 +1799,21 @@ class Users extends Model
                         AND createby = '{$user_create}'";
                         $check_username_temp = DB::select($sql_username_temp);
 
-                        if(count($check_username) != 0 || count($check_username_temp) != 0){
+                        $sql_empcode = "
+                        SELECT * FROM users
+                        WHERE emp_code = '{$emp_code}'
+                        AND type = {$type}
+                        AND active = 1";
+                        $check_empcode = DB::select($sql_empcode);
+
+                        $sql_empcode_temp = "
+                        SELECT * FROM temporary
+                        WHERE emp_code = '{$emp_code}'
+                        AND type = {$type}
+                        AND createby = '{$user_create}'";
+                        $check_empcode_temp = DB::select($sql_empcode_temp);
+
+                        if(count($check_username) != 0 || count($check_username_temp) != 0 || count($check_empcode) != 0 || count($check_empcode_temp) != 0){
                             return 'ข้อมูลไม่ถูกต้อง';
                         }else{
                             return 'new user';
@@ -1817,7 +1880,8 @@ class Users extends Model
                     ){
                         return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
                     }else{
-                        if(($username  == '' || ($username  == $check_user[0]->username))){
+                        if(($username  == '' || ($username  == $check_user[0]->username)) && 
+                           ($emp_code == $check_user_profile[0]->emp_code)){
                             return 'update user';
                         }else{
                             $sql_username = "
@@ -1833,12 +1897,30 @@ class Users extends Model
                             AND type = {$type}
                             AND createby = '{$user_create}'";
                             $check_username_temp = DB::select($sql_username_temp);
-                            if(count($check_username) == 0 && count($check_username_temp) ==0 ){
+
+                            // $sql_empcode = "
+                            // SELECT * FROM users
+                            // WHERE emp_code = '{$emp_code}'
+                            // AND type = {$type}
+                            // AND active = 1";
+                            // $check_empcode = DB::select($sql_empcode);
+    
+                            $sql_empcode_temp = "
+                            SELECT * FROM temporary
+                            WHERE emp_code = '{$emp_code}'
+                            AND type = {$type}
+                            AND createby = '{$user_create}'";
+                            $check_empcode_temp = DB::select($sql_empcode_temp);
+                            // if((count($check_username) == 0 && count($check_username_temp) ==0) && ($emp_code == $check_user_profile[0]->emp_code)){
+                            //     return 'update user';
+                            // }else 
+                            if(($username  == '' || ($username  == $check_user[0]->username)) && (count($check_empcode_temp) == 0)){
+                                return 'update user';
+                            }else if(count($check_username) == 0 && count($check_username_temp) == 0 && count($check_empcode_temp) == 0){
                                 return 'update user';
                             }else{
                                 return 'ข้อมูลไม่ถูกต้อง';
                             }
-                            
                         }
                     }
                 }
@@ -1882,7 +1964,7 @@ class Users extends Model
     $name_en, $postname_th, $postname_en, 
     $email, $cx, $group_id, 
     $username, $password, 
-    $status,$user_create)
+    $status,$user_create,$data_status,$note)
     {
         if ($type == -1 || $emp_code == ''){
             return 'ข้อมูลไม่ถูกต้อง';
@@ -1947,7 +2029,14 @@ class Users extends Model
                         AND active = 1";
                         $check_username = DB::select($sql_username);
 
-                        if(count($check_username) != 0){
+                        $sql_empcode = "
+                        SELECT * FROM users
+                        WHERE emp_code = '{$emp_code}'
+                        AND type = {$type}
+                        AND active = 1";
+                        $check_empcode = DB::select($sql_empcode);
+
+                        if(count($check_username) != 0 || count($check_empcode) != 0){
                             return 'ข้อมูลไม่ถูกต้อง';
                         }else{
                             return 'new user';
@@ -2014,7 +2103,8 @@ class Users extends Model
                     ){
                         return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
                     }else{
-                        if(($username  == '' || ($username  == $check_user[0]->username))){
+                        if(($username  == '' || ($username  == $check_user[0]->username)) &&
+                           ($emp_code == $check_user_profile[0]->emp_code)){
                             return 'update user';
                         }else{
                             $sql_username = "
@@ -2024,15 +2114,24 @@ class Users extends Model
                             AND active = 1";
                             $check_username = DB::select($sql_username);
 
-                            if(count($check_username) == 0){
+                            $sql_empcode = "
+                            SELECT * FROM users
+                            WHERE emp_code = '{$emp_code}'
+                            AND type = {$type}
+                            AND active = 1";
+                            $check_empcode = DB::select($sql_empcode);
+
+                            if(($username  == '' || ($username  == $check_user[0]->username)) && count($check_empcode) == 0){
+                                return 'update user';
+                            }else if(count($check_username) == 0 && ($emp_code == $check_user_profile[0]->emp_code)){
+                                return 'update user';
+                            }else if(count($check_username) == 0 && count($check_empcode) == 0){
                                 return 'update user';
                             }else{
                                 return 'ข้อมูลไม่ถูกต้อง';
                             }
-                            
                         }
                     }
-
                 }
                 if ($type == 1){
                     if(

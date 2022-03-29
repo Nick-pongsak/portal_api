@@ -873,8 +873,8 @@ class UserController extends Controller
         $data = DB::select($sql_temporary_s);
         $emp_update = array();
         foreach($data as $item){
-            $data_status = Users::checkdata_status_update($item->type, $item->emp_code, $item->name_th, $item->name_en,  $item->postname_th,     $item->postname_en,     $item->email, $item->cx,   $item->group_id,    $item->username,  $item->password,     $item->status,  $user_update->user_id);
-            $note         = Users::checkerror_note_update($item->type, $item->emp_code, $item->name_th, $item->name_en,  $item->postname_th,     $item->postname_en,     $item->email, $item->cx,   $item->group_id,    $item->username,  $item->password,     $item->status,  $user_update->user_id);
+            $data_status = Users::checkdata_status_update($item->type, $item->emp_code, $item->name_th, $item->name_en,  $item->postname_th,     $item->postname_en,     $item->email, $item->cx,   $item->group_id,    $item->username,  $item->password,     $item->status,  $user_update->user_id, $item->data_status, $item->note);
+            $note         = Users::checkerror_note_update($item->type, $item->emp_code, $item->name_th, $item->name_en,  $item->postname_th,     $item->postname_en,     $item->email, $item->cx,   $item->group_id,    $item->username,  $item->password,     $item->status,  $user_update->user_id, $item->data_status, $item->note);
             if($item->data_status != $data_status){
                 array_push($emp_update, $item->emp_code, $item->note);
                 $user     = Users::update_temporary($item->type, $item->emp_code, $item->name_th, $item->name_en,  $item->postname_th,     $item->postname_en,     $item->email, $item->cx,   $item->group_id,    $item->username,  $item->password,     $item->status,  $user_update->user_id, $data_status, $note);
