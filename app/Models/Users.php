@@ -1157,21 +1157,35 @@ class Users extends Model
     {
         if($type == ''){
             $type = -1;
+        }else{
+            if($type != '0' && $type != '1'){
+                $type = -1;
+            }
         }
+
         if($status == ''){
             $status = -1;
+        }else{
+            if($status != '0' && $status != '1'){
+                $status = -1;
+            }
         }
+
         if($group_id == ''){
             $group_id = -1;
         }else{
-            $sql_group_id = "
-            SELECT * FROM application_group
-            WHERE group_id = {$group_id}
-            AND active = 1";
-            $check_group_id = DB::select($sql_group_id);
-    
-            if(count($check_group_id) == 0){
+            if(!ctype_digit($group_id)){
                 $group_id = -1;
+            }else{
+                $sql_group_id = "
+                SELECT * FROM application_group
+                WHERE group_id = {$group_id}
+                AND active = 1";
+                $check_group_id = DB::select($sql_group_id);
+        
+                if(count($check_group_id) == 0){
+                    $group_id = -1;
+                }
             }
         }
         $datetime_now = date('Y-m-d H:i:s');
@@ -1260,6 +1274,14 @@ class Users extends Model
         if ($type == '' || $emp_code == ''){
             return 0;
         }else{
+            if($type != '0' && $type != '1'){
+                return 0;
+            }
+            if($status != ''){
+                if($status != '0' && $status != '1'){
+                    return 0;
+                }
+            }
             $sql = "
             SELECT *, 3cx as cx FROM user_profile
             WHERE emp_code = '{$emp_code}'
@@ -1275,14 +1297,18 @@ class Users extends Model
             $check_user = DB::select($sql_user);
     
             if($group_id != ''){
-                $sql_group_id = "
-                SELECT * FROM application_group
-                WHERE group_id = {$group_id}
-                AND active = 1";
-                $check_group_id = DB::select($sql_group_id);
-        
-                if(count($check_group_id) == 0){
+                if(!ctype_digit($group_id)){
                     return 0;
+                }else{
+                    $sql_group_id = "
+                    SELECT * FROM application_group
+                    WHERE group_id = {$group_id}
+                    AND active = 1";
+                    $check_group_id = DB::select($sql_group_id);
+            
+                    if(count($check_group_id) == 0){
+                        return 0;
+                    }
                 }
             }
             
@@ -1305,7 +1331,25 @@ class Users extends Model
                     ){
                         return 0;
                     }else{
-                        return 1;
+                        $sql_username = "
+                        SELECT * FROM users
+                        WHERE username = '{$username}'
+                        AND type = {$type}
+                        AND active = 1";
+                        $check_username = DB::select($sql_username);
+
+                        $sql_username_temp = "
+                        SELECT * FROM temporary
+                        WHERE username = '{$username}'
+                        AND type = {$type}
+                        AND createby = '{$user_create}'";
+                        $check_username_temp = DB::select($sql_username_temp);
+
+                        if(count($check_username) != 0 || count($check_username_temp) != 0){
+                            return 0;
+                        }else{
+                            return 1;
+                        }
                     }
                 }
                 if ($type == 1){
@@ -1368,7 +1412,29 @@ class Users extends Model
                     ){
                         return 0;
                     }else{
-                        return 2;
+                        if(($username  == '' || ($username  == $check_user[0]->username))){
+                            return 2;
+                        }else{
+                            $sql_username = "
+                            SELECT * FROM users
+                            WHERE username = '{$username}'
+                            AND type = {$type}
+                            AND active = 1";
+                            $check_username = DB::select($sql_username);
+    
+                            $sql_username_temp = "
+                            SELECT * FROM temporary
+                            WHERE username = '{$username}'
+                            AND type = {$type}
+                            AND createby = '{$user_create}'";
+                            $check_username_temp = DB::select($sql_username_temp);
+                            if(count($check_username) == 0 && count($check_username_temp) ==0 ){
+                                return 2;
+                            }else{
+                                return 0;
+                            }
+                            
+                        }
                     }
 
                 }
@@ -1420,6 +1486,14 @@ class Users extends Model
         if ($type == -1 || $emp_code == ''){
             return 0;
         }else{
+            if($type != '0' && $type != '1'){
+                return 0;
+            }
+            if($status != -1){
+                if($status != '0' && $status != '1'){
+                    return 0;
+                }
+            }
             $sql = "
             SELECT *, 3cx as cx FROM user_profile
             WHERE emp_code = '{$emp_code}'
@@ -1435,14 +1509,18 @@ class Users extends Model
             $check_user = DB::select($sql_user);
 
             if($group_id != -1){
-                $sql_group_id = "
-                SELECT * FROM application_group
-                WHERE group_id = {$group_id}
-                AND active = 1";
-                $check_group_id = DB::select($sql_group_id);
-        
-                if(count($check_group_id) == 0){
+                if(!ctype_digit($group_id)){
                     return 0;
+                }else{
+                    $sql_group_id = "
+                    SELECT * FROM application_group
+                    WHERE group_id = {$group_id}
+                    AND active = 1";
+                    $check_group_id = DB::select($sql_group_id);
+            
+                    if(count($check_group_id) == 0){
+                        return 0;
+                    }                    
                 }
             }
     
@@ -1465,7 +1543,25 @@ class Users extends Model
                     ){
                         return 0;
                     }else{
-                        return 1;
+                        $sql_username = "
+                        SELECT * FROM users
+                        WHERE username = '{$username}'
+                        AND type = {$type}
+                        AND active = 1";
+                        $check_username = DB::select($sql_username);
+
+                        $sql_username_temp = "
+                        SELECT * FROM temporary
+                        WHERE username = '{$username}'
+                        AND type = {$type}
+                        AND createby = '{$user_create}'";
+                        $check_username_temp = DB::select($sql_username_temp);
+
+                        if(count($check_username) != 0 || count($check_username_temp) != 0){
+                            return 0;
+                        }else{
+                            return 1;
+                        }
                     }
                 }
                 if ($type == 1){
@@ -1529,7 +1625,29 @@ class Users extends Model
                     ){
                         return 0;
                     }else{
-                        return 2;
+                        if(($username  == '' || ($username  == $check_user[0]->username))){
+                            return 2;
+                        }else{
+                            $sql_username = "
+                            SELECT * FROM users
+                            WHERE username = '{$username}'
+                            AND type = {$type}
+                            AND active = 1";
+                            $check_username = DB::select($sql_username);
+    
+                            $sql_username_temp = "
+                            SELECT * FROM temporary
+                            WHERE username = '{$username}'
+                            AND type = {$type}
+                            AND createby = '{$user_create}'";
+                            $check_username_temp = DB::select($sql_username_temp);
+                            if(count($check_username) == 0 && count($check_username_temp) ==0 ){
+                                return 2;
+                            }else{
+                                return 0;
+                            }
+                            
+                        }
                     }
 
                 }
@@ -1578,6 +1696,14 @@ class Users extends Model
         if ($type == '' || $emp_code == ''){
             return 'ข้อมูลไม่ถูกต้อง';
         }else{
+            if($type != '0' && $type != '1'){
+                return 'ข้อมูลไม่ถูกต้อง';
+            }
+            if($status != ''){
+                if($status != '0' && $status != '1'){
+                    return 'ข้อมูลไม่ถูกต้อง';
+                }
+            }
             $sql = "
             SELECT *, 3cx as cx FROM user_profile
             WHERE emp_code = '{$emp_code}'
@@ -1593,14 +1719,18 @@ class Users extends Model
             $check_user = DB::select($sql_user);
     
             if($group_id != ''){
-                $sql_group_id = "
-                SELECT * FROM application_group
-                WHERE group_id = {$group_id}
-                AND active = 1";
-                $check_group_id = DB::select($sql_group_id);
-        
-                if(count($check_group_id) == 0){
+                if(!ctype_digit($group_id)){
                     return 'ข้อมูลไม่ถูกต้อง';
+                }else{
+                    $sql_group_id = "
+                    SELECT * FROM application_group
+                    WHERE group_id = {$group_id}
+                    AND active = 1";
+                    $check_group_id = DB::select($sql_group_id);
+            
+                    if(count($check_group_id) == 0){
+                        return 'ข้อมูลไม่ถูกต้อง';
+                    }
                 }
             }
             
@@ -1623,7 +1753,25 @@ class Users extends Model
                     ){
                         return 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง';
                     }else{
-                        return 'new user';
+                        $sql_username = "
+                        SELECT * FROM users
+                        WHERE username = '{$username}'
+                        AND type = {$type}
+                        AND active = 1";
+                        $check_username = DB::select($sql_username);
+
+                        $sql_username_temp = "
+                        SELECT * FROM temporary
+                        WHERE username = '{$username}'
+                        AND type = {$type}
+                        AND createby = '{$user_create}'";
+                        $check_username_temp = DB::select($sql_username_temp);
+
+                        if(count($check_username) != 0 || count($check_username_temp) != 0){
+                            return 'ข้อมูลไม่ถูกต้อง';
+                        }else{
+                            return 'new user';
+                        }
                     }
                 }
                 if ($type == 1){
@@ -1686,9 +1834,30 @@ class Users extends Model
                     ){
                         return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
                     }else{
-                        return 'update user';
+                        if(($username  == '' || ($username  == $check_user[0]->username))){
+                            return 'update user';
+                        }else{
+                            $sql_username = "
+                            SELECT * FROM users
+                            WHERE username = '{$username}'
+                            AND type = {$type}
+                            AND active = 1";
+                            $check_username = DB::select($sql_username);
+    
+                            $sql_username_temp = "
+                            SELECT * FROM temporary
+                            WHERE username = '{$username}'
+                            AND type = {$type}
+                            AND createby = '{$user_create}'";
+                            $check_username_temp = DB::select($sql_username_temp);
+                            if(count($check_username) == 0 && count($check_username_temp) ==0 ){
+                                return 'update user';
+                            }else{
+                                return 'ข้อมูลไม่ถูกต้อง';
+                            }
+                            
+                        }
                     }
-
                 }
                 if ($type == 1){
                     if(
@@ -1735,6 +1904,14 @@ class Users extends Model
         if ($type == -1 || $emp_code == ''){
             return 'ข้อมูลไม่ถูกต้อง';
         }else{
+            if($type != '0' && $type != '1'){
+                return 'ข้อมูลไม่ถูกต้อง';
+            }
+            if($status != -1){
+                if($status != '0' && $status != '1'){
+                    return 'ข้อมูลไม่ถูกต้อง';
+                }
+            }
             $sql = "
             SELECT *, 3cx as cx FROM user_profile
             WHERE emp_code = '{$emp_code}'
@@ -1750,15 +1927,19 @@ class Users extends Model
             $check_user = DB::select($sql_user);
 
             if($group_id != -1){
-                $sql_group_id = "
-                SELECT * FROM application_group
-                WHERE group_id = {$group_id}
-                AND active = 1";
-                $check_group_id = DB::select($sql_group_id);
-        
-                if(count($check_group_id) == 0){
+                if(!ctype_digit($group_id)){
                     return 'ข้อมูลไม่ถูกต้อง';
-                }                
+                }else{
+                    $sql_group_id = "
+                    SELECT * FROM application_group
+                    WHERE group_id = {$group_id}
+                    AND active = 1";
+                    $check_group_id = DB::select($sql_group_id);
+            
+                    if(count($check_group_id) == 0){
+                        return 'ข้อมูลไม่ถูกต้อง';
+                    } 
+                }            
             }
     
             if(count($check_user_profile) == 0 && count($check_user) == 0){
@@ -1780,7 +1961,25 @@ class Users extends Model
                     ){
                         return 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง';
                     }else{
-                        return 'new user';
+                        $sql_username = "
+                        SELECT * FROM users
+                        WHERE username = '{$username}'
+                        AND type = {$type}
+                        AND active = 1";
+                        $check_username = DB::select($sql_username);
+
+                        $sql_username_temp = "
+                        SELECT * FROM temporary
+                        WHERE username = '{$username}'
+                        AND type = {$type}
+                        AND createby = '{$user_create}'";
+                        $check_username_temp = DB::select($sql_username_temp);
+
+                        if(count($check_username) != 0 || count($check_username_temp) != 0){
+                            return 'ข้อมูลไม่ถูกต้อง';
+                        }else{
+                            return 'new user';
+                        }
                     }
                 }
                 if ($type == 1){
@@ -1843,7 +2042,29 @@ class Users extends Model
                     ){
                         return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
                     }else{
-                        return 'update user';
+                        if(($username  == '' || ($username  == $check_user[0]->username))){
+                            return 'update user';
+                        }else{
+                            $sql_username = "
+                            SELECT * FROM users
+                            WHERE username = '{$username}'
+                            AND type = {$type}
+                            AND active = 1";
+                            $check_username = DB::select($sql_username);
+    
+                            $sql_username_temp = "
+                            SELECT * FROM temporary
+                            WHERE username = '{$username}'
+                            AND type = {$type}
+                            AND createby = '{$user_create}'";
+                            $check_username_temp = DB::select($sql_username_temp);
+                            if(count($check_username) == 0 && count($check_username_temp) ==0 ){
+                                return 'update user';
+                            }else{
+                                return 'ข้อมูลไม่ถูกต้อง';
+                            }
+                            
+                        }
                     }
 
                 }
