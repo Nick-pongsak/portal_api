@@ -404,7 +404,7 @@ class Users extends Model
                     'group_name_th' => $item->group_name_th,
                     'group_name_en' => $item->group_name_en,
                     'type_login' => $item->type_login,
-                    'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
+                    'image' => ($item->image == '' ? '' :  Path_Image.'apiweb/images/user-profile/' . $item->image),
                     'status_permission' => $item->status_permission,
                     'admin_menu' => $item->admin_menu,
                     'language' => 'th',
@@ -450,7 +450,7 @@ class Users extends Model
                     'group_name_th' => $item->group_name_th,
                     'group_name_en' => $item->group_name_en,
                     'type_login' => $item->type_login,
-                    'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
+                    'image' => ($item->image == '' ? '' :  Path_Image.'apiweb/images/user-profile/' . $item->image),
                     'status_permission' => $item->status_permission,
                     'admin_menu' => $item->admin_menu,
                     'language' => $item->language,
@@ -789,7 +789,7 @@ class Users extends Model
                         'group_name_th' => ($item->active == 0 ? '' : $item->group_name_th),
                         'group_name_en' => ($item->active == 0 ? '' : $item->group_name_en),
                         'type_login' => $item->type_login,
-                        'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
+                        'image' => ($item->image == '' ? '' :  Path_Image.'apiweb/images/user-profile/' . $item->image),
                         'status_permission' => $item->status_permission,
                         'admin_menu' => $item->admin_menu,
                     );
@@ -876,7 +876,7 @@ class Users extends Model
 
             return response()->json([
                 'success' => [
-                    'data' => 'http://10.7.200.229/apiweb/images/user-profile/' . $image
+                    'data' =>  Path_Image.'apiweb/images/user-profile/' . $image
                 ]
             ], 200);
         } else {
@@ -2251,7 +2251,7 @@ class Users extends Model
                         'group_id' => $item->group_id,
                         'group_name_th' => ($item->active == 0 ? '' : $item->group_name_th),
                         'group_name_en' => ($item->active == 0 ? '' : $item->group_name_en),
-                        // 'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
+                        // 'image' => ($item->image == '' ? '' :  Path_Image.'apiweb/images/user-profile/' . $item->image),
                         'status_permission' => $item->status_permission,
                         'admin_menu' => $item->admin_menu,
                         'data_status' => $item->data_status,
@@ -2347,7 +2347,7 @@ class Users extends Model
                         'group_id' => ($item->group_id == -1 ? '' : $item->group_id),
                         'group_name_th' => ($item->active == 0 ? '' : $item->group_name_th),
                         'group_name_en' => ($item->active == 0 ? '' : $item->group_name_en),
-                        // 'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
+                        // 'image' => ($item->image == '' ? '' :  Path_Image.'apiweb/images/user-profile/' . $item->image),
                         'status_permission' => $item->status_permission,
                         'admin_menu' => $item->admin_menu,
                         'data_status' => $item->data_status,
@@ -2443,7 +2443,7 @@ class Users extends Model
                         'group_id' => ($item->group_id == -1 ? '' : $item->group_id),
                         'group_name_th' => ($item->active == 0 ? '' : $item->group_name_th),
                         'group_name_en' => ($item->active == 0 ? '' : $item->group_name_en),
-                        // 'image' => ($item->image == '' ? '' : 'http://10.7.200.229/apiweb/images/user-profile/' . $item->image),
+                        // 'image' => ($item->image == '' ? '' :  Path_Image.'apiweb/images/user-profile/' . $item->image),
                         'status_permission' => $item->status_permission,
                         'admin_menu' => $item->admin_menu,
                         'data_status' => $item->data_status,

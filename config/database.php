@@ -3,6 +3,7 @@
 use Illuminate\Support\Str;
 
 define('API_Sync','http://10.7.200.178:82/');
+define('Path_Image','http://10.7.200.229/');
 return [
 
     /*

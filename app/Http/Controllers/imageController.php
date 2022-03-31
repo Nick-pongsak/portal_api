@@ -20,5 +20,5 @@ class imageController extends Controller
 
         return 'success';
     }
-    // http://10.7.200.229/apiweb/images/user-profile/application-detail.PNG
+    //  Path_Image.'apiweb/images/user-profile/application-detail.PNG'
 }

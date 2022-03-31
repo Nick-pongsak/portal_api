@@ -364,7 +364,7 @@ class Application extends Model
                     'type_login' => $item->type_login,
                     'status_sso' => $item->status_sso,
                     'status' => $item->status,
-                    'image' => 'http://10.7.200.229/apiweb/images/banner-app/' . $item->image,
+                    'image' =>  Path_Image.'apiweb/images/banner-app/' . $item->image,
                     'url' => $item->url,
                 );
                 $i++;
@@ -846,7 +846,7 @@ class Application extends Model
                             'name_th'     => $item->group_name_th,
                             'name_en'     => $item->group_name_en,
                             'order'       => $item_o->app_order,
-                            'path'        => 'http://10.7.200.229/apiweb/images/banner-app/',
+                            'path'        =>  Path_Image.'apiweb/images/banner-app/',
                             'app'         => $app_a,
                         );
                     }
@@ -856,7 +856,7 @@ class Application extends Model
                         'name_th'     => $item->group_name_th,
                         'name_en'     => $item->group_name_en,
                         'order'       => '',
-                        'path'        => 'http://10.7.200.229/apiweb/images/banner-app/',
+                        'path'        =>  Path_Image.'apiweb/images/banner-app/',
                         'app'         => $app_a,
                     );
                 }
