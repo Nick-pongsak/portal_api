@@ -2803,4 +2803,41 @@ class Users extends Model
         }
         
     }
+
+    public static function checkNullgroup_id($user_create){
+        $sql_chack_group_id = "
+        SELECT * FROM application_group
+        WHERE group_id = -1
+        AND active = 0";
+
+        $sql_check_group = DB::select($sql_chack_group_id);
+        if (count($sql_check_group) == 0) {
+            $datetime_now = date('Y-m-d H:i:s');
+            $sql_add_group_id = "
+            INSERT INTO application_group 
+            (group_id
+            ,name_th
+            ,name_en 
+            ,app_id
+            ,createdate
+            ,updatedate
+            ,createby
+            ,updateby
+            ,active)
+            VALUES 
+            (
+              -1
+            , ''
+            , ''
+            , '0'
+            ,'{$datetime_now}'
+            ,'{$datetime_now}'
+            ,'{$user_create}'
+            ,'{$user_create}'
+            , 0)";
+            $sql_add_group = DB::insert($sql_add_group_id);
+        }
+
+        return 'seccess';
+    }
 }

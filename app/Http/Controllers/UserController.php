@@ -790,6 +790,7 @@ class UserController extends Controller
     {
         $user_s = $this->getUserLogin();
         $user_id = $user_s->user_id;
+        Users::checkNullgroup_id($user_id);
         Users::delete_temporary($user_id);
         File::delete(base_path('resources/csv/import-user-'.$user_id.'.csv'));
         $user_update = $this->getUserLogin();
