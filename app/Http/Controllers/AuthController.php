@@ -329,7 +329,11 @@ class AuthController extends Controller
         $ldap = file_get_contents(API_Sync . "iauthen/get-all-profile?user_name=&emp_number={$emp_code}");
         $data = json_decode($ldap);
         if (isset($data->data->code)) {
-            return '';
+            return $this->createSuccessResponse([
+                'success' => [
+                    'data' => ''
+                ]
+            ], 200);
         }else{
             $i = 0;
             foreach ($data->data as $item) {
