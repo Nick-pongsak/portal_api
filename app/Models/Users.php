@@ -1394,7 +1394,18 @@ class Users extends Model
                     ){
                         return 0;
                     }else{
-                        return 1;
+                        $sql_empcode_temp = "
+                        SELECT * FROM temporary
+                        WHERE emp_code = '{$emp_code}'
+                        AND type = {$type}
+                        AND createby = '{$user_create}'";
+                        $check_empcode_temp = DB::select($sql_empcode_temp);
+
+                        if(count($check_empcode_temp) != 0){
+                            return 0;
+                        }else{
+                            return 1;
+                        }
                     }
                 }
             } else {
@@ -1496,7 +1507,18 @@ class Users extends Model
                     ){
                         return 0;
                     }else{
-                        return 2;
+                        $sql_empcode_temp = "
+                        SELECT * FROM temporary
+                        WHERE emp_code = '{$emp_code}'
+                        AND type = {$type}
+                        AND createby = '{$user_create}'";
+                        $check_empcode_temp = DB::select($sql_empcode_temp);
+
+                        if(count($check_empcode_temp) != 0){
+                            return 0;
+                        }else{
+                            return 2;
+                        }
                     }
                 }
             }           
@@ -1620,7 +1642,7 @@ class Users extends Model
                     ){
                         return 0;
                     }else{
-                        return 1;
+                        return $data_status;
                     }
                 }
             } else {
@@ -1709,7 +1731,7 @@ class Users extends Model
                     ){
                         return 0;
                     }else{
-                        return 2;
+                        return $data_status;
                     }
                 }
             }           
@@ -1848,7 +1870,18 @@ class Users extends Model
                     ){
                         return 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง';
                     }else{
-                        return 'new user LDAP';
+                        $sql_empcode_temp = "
+                        SELECT * FROM temporary
+                        WHERE emp_code = '{$emp_code}'
+                        AND type = {$type}
+                        AND createby = '{$user_create}'";
+                        $check_empcode_temp = DB::select($sql_empcode_temp);
+
+                        if(count($check_empcode_temp) != 0){
+                            return 'ข้อมูลไม่ถูกต้อง';
+                        }else{
+                            return 'new user LDAP';
+                        }
                     }
                 }
             } else {
@@ -1950,7 +1983,18 @@ class Users extends Model
                     ){
                         return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
                     }else{
-                        return 'update user LDAP';
+                        $sql_empcode_temp = "
+                        SELECT * FROM temporary
+                        WHERE emp_code = '{$emp_code}'
+                        AND type = {$type}
+                        AND createby = '{$user_create}'";
+                        $check_empcode_temp = DB::select($sql_empcode_temp);
+
+                        if(count($check_empcode_temp) != 0){
+                            return 'ข้อมูลไม่ถูกต้อง';
+                        }else{
+                            return 'update user LDAP';
+                        }
                     }
                 }
             }
@@ -2039,7 +2083,7 @@ class Users extends Model
                         if(count($check_username) != 0 || count($check_empcode) != 0){
                             return 'ข้อมูลไม่ถูกต้อง';
                         }else{
-                            return 'new user';
+                            return $note;
                         }
                     }
                 }
@@ -2071,7 +2115,7 @@ class Users extends Model
                     ){
                         return 'ข้อมูลผู้ใช้งานใหม่ไม่ถูกต้อง';
                     }else{
-                        return 'new user LDAP';
+                        return $note;
                     }
                 }
             } else {
@@ -2122,11 +2166,11 @@ class Users extends Model
                             $check_empcode = DB::select($sql_empcode);
 
                             if(($username  == '' || ($username  == $check_user[0]->username)) && count($check_empcode) == 0){
-                                return 'update user';
+                                return $note;
                             }else if(count($check_username) == 0 && ($emp_code == $check_user_profile[0]->emp_code)){
-                                return 'update user';
+                                return $note;
                             }else if(count($check_username) == 0 && count($check_empcode) == 0){
-                                return 'update user';
+                                return $note;
                             }else{
                                 return 'ข้อมูลไม่ถูกต้อง';
                             }
@@ -2159,7 +2203,7 @@ class Users extends Model
                     ){
                         return 'ไม่พบข้อมูลที่ต้องการอัปเดต';
                     }else{
-                        return 'update user LDAP';
+                        return $note;
                     }
                 }
             }
