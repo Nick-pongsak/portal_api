@@ -660,7 +660,7 @@ class UserController extends Controller
                 'success' => [
                     'data' => 'false',
                 ]
-            ], 401);
+            ], 400);
         }
         
     }
@@ -689,7 +689,7 @@ class UserController extends Controller
                 'success' => [
                     'data' => 'false',
                 ]
-            ], 401);
+            ], 400);
         }
         
     }
@@ -719,7 +719,7 @@ class UserController extends Controller
                 'success' => [
                     'data' => 'false',
                 ]
-            ], 401);
+            ], 400);
         }
         
     }
@@ -749,7 +749,7 @@ class UserController extends Controller
                 'success' => [
                     'data' => 'false',
                 ]
-            ], 401);
+            ], 400);
         }
         
     }
