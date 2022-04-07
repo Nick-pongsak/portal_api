@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call('App\Http\Controllers\UserController@UpdatestatusUser')->dailyAt('13:35')->timezone('Asia/Bangkok');
+        $schedule->call('App\Http\Controllers\UserController@UpdatestatusUser')->dailyAt('00:05')->timezone('Asia/Bangkok');
     }
      
     /**
