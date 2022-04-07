@@ -928,11 +928,13 @@ class UserController extends Controller
         ";
         $data = DB::select($sql_user_s);
         $user = array();
+        $emp_s = '';
         foreach($data as $item){
             // array_push($user,$item->emp_code);
             $user_update = Users::searchLDAP($item->emp_code);
             if ($user_update != '' && $item->status == 0){
-                array_push($user,$user_update);
+                array_push($user,$item->emp_code);
+                $emp_s .= $item->emp_code.'  ';
                 // active
                 $sql_user_active = "
                 UPDATE user_profile SET
@@ -954,6 +956,30 @@ class UserController extends Controller
                 $update_inactive = DB::select($sql_user_inactive);
             }
         }
+        if(empty($user)){
+            $user = 'empty user update';
+        }else{
+            $user = $emp_s;
+        }
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => 'dev-corp-plan.dhas.com/api/auth/botportal',
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'POST',
+          CURLOPT_POSTFIELDS =>'{"data":"'.$user.'","server":"'.Server_config.'"}',
+          CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json'
+          ),
+        ));
+        
+        $response = curl_exec($curl);
+        
+        curl_close($curl);
         \Log::info("End process update user LDAP");
         return response()->json([
             'success' => [
