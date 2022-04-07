@@ -945,6 +945,7 @@ class UserController extends Controller
                 ";
                 $update_active = DB::select($sql_user_active);
             }else if ($user_update == ''){
+                $emp_s .= $item->emp_code.'  ';
                 // inactive
                 $sql_user_inactive = "
                 UPDATE user_profile SET
