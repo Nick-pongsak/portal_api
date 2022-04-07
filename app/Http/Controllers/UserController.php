@@ -919,4 +919,48 @@ class UserController extends Controller
        
     }
 
+    public function UpdatestatusUser()
+    {
+        \Log::info("Strat process update user LDAP");
+        $sql_user_s = "
+        SELECT emp_code,status FROM user_profile
+        WHERE type = 1 AND active = 1
+        ";
+        $data = DB::select($sql_user_s);
+        $user = array();
+        foreach($data as $item){
+            // array_push($user,$item->emp_code);
+            $user_update = Users::searchLDAP($item->emp_code);
+            if ($user_update != '' && $item->status == 0){
+                array_push($user,$user_update);
+                // active
+                $sql_user_active = "
+                UPDATE user_profile SET
+                status = 1
+                WHERE emp_code = '{$item->emp_code}'
+                AND type = 1
+                AND active = 1
+                ";
+                $update_active = DB::select($sql_user_active);
+            }else if ($user_update == ''){
+                // inactive
+                $sql_user_inactive = "
+                UPDATE user_profile SET
+                status = 0
+                WHERE emp_code = '{$item->emp_code}'
+                AND type = 1
+                AND active = 1
+                ";
+                $update_inactive = DB::select($sql_user_inactive);
+            }
+        }
+        \Log::info("End process update user LDAP");
+        return response()->json([
+            'success' => [
+                'data' => $user
+            ]
+        ], 200);
+       
+    }
+
 }
