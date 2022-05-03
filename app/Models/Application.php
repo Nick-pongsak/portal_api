@@ -135,7 +135,7 @@ class Application extends Model
         $check_name_en = DB::select($sql_name_en);
 
         if (count($sql_app) == 1) {
-            if($sql_app[0]->name_th == $name_th && $sql_app[0]->name_en == $name_en){
+            if(strcasecmp($sql_app[0]->name_th , $name_th) == 0 && strcasecmp($sql_app[0]->name_en , $name_en) == 0 ){
                 $app = Application::update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id);
                 return response()->json([
                     'success' => [
@@ -476,7 +476,7 @@ class Application extends Model
         $check_name_en = DB::select($sql_name_en);
 
         if (count($sql_cat) == 1){
-            if($sql_cat[0]->name_th == $name_th && $sql_cat[0]->name_en == $name_en){
+            if(strcasecmp($sql_cat[0]->name_th , $name_th) == 0 && strcasecmp($sql_cat[0]->name_en , $name_en) == 0){
                 $datetime_now = date('Y-m-d H:i:s');
                 $sql = "UPDATE category SET 
                  name_th = '{$name_th}'
@@ -943,7 +943,7 @@ class Application extends Model
         $check_name_en = DB::select($sql_name_en);
 
         if (count($sql_group) == 1) {
-            if($sql_group[0]->name_th == $name_th && $sql_group[0]->name_en == $name_en){
+            if(strcasecmp($sql_group[0]->name_th , $name_th) == 0 && strcasecmp($sql_group[0]->name_en , $name_en) == 0){
                 $datetime_now = date('Y-m-d H:i:s');
                 $sql = "UPDATE application_group SET
                 name_th = '{$name_th}',
