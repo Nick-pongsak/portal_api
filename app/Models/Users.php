@@ -3039,7 +3039,7 @@ class Users extends Model
                     'con_id'  => $item->con_id,
                     'condition_th' => $item->condition_th,
                     'condition_en' => $item->condition_en,
-                    'start_date' => $item->start_date,
+                    'start_date' => date("d-m-Y H:i", strtotime($item->start_date)),
                     'active' => $item->active,
                     'amount_user' => $item->amount_user,
                     'name_th' => $item->name_th,
