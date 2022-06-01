@@ -1023,4 +1023,60 @@ class UserController extends Controller
        
     }
 
+    public function add_condition(Request $request)
+    {
+        $_dataAll = $request->all();
+        $user_s = $this->getUserLogin();
+        $user_id = $user_s->user_id;
+        $event  = $_dataAll['event']; // save-and-active, draft
+        $condition_th    = $_dataAll['condition_th'];
+        $condition_en    = $_dataAll['condition_en'];
+
+        $add_conditions  = Users::add_condition($event, $condition_th, $condition_en, $user_id);
+
+        return response()->json([
+            'success' => [
+                'data' => $add_conditions,
+            ]
+        ], 200);
+       
+    }
+
+    public function update_condition(Request $request)
+    {
+        $_dataAll = $request->all();
+        $user_s = $this->getUserLogin();
+        $user_id = $user_s->user_id;
+        $con_id = $_dataAll['con_id'];
+        $event  = $_dataAll['event']; // save-and-active, draft, inactive
+        $condition_th    = $_dataAll['condition_th'];
+        $condition_en    = $_dataAll['condition_en'];
+
+        $update_condition  = Users::update_condition($event, $condition_th, $condition_en, $user_id, $con_id);
+
+        return response()->json([
+            'success' => [
+                'data' => $update_condition,
+            ]
+        ], 200);
+       
+    }
+
+    public function delete_condition(Request $request)
+    {
+        $_dataAll = $request->all();
+        $user_s = $this->getUserLogin();
+        $user_id = $user_s->user_id;
+        $con_id    = $_dataAll['con_id'];
+
+        $delete_condition  = Users::delete_condition($con_id);
+
+        return response()->json([
+            'success' => [
+                'data' => $delete_condition,
+            ]
+        ], 200);
+       
+    }
+
 }

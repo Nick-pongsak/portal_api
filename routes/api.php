@@ -90,3 +90,6 @@ Route::post('/import-temp-to-users', [UserController::class, 'import_temporary_t
 // condition
 Route::post('/user-accept', [UserController::class, 'user_accept']);
 Route::post('/condition-list', [UserController::class, 'condition_list']);
+Route::post('/add-condition', [UserController::class, 'add_condition']);
+Route::post('/update-condition', [UserController::class, 'update_condition']);
+Route::post('/delete-condition', [UserController::class, 'delete_condition']);

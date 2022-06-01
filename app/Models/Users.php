@@ -2978,13 +2978,13 @@ class Users extends Model
             UPDATE user_profile SET
             con_id = '{$con_id}'
             WHERE user_id = {$user_id}";
-            $sql_update_con_id = DB::insert($sql_update_con_id);
+            $sql_update_con_id = DB::select($sql_update_con_id);
         }else{
             $sql_update_con_id = "
             UPDATE user_profile SET
             con_id = concat(con_id, ',{$con_id}')
             WHERE user_id = {$user_id}";
-            $sql_update_con_id = DB::insert($sql_update_con_id);
+            $sql_update_con_id = DB::select($sql_update_con_id);
         }
 
         $sql_add_amount_user = "
@@ -3051,4 +3051,143 @@ class Users extends Model
         
         return $condition;
     }
+
+    public static function add_condition($event, $condition_th, $condition_en, $user_id){
+
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
+        $datetime_now = date('Y-m-d H:i:s');
+        if($event == "draft"){
+            $sql_condition = "
+            INSERT INTO conditions 
+            (
+             condition_th
+            ,condition_en 
+            ,active
+            ,amount_user
+            ,createdate
+            ,updatedate
+            ,createby
+            ,updateby
+            )
+            VALUES 
+            (
+             '{$condition_th}'
+            ,'{$condition_en}'
+            , 0
+            , 0
+            ,'{$datetime_now}'
+            ,'{$datetime_now}'
+            ,'{$user_id}'
+            ,'{$user_id}'
+            )
+            ";
+
+            $sql_condition = DB::select($sql_condition);
+
+        }else if($event == "save-and-active"){
+
+            $sql_update_inactive = "
+            UPDATE conditions
+            SET active = 0
+            ";
+            $sql_update_inactive = DB::select($sql_update_inactive);
+
+
+            $sql_condition = "
+            INSERT INTO conditions 
+            (
+             condition_th
+            ,condition_en 
+            ,start_date
+            ,active
+            ,amount_user
+            ,createdate
+            ,updatedate
+            ,createby
+            ,updateby
+            )
+            VALUES 
+            (
+             '{$condition_th}'
+            ,'{$condition_en}'
+            ,'{$datetime_now}'
+            , 1
+            , 0
+            ,'{$datetime_now}'
+            ,'{$datetime_now}'
+            ,'{$user_id}'
+            ,'{$user_id}'
+            )
+            ";
+
+            $sql_condition = DB::select($sql_condition);
+
+
+        }
+        
+        return "add condition success";
+    }
+
+    public static function update_condition($event, $condition_th, $condition_en, $user_id, $con_id){
+
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
+        $datetime_now = date('Y-m-d H:i:s');
+        if($event == "draft"){
+            $sql_condition = "
+            UPDATE conditions SET 
+             condition_th = '{$condition_th}'
+            ,condition_en = '{$condition_en}'
+            ,active       = 0 
+            ,updatedate   = '{$datetime_now}'
+            ,updateby     = '{$user_id}'
+            WHERE con_id = {$con_id}
+            ";
+
+            $sql_condition = DB::select($sql_condition);
+
+        }else if($event == "save-and-active"){
+            $sql_update_inactive = "
+            UPDATE conditions
+            SET active = 0
+            ";
+            $sql_update_inactive = DB::select($sql_update_inactive);
+
+            $sql_condition = "
+            UPDATE conditions SET 
+             condition_th = '{$condition_th}'
+            ,condition_en = '{$condition_en}'
+            ,start_date   = '{$datetime_now}'
+            ,active       = 1 
+            ,updatedate   = '{$datetime_now}'
+            ,updateby     = '{$user_id}'
+            WHERE con_id = {$con_id}
+            ";
+
+            $sql_condition = DB::select($sql_condition);
+
+        }else if($event == "inactive"){
+            $sql_update_inactive = "
+            UPDATE conditions
+            SET active = 0
+            WHERE con_id = {$con_id}
+            ";
+            $sql_update_inactive = DB::select($sql_update_inactive);
+        }
+        
+        return "update condition success";
+    }
+
+    public static function delete_condition($con_id){
+
+        $sql_condition = "
+        DELETE
+        FROM conditions
+        WHERE con_id = {$con_id}
+        ";
+
+        $sql_condition = DB::select($sql_condition);
+        
+        return "delete condition success";
+    }
+    
 }
