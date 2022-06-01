@@ -990,4 +990,37 @@ class UserController extends Controller
        
     }
 
+    public function user_accept(Request $request)
+    {
+        $_dataAll = $request->all();
+        $user_id  = $_dataAll['user_id'];
+        $con_id   = $_dataAll['con_id'];
+        
+        $acception   = Users::update_con_id($user_id, $con_id);
+
+        return response()->json([
+            'success' => [
+                'data' => 'update con_id success',
+            ]
+        ], 200);
+       
+    }
+
+    public function condition_list(Request $request)
+    {
+        $_dataAll = $request->all();
+        $keyword  = $_dataAll['keyword'];
+        $sort     = $_dataAll['sort'];
+        $field    = $_dataAll['field'];
+
+        $conditions_list  = Users::condition_list($keyword, $field, $sort);
+
+        return response()->json([
+            'success' => [
+                'data' => $conditions_list,
+            ]
+        ], 200);
+       
+    }
+
 }

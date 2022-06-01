@@ -313,7 +313,8 @@ class Users extends Model
         ,pro.status_permission
         ,pro.admin_menu,
         g.name_en as group_name_en,
-        g.name_th as group_name_th 
+        g.name_th as group_name_th,
+        pro.con_id 
         FROM users u
         INNER JOIN user_profile pro
         ON u.user_id = pro.user_id
@@ -353,7 +354,8 @@ class Users extends Model
         ,pro.admin_menu,
         g.name_en as group_name_en,
         g.name_th as group_name_th,
-        s.language
+        s.language,
+        pro.con_id
         FROM users u
         INNER JOIN user_profile pro
         ON u.user_id = pro.user_id
@@ -380,6 +382,44 @@ class Users extends Model
                 ], 400);
             }
             foreach ($sql_user as $item) {
+                $condition = array();
+                if($item->con_id != ''){
+                    $sql_condition = "
+                    SELECT 
+                    con_id,
+                    condition_th,
+                    condition_en
+                    FROM conditions
+                    WHERE con_id NOT IN ({$item->con_id})
+                    AND active = 1";
+                    $sql_condition = DB::select($sql_condition);
+
+                    foreach ($sql_condition as $item_con) {
+                        $condition = array(
+                            'con_id' => $item_con->con_id,
+                            'condition_th' => $item_con->condition_th,
+                            'condition_en' => $item_con->condition_en,
+                        );
+                    }
+                }else{
+                    $sql_condition = "
+                    SELECT 
+                    con_id,
+                    condition_th,
+                    condition_en
+                    FROM conditions
+                    WHERE active = 1";
+                    $sql_condition = DB::select($sql_condition);
+
+                    foreach ($sql_condition as $item_con) {
+                        $condition = array(
+                            'con_id' => $item_con->con_id,
+                            'condition_th' => $item_con->condition_th,
+                            'condition_en' => $item_con->condition_en,
+                        );
+                    }
+                }
+
                 $datas = array(
                     'access_token' => $token,
                     'username' => $username,
@@ -408,6 +448,7 @@ class Users extends Model
                     'status_permission' => $item->status_permission,
                     'admin_menu' => $item->admin_menu,
                     'language' => 'th',
+                    'condition' => $condition,
                 );
             }
             return response()->json([
@@ -426,6 +467,44 @@ class Users extends Model
                 ], 400);
             }
             foreach ($sql_language as $item) {
+                $condition = array();
+                if($item->con_id != ''){
+                    $sql_condition = "
+                    SELECT 
+                    con_id,
+                    condition_th,
+                    condition_en
+                    FROM conditions
+                    WHERE con_id NOT IN ({$item->con_id})
+                    AND active = 1";
+                    $sql_condition = DB::select($sql_condition);
+
+                    foreach ($sql_condition as $item_con) {
+                        $condition = array(
+                            'con_id' => $item_con->con_id,
+                            'condition_th' => $item_con->condition_th,
+                            'condition_en' => $item_con->condition_en,
+                        );
+                    }
+                }else{
+                    $sql_condition = "
+                    SELECT 
+                    con_id,
+                    condition_th,
+                    condition_en
+                    FROM conditions
+                    WHERE active = 1";
+                    $sql_condition = DB::select($sql_condition);
+
+                    foreach ($sql_condition as $item_con) {
+                        $condition = array(
+                            'con_id' => $item_con->con_id,
+                            'condition_th' => $item_con->condition_th,
+                            'condition_en' => $item_con->condition_en,
+                        );
+                    }
+                }
+
                 $datas = array(
                     'access_token' => $token,
                     'username' => $username,
@@ -454,6 +533,7 @@ class Users extends Model
                     'status_permission' => $item->status_permission,
                     'admin_menu' => $item->admin_menu,
                     'language' => $item->language,
+                    'condition' => $condition,
                 );
             }
             return response()->json([
@@ -2883,5 +2963,92 @@ class Users extends Model
         }
 
         return 'seccess';
+    }
+
+    public static function update_con_id($user_id, $con_id){
+        $sql_check_con_id = "
+        SELECT con_id FROM user_profile
+        WHERE user_id = {$user_id}
+        AND active = 1";
+
+        $sql_check_con_id = DB::select($sql_check_con_id);
+
+        if($sql_check_con_id[0]->con_id == ''){
+            $sql_update_con_id = "
+            UPDATE user_profile SET
+            con_id = '{$con_id}'
+            WHERE user_id = {$user_id}";
+            $sql_update_con_id = DB::insert($sql_update_con_id);
+        }else{
+            $sql_update_con_id = "
+            UPDATE user_profile SET
+            con_id = concat(con_id, ',{$con_id}')
+            WHERE user_id = {$user_id}";
+            $sql_update_con_id = DB::insert($sql_update_con_id);
+        }
+
+        $sql_add_amount_user = "
+        UPDATE conditions SET
+        amount_user  = amount_user + 1
+        WHERE con_id = '{$con_id}' ";
+
+        $sql_add_amount_user = DB::select($sql_add_amount_user);
+    }
+
+    public static function condition_list($keyword, $field, $sort){
+
+        $search = '';
+        $order_by = '';
+        if ($keyword != '') {
+            $search = "AND ((pro.name_th like '%{$keyword}%') OR 
+            (pro.name_en like '%{$keyword}%')
+            )";
+        }
+        if ($field != '') {
+            $order_by = "ORDER BY {$field} {$sort}";
+        } else {
+            $order_by = "ORDER BY pro.name_th";
+        }
+
+        $sql_condition = "
+        SELECT 
+        con.con_id,
+        con.condition_th,
+        con.condition_en,
+        con.start_date,
+        con.active,
+        con.amount_user,
+        con.updateby,
+        pro.name_th,
+        pro.name_en
+        FROM conditions con
+        INNER JOIN user_profile pro
+        ON con.updateby = user_id
+        {$search}
+        {$order_by}
+        ";
+
+        $sql_condition = DB::select($sql_condition);
+
+        $condition = array();
+        if (!empty($sql_condition)) {
+            $i = 0;
+            foreach ($sql_condition as $item) {
+                $condition[] = array(
+                    'index'  => $i,
+                    'con_id'  => $item->con_id,
+                    'condition_th' => $item->condition_th,
+                    'condition_en' => $item->condition_en,
+                    'start_date' => $item->start_date,
+                    'active' => $item->active,
+                    'amount_user' => $item->amount_user,
+                    'name_th' => $item->name_th,
+                    'name_en' => $item->name_en,
+                );
+                $i++;
+            }
+        }
+        
+        return $condition;
     }
 }
