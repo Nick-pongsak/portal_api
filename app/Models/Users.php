@@ -16,6 +16,7 @@ class Users extends Model
 
     public static function create_user($emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create)
     {
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
         if ($type == 1) {
             $password = bcrypt($password);
@@ -56,6 +57,7 @@ class Users extends Model
 
     public static function edit_user($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_update)
     {
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
         if($password == 'LDAP'){
             $password = bcrypt($password);
@@ -80,6 +82,7 @@ class Users extends Model
 
     public static function create_user_profile($user_id, $emp_code, $name_th, $name_en, $postname_th, $postname_en, $email, $status, $group_id, $type, $username, $password, $user_create, $cx, $nickname1_th, $nickname1_en, $nickname2_th, $nickname2_en, $phone, $permission, $admin_menu)
     {
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
         $sql_id = "UPDATE users SET id = {$user_id} WHERE type = {$type} AND emp_code = '{$emp_code}' AND active = 1";
         $sql_add_id = DB::insert($sql_id);
@@ -161,7 +164,7 @@ class Users extends Model
 
             $sql_delete = DB::insert($sql_delete_order);
         }
-
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
 
         $sql = "UPDATE user_profile SET 
@@ -197,6 +200,7 @@ class Users extends Model
 
     public static function create_username_sso($user_id, $emp_code, $app_id, $username, $password_sso, $user_create)
     {
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
         // $password = bcrypt($password);
         $sql = "INSERT INTO sso 
@@ -234,6 +238,7 @@ class Users extends Model
 
     public static function edit_username_sso($user_id, $emp_code, $app_id, $username, $password_sso, $user_update)
     {
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
         // $password = bcrypt($password);
         $sql_app = "
@@ -888,6 +893,7 @@ class Users extends Model
         $sql_user = DB::select($sql);
 
         if (count($sql_user) == 1) {
+            $datetime_now = date_default_timezone_set("Asia/Bangkok");
             $datetime_now = date('Y-m-d H:i:s');
             $sql_users = "
             UPDATE user_setting SET
@@ -903,7 +909,7 @@ class Users extends Model
                 ]
             ], 200);
         } else {
-
+            $datetime_now = date_default_timezone_set("Asia/Bangkok");
             $datetime_now = date('Y-m-d H:i:s');
             $sql = "
             INSERT INTO user_setting 
@@ -945,6 +951,7 @@ class Users extends Model
         $sql_user = DB::select($sql);
 
         if (count($sql_user) == 1) {
+            $datetime_now = date_default_timezone_set("Asia/Bangkok");
             $datetime_now = date('Y-m-d H:i:s');
             $sql_users = "
             UPDATE user_profile SET
@@ -978,6 +985,7 @@ class Users extends Model
         $sql_user = DB::select($sql);
 
         if (count($sql_user) == 1) {
+            $datetime_now = date_default_timezone_set("Asia/Bangkok");
             $datetime_now = date('Y-m-d H:i:s');
             $sql_users = "
             UPDATE user_profile SET
@@ -1019,7 +1027,7 @@ class Users extends Model
         //     $sql_delete = DB::insert($sql_delete_order);
 
         // }
-
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
 
         $sql = "UPDATE user_profile SET
@@ -1110,6 +1118,7 @@ class Users extends Model
             $sql_user_id = DB::select($sql_user_id);
 
             if (count($sql_user) == 1 && count($sql_user_id) == 1) {
+                $datetime_now = date_default_timezone_set("Asia/Bangkok");
                 $datetime_now = date('Y-m-d H:i:s');
                 $sql = "
                 UPDATE sso SET
@@ -1131,6 +1140,7 @@ class Users extends Model
                 ], 200);
                 
             } else if (count($sql_user) == 0 && count($sql_user_id) == 1) {
+                $datetime_now = date_default_timezone_set("Asia/Bangkok");
                 $datetime_now = date('Y-m-d H:i:s');
                 $sql = "INSERT INTO sso 
                 (emp_code
@@ -1181,6 +1191,7 @@ class Users extends Model
         $sql_user = DB::select($sql);
 
         if (count($sql_user) == 1) {
+            $datetime_now = date_default_timezone_set("Asia/Bangkok");
             $datetime_now = date('Y-m-d H:i:s');
             $sql_users = "
             UPDATE user_setting SET
@@ -1196,7 +1207,7 @@ class Users extends Model
                 ]
             ], 200);
         } else {
-
+            $datetime_now = date_default_timezone_set("Asia/Bangkok");
             $datetime_now = date('Y-m-d H:i:s');
             $sql = "
             INSERT INTO user_setting 
@@ -1268,6 +1279,7 @@ class Users extends Model
                 }
             }
         }
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
         $sql = "
         INSERT INTO temporary 
@@ -2672,7 +2684,7 @@ class Users extends Model
 
     public static function update_user_csv($item,$user_create)
     {
-
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
         $update = '';
         $update_pro = '';
@@ -2769,6 +2781,7 @@ class Users extends Model
         if($item->type != -1){
             $update_pro .= ",type = {$item->type}";
         }
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
         $update_pro .= ",updatedate = '{$datetime_now}'";
         $update_pro .= ",updateby = '{$user_create}'";
@@ -2786,7 +2799,7 @@ class Users extends Model
 
     public static function update_user_ldap_csv($item,$user_create)
     {
-
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
         $update = '';
         $update_pro = '';
@@ -2827,7 +2840,7 @@ class Users extends Model
 
             $sql_delete = DB::insert($sql_delete_order);
         }
-
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
 
         if($item->name_th != ''){
@@ -2936,6 +2949,7 @@ class Users extends Model
 
         $sql_check_group = DB::select($sql_chack_group_id);
         if (count($sql_check_group) == 0) {
+            $datetime_now = date_default_timezone_set("Asia/Bangkok");
             $datetime_now = date('Y-m-d H:i:s');
             $sql_add_group_id = "
             INSERT INTO application_group 

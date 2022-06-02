@@ -51,6 +51,7 @@ class Application extends Model
 
     public static function create_app($name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id)
     {
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
         $sql = "INSERT INTO application 
         (name_th
@@ -184,6 +185,7 @@ class Application extends Model
 
     public static function update_app($app_id, $name_th, $name_en, $description_th, $description_en, $category_id, $key_app, $type_login, $status, $status_sso, $image, $url, $user_id)
     {
+        $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
         if($image != ''){
             $sql = "UPDATE application SET
@@ -266,6 +268,7 @@ class Application extends Model
                         ], 215);
                     }
                     if ($confirm == 1) {
+                        $datetime_now = date_default_timezone_set("Asia/Bangkok");
                         $datetime_now = date('Y-m-d H:i:s');
                         $sql = "UPDATE application SET
                         active = 0,
@@ -282,6 +285,7 @@ class Application extends Model
                     }
                 }
             } else {
+                $datetime_now = date_default_timezone_set("Asia/Bangkok");
                 $datetime_now = date('Y-m-d H:i:s');
                 $sql = "UPDATE application SET
                 active = 0,
@@ -419,6 +423,7 @@ class Application extends Model
         $sql_cat = DB::select($sql);
 
         if (count($sql_cat) == 0) {
+            $datetime_now = date_default_timezone_set("Asia/Bangkok");
             $datetime_now = date('Y-m-d H:i:s');
             $sql = "INSERT INTO category 
             (name_th
@@ -477,6 +482,7 @@ class Application extends Model
 
         if (count($sql_cat) == 1){
             if(strcasecmp($sql_cat[0]->name_th , $name_th) == 0 && strcasecmp($sql_cat[0]->name_en , $name_en) == 0){
+                $datetime_now = date_default_timezone_set("Asia/Bangkok");
                 $datetime_now = date('Y-m-d H:i:s');
                 $sql = "UPDATE category SET 
                  name_th = '{$name_th}'
@@ -493,6 +499,7 @@ class Application extends Model
                 ], 200);
             } else {
                 if(count($check_name_th) == 0 && $sql_cat[0]->name_en == $name_en){
+                    $datetime_now = date_default_timezone_set("Asia/Bangkok");
                     $datetime_now = date('Y-m-d H:i:s');
                     $sql = "UPDATE category SET 
                      name_th = '{$name_th}'
@@ -508,6 +515,7 @@ class Application extends Model
                         ]
                     ], 200);          
                 }else if($sql_cat[0]->name_th == $name_th && count($check_name_en) == 0){
+                    $datetime_now = date_default_timezone_set("Asia/Bangkok");
                     $datetime_now = date('Y-m-d H:i:s');
                     $sql = "UPDATE category SET 
                      name_th = '{$name_th}'
@@ -523,6 +531,7 @@ class Application extends Model
                         ]
                     ], 200);          
                 }else if(count($check_name_th) == 0 && count($check_name_en) == 0){
+                    $datetime_now = date_default_timezone_set("Asia/Bangkok");
                     $datetime_now = date('Y-m-d H:i:s');
                     $sql = "UPDATE category SET 
                      name_th = '{$name_th}'
@@ -573,6 +582,7 @@ class Application extends Model
         $sql_cat_app = DB::select($sql_count);
 
         if ((count($sql_cat_active) == 1) && (count($sql_cat_app) == 0))  {
+            $datetime_now = date_default_timezone_set("Asia/Bangkok");
             $datetime_now = date('Y-m-d H:i:s');
             $sql = "UPDATE category SET 
              active = 0
@@ -883,6 +893,7 @@ class Application extends Model
         $sql_group = DB::select($sql);
 
         if (count($sql_group) == 0) {
+            $datetime_now = date_default_timezone_set("Asia/Bangkok");
             $datetime_now = date('Y-m-d H:i:s');
             $sql = "INSERT INTO application_group
             (name_th,
@@ -944,6 +955,7 @@ class Application extends Model
 
         if (count($sql_group) == 1) {
             if(strcasecmp($sql_group[0]->name_th , $name_th) == 0 && strcasecmp($sql_group[0]->name_en , $name_en) == 0){
+                $datetime_now = date_default_timezone_set("Asia/Bangkok");
                 $datetime_now = date('Y-m-d H:i:s');
                 $sql = "UPDATE application_group SET
                 name_th = '{$name_th}',
@@ -963,6 +975,7 @@ class Application extends Model
                 ], 200);
             } else {
                 if(count($check_name_th) == 0 && $sql_group[0]->name_en == $name_en){
+                    $datetime_now = date_default_timezone_set("Asia/Bangkok");
                     $datetime_now = date('Y-m-d H:i:s');
                     $sql = "UPDATE application_group SET
                     name_th = '{$name_th}',
@@ -981,6 +994,7 @@ class Application extends Model
                         ]
                     ], 200);                 
                 }else if($sql_group[0]->name_th == $name_th && count($check_name_en) == 0 ){
+                    $datetime_now = date_default_timezone_set("Asia/Bangkok");
                     $datetime_now = date('Y-m-d H:i:s');
                     $sql = "UPDATE application_group SET
                     name_th = '{$name_th}',
@@ -999,6 +1013,7 @@ class Application extends Model
                         ]
                     ], 200);                 
                 }else if(count($check_name_th) == 0 && count($check_name_en) == 0 ){
+                    $datetime_now = date_default_timezone_set("Asia/Bangkok");
                     $datetime_now = date('Y-m-d H:i:s');
                     $sql = "UPDATE application_group SET
                     name_th = '{$name_th}',
@@ -1054,6 +1069,7 @@ class Application extends Model
         $sql_user = DB::select($sql_u);
 
         if (count($sql_group) == 1 && count($sql_user) == 0) {
+            $datetime_now = date_default_timezone_set("Asia/Bangkok");
             $datetime_now = date('Y-m-d H:i:s');
             $sql = "UPDATE application_group SET
             active  = 0,
