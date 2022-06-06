@@ -3021,7 +3021,7 @@ class Users extends Model
         if ($field != '') {
             $order_by = "ORDER BY {$field} {$sort}";
         } else {
-            $order_by = "ORDER BY pro.name_th";
+            $order_by = "ORDER BY con.start_date";
         }
 
         $sql_condition = "
