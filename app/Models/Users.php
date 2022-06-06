@@ -3021,7 +3021,7 @@ class Users extends Model
         if ($field != '') {
             $order_by = "ORDER BY {$field} {$sort}";
         } else {
-            $order_by = "ORDER BY con.start_date";
+            $order_by = "ORDER BY con.status, con.start_date DESC, con.createdate DESC";
         }
 
         $sql_condition = "
@@ -3034,7 +3034,9 @@ class Users extends Model
         con.amount_user,
         con.updateby,
         pro.name_th,
-        pro.name_en
+        pro.name_en,
+        con.createdate,
+        con.status
         FROM conditions con
         INNER JOIN user_profile pro
         ON con.updateby = user_id
@@ -3058,6 +3060,8 @@ class Users extends Model
                     'amount_user' => $item->amount_user,
                     'name_th' => $item->name_th,
                     'name_en' => $item->name_en,
+                    'createdate' => $item->createdate,
+                    'status' => $item->status,
                 );
                 $i++;
             }
@@ -3082,6 +3086,7 @@ class Users extends Model
             ,updatedate
             ,createby
             ,updateby
+            ,status
             )
             VALUES 
             (
@@ -3093,6 +3098,7 @@ class Users extends Model
             ,'{$datetime_now}'
             ,'{$user_id}'
             ,'{$user_id}'
+            , 0
             )
             ";
 
@@ -3105,6 +3111,12 @@ class Users extends Model
             SET active = 0
             ";
             $sql_update_inactive = DB::select($sql_update_inactive);
+
+            $sql_update_status = "
+            UPDATE conditions
+            SET status = 2 WHERE start_date IS NOT NULL
+            ";
+            $sql_update_status = DB::select($sql_update_status);
 
 
             $sql_condition = "
@@ -3119,6 +3131,7 @@ class Users extends Model
             ,updatedate
             ,createby
             ,updateby
+            ,status
             )
             VALUES 
             (
@@ -3131,6 +3144,7 @@ class Users extends Model
             ,'{$datetime_now}'
             ,'{$user_id}'
             ,'{$user_id}'
+            , 1
             )
             ";
 
@@ -3152,6 +3166,7 @@ class Users extends Model
              condition_th = '{$condition_th}'
             ,condition_en = '{$condition_en}'
             ,active       = 0 
+            ,status       = 0 
             ,updatedate   = '{$datetime_now}'
             ,updateby     = '{$user_id}'
             WHERE con_id = {$con_id}
@@ -3166,12 +3181,19 @@ class Users extends Model
             ";
             $sql_update_inactive = DB::select($sql_update_inactive);
 
+            $sql_update_status = "
+            UPDATE conditions
+            SET status = 2 WHERE start_date IS NOT NULL
+            ";
+            $sql_update_status = DB::select($sql_update_status);
+
             $sql_condition = "
             UPDATE conditions SET 
              condition_th = '{$condition_th}'
             ,condition_en = '{$condition_en}'
             ,start_date   = '{$datetime_now}'
             ,active       = 1 
+            ,status       = 1 
             ,updatedate   = '{$datetime_now}'
             ,updateby     = '{$user_id}'
             WHERE con_id = {$con_id}
@@ -3183,6 +3205,7 @@ class Users extends Model
             $sql_update_inactive = "
             UPDATE conditions
             SET active = 0
+            ,   status = 2
             WHERE con_id = {$con_id}
             ";
             $sql_update_inactive = DB::select($sql_update_inactive);
