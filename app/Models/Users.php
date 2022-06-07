@@ -3053,8 +3053,8 @@ class Users extends Model
                 $condition[] = array(
                     'index'  => $i,
                     'con_id'  => $item->con_id,
-                    'condition_th' => $item->condition_th,
-                    'condition_en' => $item->condition_en,
+                    'condition_th' => stripslashes($item->condition_th),
+                    'condition_en' => stripslashes($item->condition_en),
                     'start_date' =>  ($item->start_date == '' ? '-' : date("d-m-Y H:i", strtotime($item->start_date))),
                     'active' => $item->active,
                     'amount_user' => $item->amount_user,
@@ -3074,6 +3074,8 @@ class Users extends Model
 
         $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
+        $condition_th = addslashes($condition_th);
+        $condition_en = addslashes($condition_en);
         if($event == "draft"){
             $sql_condition = "
             INSERT INTO conditions 
@@ -3160,6 +3162,8 @@ class Users extends Model
 
         $datetime_now = date_default_timezone_set("Asia/Bangkok");
         $datetime_now = date('Y-m-d H:i:s');
+        $condition_th = addslashes($condition_th);
+        $condition_en = addslashes($condition_en);
         if($event == "draft"){
             $sql_condition = "
             UPDATE conditions SET 
