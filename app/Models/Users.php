@@ -481,7 +481,7 @@ class Users extends Model
                     condition_en
                     FROM conditions
                     WHERE con_id NOT IN ({$item->con_id})
-                    AND active = 1";
+                    AND status = 1";
                     $sql_condition = DB::select($sql_condition);
 
                     foreach ($sql_condition as $item_con) {
@@ -498,7 +498,7 @@ class Users extends Model
                     condition_th,
                     condition_en
                     FROM conditions
-                    WHERE active = 1";
+                    WHERE status = 1";
                     $sql_condition = DB::select($sql_condition);
 
                     foreach ($sql_condition as $item_con) {
