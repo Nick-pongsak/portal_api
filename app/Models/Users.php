@@ -413,7 +413,7 @@ class Users extends Model
                     condition_th,
                     condition_en
                     FROM conditions
-                    WHERE active = 1";
+                    WHERE status = 1";
                     $sql_condition = DB::select($sql_condition);
 
                     foreach ($sql_condition as $item_con) {
