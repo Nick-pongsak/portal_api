@@ -3004,7 +3004,8 @@ class Users extends Model
         $sql_add_amount_user = "
         UPDATE conditions SET
         amount_user  = amount_user + 1
-        WHERE con_id = '{$con_id}' ";
+        WHERE con_id = '{$con_id}'
+        AND status = 1 ";
 
         $sql_add_amount_user = DB::select($sql_add_amount_user);
     }
