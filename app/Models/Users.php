@@ -3030,7 +3030,7 @@ class Users extends Model
         con.condition_th,
         con.condition_en,
         con.start_date,
-        con.active,
+        IF (con.status = 2, 0 , con.status ) AS active,
         con.amount_user,
         con.updateby,
         pro.name_th,
@@ -3081,8 +3081,7 @@ class Users extends Model
             INSERT INTO conditions 
             (
              condition_th
-            ,condition_en 
-            ,active
+            ,condition_en
             ,amount_user
             ,createdate
             ,updatedate
@@ -3095,7 +3094,6 @@ class Users extends Model
              '{$condition_th}'
             ,'{$condition_en}'
             , 0
-            , 0
             ,'{$datetime_now}'
             ,'{$datetime_now}'
             ,'{$user_id}'
@@ -3107,12 +3105,6 @@ class Users extends Model
             $sql_condition = DB::select($sql_condition);
 
         }else if($event == "save-and-active"){
-
-            $sql_update_inactive = "
-            UPDATE conditions
-            SET active = 0
-            ";
-            $sql_update_inactive = DB::select($sql_update_inactive);
 
             $sql_update_status = "
             UPDATE conditions
@@ -3127,7 +3119,6 @@ class Users extends Model
              condition_th
             ,condition_en 
             ,start_date
-            ,active
             ,amount_user
             ,createdate
             ,updatedate
@@ -3140,7 +3131,6 @@ class Users extends Model
              '{$condition_th}'
             ,'{$condition_en}'
             ,'{$datetime_now}'
-            , 1
             , 0
             ,'{$datetime_now}'
             ,'{$datetime_now}'
@@ -3169,7 +3159,6 @@ class Users extends Model
             UPDATE conditions SET 
              condition_th = '{$condition_th}'
             ,condition_en = '{$condition_en}'
-            ,active       = 0 
             ,status       = 0 
             ,updatedate   = '{$datetime_now}'
             ,updateby     = '{$user_id}'
@@ -3179,11 +3168,6 @@ class Users extends Model
             $sql_condition = DB::select($sql_condition);
 
         }else if($event == "save-and-active"){
-            $sql_update_inactive = "
-            UPDATE conditions
-            SET active = 0
-            ";
-            $sql_update_inactive = DB::select($sql_update_inactive);
 
             $sql_update_status = "
             UPDATE conditions
@@ -3196,7 +3180,6 @@ class Users extends Model
              condition_th = '{$condition_th}'
             ,condition_en = '{$condition_en}'
             ,start_date   = '{$datetime_now}'
-            ,active       = 1 
             ,status       = 1 
             ,updatedate   = '{$datetime_now}'
             ,updateby     = '{$user_id}'
@@ -3208,8 +3191,7 @@ class Users extends Model
         }else if($event == "inactive"){
             $sql_update_inactive = "
             UPDATE conditions
-            SET active = 0
-            ,   status = 2
+            SET status = 2
             WHERE con_id = {$con_id}
             ";
             $sql_update_inactive = DB::select($sql_update_inactive);
@@ -3224,6 +3206,7 @@ class Users extends Model
         DELETE
         FROM conditions
         WHERE con_id = {$con_id}
+        AND status = 0
         ";
 
         $sql_condition = DB::select($sql_condition);
