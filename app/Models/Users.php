@@ -2980,33 +2980,125 @@ class Users extends Model
     }
 
     public static function update_con_id($user_id, $con_id){
-        $sql_check_con_id = "
-        SELECT con_id FROM user_profile
-        WHERE user_id = {$user_id}
-        AND active = 1";
 
-        $sql_check_con_id = DB::select($sql_check_con_id);
+        $sql_check_con_id_active = "
+        SELECT * FROM conditions
+        WHERE con_id = {$con_id}
+        AND status = 1";
+        $sql_check_con_id_active = DB::select($sql_check_con_id_active);
 
-        if($sql_check_con_id[0]->con_id == ''){
-            $sql_update_con_id = "
-            UPDATE user_profile SET
-            con_id = '{$con_id}'
-            WHERE user_id = {$user_id}";
-            $sql_update_con_id = DB::select($sql_update_con_id);
+        if(count($sql_check_con_id_active) == 1){
+            $sql_check_con_id = "
+            SELECT con_id FROM user_profile
+            WHERE user_id = {$user_id}
+            AND active = 1";
+            $sql_check_con_id = DB::select($sql_check_con_id);
+            
+            $user_con_id = $sql_check_con_id[0]->con_id;
+
+            if($user_con_id == ''){
+                $sql_update_con_id = "
+                UPDATE user_profile SET
+                con_id = '{$con_id}'
+                WHERE user_id = {$user_id}";
+                $sql_update_con_id = DB::select($sql_update_con_id);
+
+                $sql_add_amount_user = "
+                UPDATE conditions SET
+                amount_user  = amount_user + 1
+                WHERE con_id = '{$con_id}'";
+                $sql_add_amount_user = DB::select($sql_add_amount_user);
+
+            }else{
+                $sql_duplicate_condition = "
+                SELECT con_id
+                FROM conditions
+                WHERE con_id IN ($user_con_id)";
+                $sql_duplicate_condition = DB::select($sql_duplicate_condition);
+
+                if(count($sql_duplicate_condition) == 0){
+                    $sql_update_con_id = "
+                    UPDATE user_profile SET
+                    con_id = concat(con_id, ',{$con_id}')
+                    WHERE user_id = {$user_id}";
+                    $sql_update_con_id = DB::select($sql_update_con_id);
+
+                    $sql_add_amount_user = "
+                    UPDATE conditions SET
+                    amount_user  = amount_user + 1
+                    WHERE con_id = '{$con_id}'";
+                    $sql_add_amount_user = DB::select($sql_add_amount_user);
+
+                }else{
+                    $condition = array();
+                    $datas = array(
+                        'condition' => $condition,
+                    );
+                    
+                    return response()->json([
+                        'success' => [
+                            'data' => $datas
+                        ]
+                    ], 200);
+                }
+                
+            }
+
+            $condition = array();
+            $sql_condition = "
+            SELECT 
+            con_id,
+            condition_th,
+            condition_en
+            FROM conditions
+            WHERE status = 1";
+            $sql_condition = DB::select($sql_condition);
+            foreach ($sql_condition as $item_con) {
+                $condition = array(
+                    'con_id' => $item_con->con_id,
+                    'condition_th' => $item_con->condition_th,
+                    'condition_en' => $item_con->condition_en,
+                );
+            }
+                
+            $datas = array(
+                'condition' => $condition,
+            );
+            
+            return response()->json([
+                'success' => [
+                    'data' => $datas
+                ]
+            ], 200);
+
         }else{
-            $sql_update_con_id = "
-            UPDATE user_profile SET
-            con_id = concat(con_id, ',{$con_id}')
-            WHERE user_id = {$user_id}";
-            $sql_update_con_id = DB::select($sql_update_con_id);
+            $condition = array();
+            $sql_condition = "
+            SELECT 
+            con_id,
+            condition_th,
+            condition_en
+            FROM conditions
+            WHERE status = 1";
+            $sql_condition = DB::select($sql_condition);
+            foreach ($sql_condition as $item_con) {
+                $condition = array(
+                    'con_id' => $item_con->con_id,
+                    'condition_th' => $item_con->condition_th,
+                    'condition_en' => $item_con->condition_en,
+                );
+            }
+                
+            $datas = array(
+                'condition' => $condition,
+            );
+            
+            return response()->json([
+                'success' => [
+                    'data' => $datas
+                ]
+            ], 200);
         }
-
-        $sql_add_amount_user = "
-        UPDATE conditions SET
-        amount_user  = amount_user + 1
-        WHERE con_id = '{$con_id}'";
-
-        $sql_add_amount_user = DB::select($sql_add_amount_user);
     }
 
     public static function condition_list($keyword, $field, $sort){

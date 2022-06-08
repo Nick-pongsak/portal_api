@@ -998,11 +998,7 @@ class UserController extends Controller
         
         $acception   = Users::update_con_id($user_id, $con_id);
 
-        return response()->json([
-            'success' => [
-                'data' => 'update con_id success',
-            ]
-        ], 200);
+        return  $acception;
        
     }
 
