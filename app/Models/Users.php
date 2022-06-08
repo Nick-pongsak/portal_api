@@ -3013,7 +3013,7 @@ class Users extends Model
                 $sql_duplicate_condition = "
                 SELECT con_id
                 FROM conditions
-                WHERE con_id IN ($user_con_id)";
+                WHERE con_id = '{$con_id}' AND con_id IN ({$user_con_id})";
                 $sql_duplicate_condition = DB::select($sql_duplicate_condition);
 
                 if(count($sql_duplicate_condition) == 0){
