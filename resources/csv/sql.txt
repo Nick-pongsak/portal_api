@@ -1,5 +1,5 @@
 SELECT 
-    DATE_FORMAT( trn_inv_date, "%Y-%m") Datetime,
+    DATE_FORMAT( trn_inv_date, '%Y-%m') Datetime,
     product_type CG, customer_code Customer,
     product_code Sku, 
     SUM(trn_qty) Qty,
@@ -9,6 +9,6 @@ WHERE
     YEAR( trn_inv_date ) >= 2015
     AND trn_type = 'iv'
     AND product_group = '0100'
-GROUP BY DATE_FORMAT( trn_inv_date, "%Y-%m"), product_type, customer_code, product_code 
-ORDER BY DATE_FORMAT( trn_inv_date, "%Y-%m"), product_type, customer_code, product_code 
+GROUP BY DATE_FORMAT( trn_inv_date, '%Y-%m'), product_type, customer_code, product_code 
+ORDER BY DATE_FORMAT( trn_inv_date, '%Y-%m'), product_type, customer_code, product_code 
 LIMIT 0, 30000
